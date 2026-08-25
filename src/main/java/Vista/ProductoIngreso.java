@@ -4,9 +4,11 @@
  */
 package Vista;
 
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -15,16 +17,25 @@ import javax.swing.table.DefaultTableModel;
 public class ProductoIngreso extends javax.swing.JFrame {
 
     
-    private JTable tablaProductos = new JTable();
-    private DefaultTableModel modeloTabla = new DefaultTableModel();
+    // ENCABEZADO Y MODELO
+    String[] encabezado = {"N°", "Código", "Nombre", "Descripción", "Cantidad", "Estado"};
+    DefaultTableModel modelo = new DefaultTableModel(encabezado, 0);
 
+    public ProductoIngreso() {
+        initComponents();
+        this.estiloJtable();
+        this.modelo();
+    
+    }
+    
+    public void modelo() {
+        tblProductos.setModel(modelo);
+    }
    
     /**
      * Creates new form ProductoIngreso
      */
-    public ProductoIngreso() {
-        initComponents();
-    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -41,7 +52,7 @@ public class ProductoIngreso extends javax.swing.JFrame {
         lblDescripcion = new javax.swing.JLabel();
         lblCantidad = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        Jtable = new javax.swing.JTable();
+        tblProductos = new javax.swing.JTable();
         txtCodigo = new javax.swing.JTextField();
         txtNombres = new javax.swing.JTextField();
         txtDescripcion = new javax.swing.JTextField();
@@ -49,10 +60,12 @@ public class ProductoIngreso extends javax.swing.JFrame {
         btnGuardar = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
         btnBuscar = new javax.swing.JButton();
-        btnDesavilitar = new javax.swing.JButton();
+        btnDeshabilitar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI Light", 3, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 255));
         jLabel1.setText("REGISTRO DE PRODUCTOS");
 
         lblCodigo.setText("Codigo Producto:");
@@ -63,18 +76,18 @@ public class ProductoIngreso extends javax.swing.JFrame {
 
         lblCantidad.setText("Cantidad:");
 
-        Jtable.setModel(new javax.swing.table.DefaultTableModel(
+        tblProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Codigo Producto", "Nombre", "Descripción", "Cantidad"
+                "Codigo Producto", "Nombre", "Descripción", "Cantidad", "Estado"
             }
         ));
-        jScrollPane1.setViewportView(Jtable);
+        jScrollPane1.setViewportView(tblProductos);
 
         btnGuardar.setText("Guardar");
 
@@ -82,7 +95,7 @@ public class ProductoIngreso extends javax.swing.JFrame {
 
         btnBuscar.setText("Buscar");
 
-        btnDesavilitar.setText("Desavilitar");
+        btnDeshabilitar.setText("Deshabilitar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -95,16 +108,16 @@ public class ProductoIngreso extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(lblDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(27, 27, 27)
+                                    .addComponent(lblCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(40, 40, 40)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
+                                    .addComponent(txtCodigo)
                                     .addComponent(txtNombres)
                                     .addComponent(txtDescripcion)
-                                    .addComponent(txtCantidad))
+                                    .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnBuscar)
@@ -112,23 +125,24 @@ public class ProductoIngreso extends javax.swing.JFrame {
                                 .addComponent(btnGuardar)
                                 .addGap(49, 49, 49)
                                 .addComponent(btnEditar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
-                                .addComponent(btnDesavilitar))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                                .addComponent(btnDeshabilitar))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(64, 64, 64)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(168, 168, 168)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(76, 76, 76)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addGap(16, 16, 16)
                 .addComponent(jLabel1)
-                .addGap(25, 25, 25)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGap(31, 31, 31)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCodigo)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -143,39 +157,97 @@ public class ProductoIngreso extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblCantidad)
                     .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGuardar)
                     .addComponent(btnEditar)
                     .addComponent(btnBuscar)
-                    .addComponent(btnDesavilitar))
+                    .addComponent(btnDeshabilitar))
                 .addGap(15, 15, 15))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public String getCodigo() { return txtCodigo.getText().trim(); }
-    public void setCodigo(String codigo) { this.txtCodigo.setText(codigo); }
-
-    public String getNombre() { return txtNombres.getText().trim(); }
-    public void setNombre(String nombre) { this.txtNombres.setText(nombre); }
-
-    public String getDescripcion() { return txtDescripcion.getText().trim(); }
-    public void setDescripcion(String descripcion) { this.txtDescripcion.setText(descripcion); }
-
-    public String getStock() { return txtCantidad.getText().trim(); }
-    public void setStock(String stock) { this.txtCantidad.setText(stock); }
-
-    public JTable getTablaProductos() { return Jtable; }
-    public DefaultTableModel getModeloTabla() { return modeloTabla; }
+    public String getCodigo() {
+        return txtCodigo.getText().trim();
+    }
     
+    public void setCodigo(String codigo) {
+        this.txtCodigo.setText(codigo);
+    }
+
+    public String getNombre() {
+        return txtNombres.getText().trim();
+    }
+    
+    public void setNombre(String nombre) {
+        this.txtNombres.setText(nombre); 
+    }
+    
+
+    public String getDescripcion() { 
+        return txtDescripcion.getText().trim(); 
+    }
+    
+    public void setDescripcion(String descripcion) { 
+        this.txtDescripcion.setText(descripcion);
+    }
+
+    public String getStock() { 
+        return txtCantidad.getText().trim();
+    }
+    
+    public void setStock(String stock) { 
+        this.txtCantidad.setText(stock); 
+    }
+
+    public JTable getTablaProductos() {
+        return tblProductos; 
+    }
+    
+  public DefaultTableModel getModeloTabla() { 
+    return (DefaultTableModel) tblProductos.getModel(); 
+
+}
     
     public void addGuardarListener(ActionListener l) { 
     btnGuardar.addActionListener(l); 
 }
+    
+    public void estiloJtable() {
+        JTableHeader header = new JTableHeader();
+        Font f = new Font("Bold", MAXIMIZED_BOTH, 18);
+        header.setFont(f);
+        tblProductos.setTableHeader(header);
+    }
+    
+    // Devuelve la fila seleccionada por el usuario
+public int getFilaSeleccionada() {
+    return tblProductos.getSelectedRow();
+}
+
+//  clic sobre la JTable
+public void addTablaListener(java.awt.event.MouseAdapter l) {
+    tblProductos.addMouseListener(l);
+}
+
+// Escucha el botón Editar
+public void addEditarListener(ActionListener l) {
+    btnEditar.addActionListener(l); 
+}
+
+public void addDeshabilitarListener(ActionListener l) {
+    btnDeshabilitar.addActionListener(l); 
+}
+
+    public void addBuscarListener(ActionListener l) {
+    btnBuscar.addActionListener(l);
+}
+    
+
     /**
      * @param args the command line arguments
      */
@@ -212,9 +284,8 @@ public class ProductoIngreso extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable Jtable;
     private javax.swing.JButton btnBuscar;
-    private javax.swing.JButton btnDesavilitar;
+    private javax.swing.JButton btnDeshabilitar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JLabel jLabel1;
@@ -223,6 +294,7 @@ public class ProductoIngreso extends javax.swing.JFrame {
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblDescripcion;
     private javax.swing.JLabel lblNombre;
+    private javax.swing.JTable tblProductos;
     private javax.swing.JTextField txtCantidad;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtDescripcion;

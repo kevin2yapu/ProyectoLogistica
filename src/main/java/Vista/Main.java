@@ -4,8 +4,12 @@
  */
 package Vista;
 
+import Controlador.BodegaControlador;
+import Controlador.LoteControlador;
 import Controlador.ProductoControlador;
 import Controlador.UsuarioControlador;
+import Modelo.Bodega;
+import Modelo.Lote;
 import Modelo.Producto;
 import Modelo.Usuario;
 
@@ -26,10 +30,24 @@ public class Main {
 //        controlador.iniciar();
 //    }
     
-    Producto modelo = new Producto();
-        ProductoIngreso vista = new ProductoIngreso();
-
-        ProductoControlador controlador = new ProductoControlador(modelo, vista);
+//    Producto modelo = new Producto();
+//        ProductoIngreso vista = new ProductoIngreso();
+//
+//        ProductoControlador controlador = new ProductoControlador(modelo, vista);
+//        controlador.iniciar();
+//    }
+    
+   Lote modelo= new Lote();
+   LoteVista vista= new LoteVista();
+   
+   LoteControlador controlador = new LoteControlador (modelo, vista);
         controlador.iniciar();
-    }
+}
+    
+//      Bodega modelo= new Bodega();
+//   Bodegavista vista= new Bodegavista();
+//   
+//   BodegaControlador controlador = new BodegaControlador (modelo, vista);
+//        controlador.iniciar();
+//}
 }

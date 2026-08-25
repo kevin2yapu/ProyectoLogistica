@@ -6,9 +6,12 @@ package Controlador;
 
 import Modelo.Producto;
 import Vista.ProductoIngreso;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -16,99 +19,150 @@ import javax.swing.JOptionPane;
  * @author KEVIN
  */
 public class ProductoControlador {
-    private Producto modelo;
-    private ProductoIngreso vista;
+  private Producto pmodelo;
+    private ProductoIngreso pvista;
 
-    // INSTANCIAR LA CONEXIÓN A LA BASE DE DATOS
-    ConexionBDD conectar = new ConexionBDD();
+    public ProductoControlador() {}
 
-    public ProductoControlador() {
+    public ProductoControlador(Producto pmodelo, ProductoIngreso pvista) {
+        this.pmodelo = pmodelo;
+        this.pvista = pvista;
     }
 
-    public ProductoControlador(Producto modelo, ProductoIngreso vista) {
-        this.modelo = modelo;
-        this.vista = vista;
-    }
+    public void cargarDatosTabla() {
+        pvista.getModeloTabla().setRowCount(0); 
+        ArrayList<String[]> lProductos = pmodelo.obtenerProductos();
 
-    // MÉTODO QUE EJECUTA EL SP EN LA BASE DE DATOS
-    public boolean ingresarProducto(String codigo, String nombre, String descripcion, double stock) throws SQLException {
-        boolean guardado = false;
-        String sql = "{call sp_ingresar_producto(?, ?, ?, ?)}";
-
-        try {
-            Connection conectado = conectar.conectar();
-            CallableStatement cs = conectado.prepareCall(sql);
-
-            cs.setString(1, codigo);
-            cs.setString(2, nombre);
-            cs.setString(3, descripcion);
-            cs.setDouble(4, stock);
-
-            int filasAfectadas = cs.executeUpdate();
-            if (filasAfectadas > 0) {
-                guardado = true;
-            }
-
-            conectado.close();
-
-        } catch (SQLException e) {
-            System.out.println("Error en el SP de ingresar producto: " + e.getMessage());
-        }
-
-        return guardado;
-    }
-
-    // MÉTODO QUE RECOGE LOS DATOS DE LA VISTA Y VALIDA
-    public void registrarProducto() throws SQLException {
-        String codigo = vista.getCodigo();
-        String nombre = vista.getNombre();
-        String descripcion = vista.getDescripcion();
-        String stockText = vista.getStock();
-
-        if (!codigo.isEmpty() && !nombre.isEmpty() && !stockText.isEmpty()) {
-
-            try {
-                double stock = Double.parseDouble(stockText);
-
-                if (stock >= 0) {
-                    boolean exito = ingresarProducto(codigo, nombre, descripcion, stock);
-
-                    if (exito) {
-                        JOptionPane.showMessageDialog(vista, "Producto guardado correctamente.");
-                        limpiarCampos();
-                    } else {
-                        JOptionPane.showMessageDialog(vista, "Error al guardar el producto.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(vista, "La cantidad no puede ser negativa.", "Error", JOptionPane.WARNING_MESSAGE);
-                }
-
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(vista, "Ingrese un valor numérico en la cantidad.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
-            }
-
-        } else {
-            JOptionPane.showMessageDialog(vista, "Por favor complete los campos obligatorios.");
+        for (String[] p : lProductos) {
+            Object[] fila = {p[0], p[1], p[2], p[3], p[4], p[5]}; 
+            pvista.getModeloTabla().addRow(fila);
         }
     }
+
+    // Pasa los valores de la fila seleccionada a los campos de texto
+    public void seleccionarFila() {
+        int fila = pvista.getFilaSeleccionada();
+
+        if (fila >= 0) {
+            // Mapeo según el orden de columnas visuales de la JTable:
+            // Columna 1 = Código, Columna 2 = Nombre, Columna 3 = Descripción, Columna 4 = Cantidad
+            String codigo = pvista.getModeloTabla().getValueAt(fila, 1).toString();
+            String nombre = pvista.getModeloTabla().getValueAt(fila, 2).toString();
+            String descripcion = pvista.getModeloTabla().getValueAt(fila, 3).toString();
+            String stock = pvista.getModeloTabla().getValueAt(fila, 4).toString();
+
+            pvista.setCodigo(codigo);
+            pvista.setNombre(nombre);
+            pvista.setDescripcion(descripcion);
+            pvista.setStock(stock);
+        }
+    }
+
+    public void editarProducto() {
+        String codigo = pvista.getCodigo();
+        String nombre = pvista.getNombre();
+        String descripcion = pvista.getDescripcion();
+        String stockStr = pvista.getStock();
+
+        if (!codigo.isEmpty() && !nombre.isEmpty() && !stockStr.isEmpty()) {
+            double stock = Double.parseDouble(stockStr);
+
+            pmodelo.setCodigo(codigo);
+            pmodelo.setNombre(nombre);
+            pmodelo.setDescripcion(descripcion);
+            pmodelo.setStock(stock);
+
+            if (pmodelo.editarProducto()) {
+                limpiarCampos();
+                cargarDatosTabla(); 
+            }
+        }
+    }
+
+    public void agregarProducto() {
+        String codigo = pvista.getCodigo();
+        String nombre = pvista.getNombre();
+        String descripcion = pvista.getDescripcion();
+        String stockStr = pvista.getStock();
+
+        if (!codigo.isEmpty() && !nombre.isEmpty() && !stockStr.isEmpty()) {
+            double stock = Double.parseDouble(stockStr);
+
+            pmodelo.setCodigo(codigo);
+            pmodelo.setNombre(nombre);
+            pmodelo.setDescripcion(descripcion);
+            pmodelo.setStock(stock);
+
+            if (pmodelo.insertarProducto()) {
+                limpiarCampos();
+                cargarDatosTabla(); 
+            }
+        }
+    }
+    
+    public void deshabilitarProducto() {
+    String codigo = pvista.getCodigo();
+
+    if (!codigo.isEmpty()) {
+        pmodelo.setCodigo(codigo);
+
+        if (pmodelo.deshabilitarProducto()) {
+            limpiarCampos();
+            cargarDatosTabla(); 
+        }
+    }
+}
+    
+    public void buscarProducto() {
+    String codigo = pvista.getCodigo().trim();
+    String nombre = pvista.getNombre().trim();
+
+  
+    String criterio = "";
+    if (!codigo.isEmpty()) {
+        criterio = codigo;
+    } else if (!nombre.isEmpty()) {
+        criterio = nombre;
+    }
+
+    if (criterio.isEmpty()) {
+        cargarDatosTabla(); 
+    } 
+  
+    else {
+        pvista.getModeloTabla().setRowCount(0); // Limpia la tabla
+        ArrayList<String[]> lProductos = pmodelo.buscarProductos(criterio);
+
+        for (String[] p : lProductos) {
+            Object[] fila = {p[0], p[1], p[2], p[3], p[4], p[5]};
+            pvista.getModeloTabla().addRow(fila);
+        }
+    }
+}
 
     private void limpiarCampos() {
-        vista.setCodigo("");
-        vista.setNombre("");
-        vista.setDescripcion("");
-        vista.setStock("");
+        pvista.setCodigo("");
+        pvista.setNombre("");
+        pvista.setDescripcion("");
+        pvista.setStock("");
     }
 
-    // INICIAR
-    public void iniciar() {
-        vista.addGuardarListener(mi -> {
-            try {
-                registrarProducto();
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(vista, "Error de base de datos: " + e.getMessage());
+   public void iniciar() {
+        // Enlaces de los botones
+        pvista.addGuardarListener(e -> agregarProducto());
+        pvista.addEditarListener(e -> editarProducto());
+        pvista.addDeshabilitarListener(e -> deshabilitarProducto());
+        pvista.addBuscarListener(e -> buscarProducto());
+        
+        pvista.addTablaListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                seleccionarFila();
             }
         });
-        vista.setLocationRelativeTo(null);
-        vista.setVisible(true);
+
+        pvista.setLocationRelativeTo(null);
+        this.cargarDatosTabla(); 
+        pvista.setVisible(true);
     }
 }

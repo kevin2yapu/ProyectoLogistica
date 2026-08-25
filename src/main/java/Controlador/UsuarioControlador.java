@@ -22,7 +22,6 @@ public class UsuarioControlador {
     private Usuario modelo;
     private InicioSesion uvista;
     
-             //INSTANCIAR LA CONEXIÓN A LA BASE DE DATOS
     ConexionBDD conectar = new ConexionBDD();
    
 
@@ -82,9 +81,9 @@ public class UsuarioControlador {
             JOptionPane.showMessageDialog(uvista, "Bienvenido/a: " + usuarioEncontrado.getNombres());
 
             if (usuarioEncontrado.getRol().equalsIgnoreCase("ADMINISTRADOR")) {
-                // Abrir vista admin
+              
             } else if (usuarioEncontrado.getRol().equalsIgnoreCase("BODEGUERO")) {
-                // Abrir vista bodega
+                
             }
 
             uvista.dispose();
