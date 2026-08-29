@@ -4,7 +4,7 @@
  */
 package Vista;
 
-import Controlador.BodegaControlador;
+
 import Controlador.LoteControlador;
 import Controlador.ProductoControlador;
 import Controlador.UsuarioControlador;
@@ -18,7 +18,20 @@ import Modelo.Usuario;
  * @author KEVIN
  */
 public class Main {
-    public static void main(String[] args) {
+   public static void main(String[] args) {
+        java.awt.EventQueue.invokeLater(() -> {
+            // 1. Instanciar Modelo y Vista del Login
+            Usuario modelo = new Usuario();
+            InicioSesion vista = new InicioSesion();
+
+            // 2. Instanciar Controlador
+            UsuarioControlador controlador = new UsuarioControlador(modelo, vista);
+
+            // 3. Arrancar la aplicación
+            controlador.iniciar();
+        });
+    }
+}
 //        // 1. Instanciar Modelo y Vista
 //        Usuario modelo = new Usuario();
 //        InicioSesion vista = new InicioSesion();
@@ -30,19 +43,23 @@ public class Main {
 //        controlador.iniciar();
 //    }
     
-//    Producto modelo = new Producto();
+//    java.awt.EventQueue.invokeLater(() -> {
+//        Producto modelo = new Producto();
 //        ProductoIngreso vista = new ProductoIngreso();
-//
+//        
 //        ProductoControlador controlador = new ProductoControlador(modelo, vista);
 //        controlador.iniciar();
-//    }
+//        
+//        vista.setLocationRelativeTo(null); // Centra la ventana en pantalla
+//        vista.setVisible(true);           // Muestra la ventana
+//    });
     
-   Lote modelo= new Lote();
-   LoteVista vista= new LoteVista();
-   
-   LoteControlador controlador = new LoteControlador (modelo, vista);
-        controlador.iniciar();
-}
+//   Lote modelo= new Lote();
+//   LoteVista vista= new LoteVista();
+//   
+//   LoteControlador controlador = new LoteControlador (modelo, vista);
+//        controlador.iniciar();
+//}
     
 //      Bodega modelo= new Bodega();
 //   Bodegavista vista= new Bodegavista();
@@ -50,4 +67,4 @@ public class Main {
 //   BodegaControlador controlador = new BodegaControlador (modelo, vista);
 //        controlador.iniciar();
 //}
-}
+   

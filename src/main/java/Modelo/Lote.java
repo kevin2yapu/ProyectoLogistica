@@ -115,15 +115,14 @@ public class Lote {
     }
 
     // INSERTAR
-   public boolean insertarLote() {
-        String sql = "{call sp_insertar_lote(?, ?, ?, ?)}";
+  public boolean insertarLote() {
+        String sql = "{call sp_insertar_lote(?, ?, ?)}"; 
         try (Connection con = conectar.conectar();
              CallableStatement cs = con.prepareCall(sql)) {
 
             cs.setString(1, this.codigoLote);
-            cs.setInt(2, this.idProducto);
-            cs.setInt(3, this.idBodega);
-            cs.setString(4, this.fechaVencimiento);
+            cs.setInt(2, this.idBodega);
+            cs.setString(3, this.fechaVencimiento);
 
             cs.executeUpdate();
             return true;
@@ -135,15 +134,14 @@ public class Lote {
 
     // EDITAR
    public boolean editarLote() {
-        String sql = "{call sp_editar_lote(?, ?, ?, ?, ?)}";
+        String sql = "{call sp_editar_lote(?, ?, ?, ?)}";
         try (Connection con = conectar.conectar();
              CallableStatement cs = con.prepareCall(sql)) {
 
             cs.setInt(1, this.id);
             cs.setString(2, this.codigoLote);
-            cs.setInt(3, this.idProducto);
-            cs.setInt(4, this.idBodega);
-            cs.setString(5, this.fechaVencimiento);
+            cs.setInt(3, this.idBodega);
+            cs.setString(4, this.fechaVencimiento);
 
             cs.executeUpdate();
             return true;
@@ -191,6 +189,22 @@ public class Lote {
             }
         } catch (SQLException e) {
             System.out.println("Error al buscar lotes: " + e.getMessage());
+        }
+        return lista;
+    }
+   public ArrayList<String> obtenerComboBodegas() {
+        ArrayList<String> lista = new ArrayList<>();
+        String sql = "SELECT id, nombre FROM bodegas WHERE estado = 'ACTIVO'";
+
+        try (Connection con = conectar.conectar();
+             CallableStatement cs = con.prepareCall(sql);
+             ResultSet rs = cs.executeQuery()) {
+
+            while (rs.next()) {
+                lista.add(rs.getInt("id") + " - " + rs.getString("nombre"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al cargar combo bodegas: " + e.getMessage());
         }
         return lista;
     }

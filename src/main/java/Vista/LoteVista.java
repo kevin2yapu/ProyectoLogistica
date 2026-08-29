@@ -6,6 +6,7 @@ package Vista;
 
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -30,21 +31,20 @@ public class LoteVista extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        txtNombres = new javax.swing.JTextField();
-        txtDescripcion = new javax.swing.JTextField();
         btnGuardar = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
         btnBuscar = new javax.swing.JButton();
         btnDeshabilitar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         lblCodigoLote = new javax.swing.JLabel();
-        lblNombre = new javax.swing.JLabel();
         lblDescripcion = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblLotes = new javax.swing.JTable();
         txtCodigoLote = new javax.swing.JTextField();
         lblFechaVencimiento = new javax.swing.JLabel();
         txtFechaVencimiento = new javax.swing.JTextField();
+        cbxBodega = new javax.swing.JComboBox<>();
+        btnRegresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -62,19 +62,17 @@ public class LoteVista extends javax.swing.JFrame {
 
         lblCodigoLote.setText("Codigo Lote:");
 
-        lblNombre.setText("ID Producto:");
-
         lblDescripcion.setText("ID Bodega:");
 
         tblLotes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Codigo Lote", "ID Producto", "Producto", "Ubicación", "Fecha Vencimiento", "Estado"
+                "Codigo Lote", "Ubicación", "Fecha Vencimiento", "Estado"
             }
         ));
         jScrollPane1.setViewportView(tblLotes);
@@ -87,65 +85,66 @@ public class LoteVista extends javax.swing.JFrame {
             }
         });
 
+        cbxBodega.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        btnRegresar.setText("<");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblCodigoLote, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
-                    .addComponent(lblNombre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblDescripcion, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
-                    .addComponent(lblFechaVencimiento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtCodigoLote, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
-                    .addComponent(txtNombres)
-                    .addComponent(txtDescripcion)
-                    .addComponent(txtFechaVencimiento))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(btnBuscar)
+                .addGap(44, 44, 44)
+                .addComponent(btnGuardar)
+                .addGap(49, 49, 49)
+                .addComponent(btnEditar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addComponent(btnDeshabilitar))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(136, 136, 136)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblCodigoLote, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                            .addComponent(lblDescripcion, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                            .addComponent(lblFechaVencimiento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(40, 40, 40)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtCodigoLote, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
+                            .addComponent(txtFechaVencimiento)
+                            .addComponent(cbxBodega, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(btnBuscar)
-                        .addGap(44, 44, 44)
-                        .addComponent(btnGuardar)
-                        .addGap(49, 49, 49)
-                        .addComponent(btnEditar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                        .addComponent(btnDeshabilitar))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(btnRegresar)
+                        .addGap(55, 55, 55)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnRegresar)))
                 .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCodigoLote)
                     .addComponent(txtCodigoLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblNombre)
-                    .addComponent(txtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblDescripcion)
-                    .addComponent(txtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbxBodega, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblFechaVencimiento)
                     .addComponent(txtFechaVencimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE)
+                .addGap(46, 46, 46)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -153,7 +152,7 @@ public class LoteVista extends javax.swing.JFrame {
                     .addComponent(btnEditar)
                     .addComponent(btnBuscar)
                     .addComponent(btnDeshabilitar))
-                .addContainerGap())
+                .addContainerGap(135, Short.MAX_VALUE))
         );
 
         pack();
@@ -163,7 +162,7 @@ public class LoteVista extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtFechaVencimientoActionPerformed
 public DefaultTableModel getModeloTabla() {
-        return (DefaultTableModel) tblLotes.getModel(); // Reemplaza 'tblLotes' por el variable name de tu JTable
+        return (DefaultTableModel) tblLotes.getModel(); 
     }
 
     
@@ -171,7 +170,6 @@ public DefaultTableModel getModeloTabla() {
         return tblLotes.getSelectedRow(); 
     }
 
-    // 3. Getters para leer los campos de texto
     public String getCodigoLote() {
         return txtCodigoLote.getText(); 
     }
@@ -183,15 +181,11 @@ public DefaultTableModel getModeloTabla() {
     }
 
    
-    public String getIdProducto() {
-    return txtNombres.getText().trim();
-}
+   
 
-    public String getIdBodega() {
-    return txtDescripcion.getText().trim();
-}
-
-    // 4. Setters para llenar los campos de texto
+public JComboBox<String> getCbxBodega() {
+    return cbxBodega; }
+   
     public void setCodigoLote(String texto) {
         txtCodigoLote.setText(texto);
     }
@@ -202,13 +196,7 @@ public DefaultTableModel getModeloTabla() {
         txtFechaVencimiento.setText(texto);
     }
 
-public void setProducto(String texto) {
-    txtNombres.setText(texto);
-}
 
-public void setBodega(String texto) {
-    txtDescripcion.setText(texto);
-}
 
 
     public void addGuardarListener(ActionListener l) {
@@ -230,6 +218,10 @@ public void setBodega(String texto) {
     public void addTablaListener(MouseAdapter adapter) {
         tblLotes.addMouseListener(adapter);
     }
+    
+    public javax.swing.JButton getBtnRegresar() {
+    return btnRegresar; 
+}
 
     /**
      * @param args the command line arguments
@@ -271,16 +263,15 @@ public void setBodega(String texto) {
     private javax.swing.JButton btnDeshabilitar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnRegresar;
+    private javax.swing.JComboBox<String> cbxBodega;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblCodigoLote;
     private javax.swing.JLabel lblDescripcion;
     private javax.swing.JLabel lblFechaVencimiento;
-    private javax.swing.JLabel lblNombre;
     private javax.swing.JTable tblLotes;
     private javax.swing.JTextField txtCodigoLote;
-    private javax.swing.JTextField txtDescripcion;
     private javax.swing.JTextField txtFechaVencimiento;
-    private javax.swing.JTextField txtNombres;
     // End of variables declaration//GEN-END:variables
 }

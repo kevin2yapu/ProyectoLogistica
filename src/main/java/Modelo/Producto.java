@@ -23,7 +23,8 @@ public class Producto {
     private String descripcion;
     private double stock;
     private String estado;
-    
+    private String estadoProducto;
+    private Integer idLote;
     private ConexionBDD conectar = new ConexionBDD();
     
    
@@ -39,6 +40,22 @@ public class Producto {
         this.descripcion = descripcion;
         this.stock = stock;
         this.estado = estado;
+    }
+
+    public String getEstadoProducto() {
+        return estadoProducto;
+    }
+
+    public void setEstadoProducto(String estadoProducto) {
+        this.estadoProducto = estadoProducto;
+    }
+
+    public Integer getIdLote() {
+        return idLote;
+    }
+
+    public void setIdLote(Integer idLote) {
+        this.idLote = idLote;
     }
 
     public int getId() {
@@ -89,148 +106,147 @@ public class Producto {
         this.estado = estado;
     }
     
+   
+
  public ArrayList<String[]> obtenerProductos() {
-        ArrayList<String[]> lregistros = new ArrayList<>();
-        String sentenciaSQL = "{call sp_listar_productos()}";
+    ArrayList<String[]> lista = new ArrayList<>();
+    String sql = "{CALL sp_listar_productos()}";
 
-        try {
-            Connection conectado = conectar.conectar();
-            CallableStatement cs = conectado.prepareCall(sentenciaSQL);
-            ResultSet res = cs.executeQuery();
+    try (Connection con = conectar.conectar();
+         CallableStatement cs = con.prepareCall(sql);
+         ResultSet rs = cs.executeQuery()) {
 
-            while (res.next()) {
-                String[] listaProductos = new String[6];
-                listaProductos[0] = res.getInt("id") + "";
-                listaProductos[1] = res.getString("codigo");
-                listaProductos[2] = res.getString("nombre");
-                listaProductos[3] = res.getString("descripcion");
-                listaProductos[4] = res.getDouble("stock") + "";
-                listaProductos[5] = res.getString("estado");
-                lregistros.add(listaProductos);
-            }
-
-            res.close();
-            cs.close();
-            conectado.close();
-
-        } catch (SQLException e) {
-            System.out.println("Error al listar productos: " + e.getMessage());
+        while (rs.next()) {
+            String[] datos = new String[8];
+            datos[0] = String.valueOf(rs.getInt("id"));
+            datos[1] = rs.getString("codigo");
+            datos[2] = rs.getString("nombre");
+            datos[3] = rs.getString("descripcion");
+            datos[4] = String.valueOf(rs.getDouble("stock"));
+            datos[5] = rs.getString("estado");
+            datos[6] = rs.getString("estado_producto");
+            datos[7] = rs.getString("lote");
+            lista.add(datos);
         }
-        return lregistros;
+    } catch (SQLException e) {
+        System.out.println(">>> ERROR SQL EN OBTENER PRODUCTOS: " + e.getMessage());
+        e.printStackTrace(); // <--- Esto imprimirá la causa exacta en la consola de NetBeans
     }
+    return lista;
+}
 
     // INSERTAR PRODUCTO
     public boolean insertarProducto() {
-        boolean guardado = false;
-        String sentenciaSQL = "{call sp_ingresar_producto(?, ?, ?, ?)}";
+    String sql = "{call sp_ingresar_producto(?, ?, ?, ?, ?, ?)}"; // 6 signos de interrogación
+    try (Connection con = conectar.conectar();
+         CallableStatement cs = con.prepareCall(sql)) {
 
-        try {
-            Connection conectado = conectar.conectar();
-            CallableStatement ejecutar = conectado.prepareCall(sentenciaSQL);
-            
-            ejecutar.setString(1, this.codigo);
-            ejecutar.setString(2, this.nombre);
-            ejecutar.setString(3, this.descripcion);
-            ejecutar.setDouble(4, this.stock);
+        cs.setString(1, this.codigo);
+        cs.setString(2, this.nombre);
+        cs.setString(3, this.descripcion);
+        cs.setDouble(4, this.stock);
+        cs.setString(5, this.estadoProducto); // "BUENO", "REGULAR", etc.
 
-            int filas = ejecutar.executeUpdate();
-            if (filas > 0) {
-                guardado = true;
-                System.out.println("Producto creado en la BDD");
-            }
-            
-            ejecutar.close();
-            conectado.close();
-
-        } catch (SQLException e) {
-            System.out.println("Error al guardar producto: " + e.getMessage());
+        // Si idLote es nulo o 0, se envía NULL a la BD
+        if (this.idLote != null && this.idLote > 0) {
+            cs.setInt(6, this.idLote);
+        } else {
+            cs.setNull(6, java.sql.Types.INTEGER);
         }
 
-        return guardado;
-    }
-    
-    public boolean editarProducto() {
-    boolean editado = false;
-    String sentenciaSQL = "{call sp_editar_producto(?, ?, ?, ?)}";
-
-    try {
-        Connection conectado = conectar.conectar();
-        CallableStatement ejecutar = conectado.prepareCall(sentenciaSQL);
-        
-        ejecutar.setString(1, this.codigo);
-        ejecutar.setString(2, this.nombre);
-        ejecutar.setString(3, this.descripcion);
-        ejecutar.setDouble(4, this.stock);
-
-        int filas = ejecutar.executeUpdate();
-        if (filas > 0) {
-            editado = true;
-            System.out.println("Producto actualizado en la BDD");
-        }
-        
-        ejecutar.close();
-        conectado.close();
-
+        cs.executeUpdate();
+        return true;
     } catch (SQLException e) {
-        System.out.println("Error al editar producto: " + e.getMessage());
+        System.out.println("Error al insertar producto: " + e.getMessage());
+        return false;
     }
-
-    return editado;
 }
     
-    public boolean deshabilitarProducto() {
-    boolean deshabilitado = false;
-    String sentenciaSQL = "{call sp_deshabilitar_producto(?)}";
+   public boolean actualizarProducto() {
+    String sql = "{call sp_actualizar_producto(?, ?, ?, ?, ?, ?, ?)}";
+    try (Connection con = conectar.conectar();
+         CallableStatement cs = con.prepareCall(sql)) {
 
-    try {
-        Connection conectado = conectar.conectar();
-        CallableStatement ejecutar = conectado.prepareCall(sentenciaSQL);
-        
-        ejecutar.setString(1, this.codigo);
+        cs.setInt(1, this.id);
+        cs.setString(2, this.codigo);
+        cs.setString(3, this.nombre);
+        cs.setString(4, this.descripcion);
+        cs.setDouble(5, this.stock);
+        cs.setString(6, this.estadoProducto);
 
-        int filas = ejecutar.executeUpdate();
-        if (filas > 0) {
-            deshabilitado = true;
-            System.out.println("Producto deshabilitado en la BDD");
+        if (this.idLote != null && this.idLote > 0) {
+            cs.setInt(7, this.idLote);
+        } else {
+            cs.setNull(7, java.sql.Types.INTEGER);
         }
-        
-        ejecutar.close();
-        conectado.close();
 
+        cs.executeUpdate();
+        return true;
+    } catch (SQLException e) {
+        System.out.println("Error al actualizar producto: " + e.getMessage());
+        return false;
+    }
+}
+    
+   public boolean deshabilitarProductoBD(int idProducto) {
+    String sql = "{call sp_deshabilitar_producto(?)}";
+    try (Connection con = conectar.conectar();
+         CallableStatement cs = con.prepareCall(sql)) {
+
+        cs.setInt(1, idProducto);
+        cs.executeUpdate();
+        return true;
     } catch (SQLException e) {
         System.out.println("Error al deshabilitar producto: " + e.getMessage());
+        return false;
     }
-
-    return deshabilitado;
 }
     
-   public ArrayList<String[]> buscarProductos(String criterio) {
+ public ArrayList<String[]> buscarProductos(String criterio) {
     ArrayList<String[]> lregistros = new ArrayList<>();
     String sentenciaSQL = "{call sp_buscar_producto(?)}";
 
-    try {
-        Connection conectado = conectar.conectar();
-        CallableStatement cs = conectado.prepareCall(sentenciaSQL);
+    try (Connection conectado = conectar.conectar();
+         CallableStatement cs = conectado.prepareCall(sentenciaSQL)) {
+        
         cs.setString(1, criterio);
-        ResultSet res = cs.executeQuery();
-
-        while (res.next()) {
-            String[] lista = new String[6];
-            lista[0] = res.getInt("id") + "";
-            lista[1] = res.getString("codigo");
-            lista[2] = res.getString("nombre");
-            lista[3] = res.getString("descripcion");
-            lista[4] = res.getDouble("stock") + "";
-            lista[5] = res.getString("estado");
-            lregistros.add(lista);
+        try (ResultSet res = cs.executeQuery()) {
+            while (res.next()) {
+                String[] lista = new String[8];
+                lista[0] = String.valueOf(res.getInt("id"));
+                lista[1] = res.getString("codigo");
+                lista[2] = res.getString("nombre");
+                lista[3] = res.getString("descripcion");
+                lista[4] = String.valueOf(res.getDouble("stock"));
+                lista[5] = res.getString("estado");
+                lista[6] = res.getString("estado_producto");
+                lista[7] = res.getString("lote");
+                lregistros.add(lista);
+            }
         }
-
-        res.close();
-        cs.close();
-        conectado.close();
     } catch (SQLException e) {
-        System.out.println("Error al buscar productos: " + e.getMessage());
+        System.out.println(">>> ERROR SQL EN BUSCAR PRODUCTOS: " + e.getMessage());
     }
     return lregistros;
 }
+ 
+   
+   public ArrayList<String> obtenerComboLotes() {
+        ArrayList<String> lista = new ArrayList<>();
+        // Consulta directa para traer ID y Número de Lote
+        String sql = "SELECT id, numero_lote FROM lotes WHERE estado = 'ACTIVO' ORDER BY id DESC";
+
+        try (Connection con = conectar.conectar();
+             CallableStatement cs = con.prepareCall(sql);
+             ResultSet rs = cs.executeQuery()) {
+
+            while (rs.next()) {
+                // Formato: "ID - NumeroLote" (ejemplo: "1 - 15L")
+                lista.add(rs.getInt("id") + " - " + rs.getString("numero_lote"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener combo lotes: " + e.getMessage());
+        }
+        return lista;
+    }
 }
