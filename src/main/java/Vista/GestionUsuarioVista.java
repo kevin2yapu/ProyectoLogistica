@@ -4,6 +4,8 @@
  */
 package Vista;
 
+import javax.swing.JButton;
+
 /**
  *
  * @author KEVIN
@@ -40,6 +42,7 @@ public class GestionUsuarioVista extends javax.swing.JFrame {
         tblUsuarios = new javax.swing.JTable();
         btnEditar = new javax.swing.JButton();
         btnRegresar = new javax.swing.JButton();
+        btnDeshabilitar = new javax.swing.JButton();
 
         jLabel6.setText("jLabel6");
 
@@ -63,13 +66,13 @@ public class GestionUsuarioVista extends javax.swing.JFrame {
 
         tblUsuarios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "NOMBRES", "EMAIL", "CONTRASEÑA", "ROL"
+                "NOMBRES", "EMAIL", "CONTRASEÑA", "ROL", "ESTADO"
             }
         ));
         jScrollPane1.setViewportView(tblUsuarios);
@@ -77,6 +80,8 @@ public class GestionUsuarioVista extends javax.swing.JFrame {
         btnEditar.setText("EDITAR");
 
         btnRegresar.setText("<");
+
+        btnDeshabilitar.setText("DESHABILITAR");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -118,9 +123,11 @@ public class GestionUsuarioVista extends javax.swing.JFrame {
                         .addGap(56, 56, 56)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(152, 152, 152)
-                        .addComponent(btnEditar)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(56, 56, 56)
+                        .addComponent(btnEditar)
+                        .addGap(79, 79, 79)
+                        .addComponent(btnDeshabilitar)))
+                .addContainerGap(84, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -149,7 +156,9 @@ public class GestionUsuarioVista extends javax.swing.JFrame {
                 .addGap(29, 29, 29)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnEditar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEditar)
+                    .addComponent(btnDeshabilitar))
                 .addContainerGap(32, Short.MAX_VALUE))
         );
 
@@ -199,6 +208,10 @@ public void limpiarCampos() {
     txtRol.setText("");
 }
 
+public JButton getBtnDeshabilitar() {
+    return btnDeshabilitar; // Reemplaza 'btnDeshabilitar' por el nombre exacto de la variable de tu botón
+}
+
 public javax.swing.JButton getBtnVolver() {
     return btnRegresar; // Reemplaza "btnVolver" por el nombre de tu variable JButton
 }
@@ -239,6 +252,7 @@ public javax.swing.JButton getBtnVolver() {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDeshabilitar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnRegresar;
     private javax.swing.JLabel jLabel1;

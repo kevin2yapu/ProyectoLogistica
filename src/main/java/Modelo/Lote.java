@@ -216,5 +216,64 @@ public class Lote {
         }
         return lista;
     }
+    
+    
+    public ArrayList<String> obtenerListaLotes() {
+    ArrayList<String> lista = new ArrayList<>();
+    String sql = "SELECT numero_lote FROM lotes"; // Reemplaza 'numero_lote' por tu columna exacta
+
+    try (Connection con = new ConexionBDD().conectar();
+         PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            lista.add(rs.getString("numero_lote"));
+        }
+    } catch (SQLException e) {
+        System.out.println("Error al obtener lotes: " + e.getMessage());
+    }
+    return lista;
+}
+
+public String obtenerProductoPorLote(String numeroLote) {
+    String producto = "";
+    // La relación es: productos.lote_id = lotes.id
+    String sql = "SELECT p.nombre FROM productos p " +
+                 "JOIN lotes l ON p.lote_id = l.id " +
+                 "WHERE l.numero_lote = ?";
+
+    try (Connection con = new ConexionBDD().conectar();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setString(1, numeroLote);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            producto = rs.getString("nombre");
+        }
+    } catch (SQLException e) {
+        System.out.println("Error al consultar producto del lote: " + e.getMessage());
+    }
+    return producto;
+}
+
+public int obtenerIdPorNumeroLote(String numeroLote) {
+    int id = -1;
+    String sql = "SELECT id FROM lotes WHERE numero_lote = ?"; // Asegúrate que 'id' y 'numero_lote' sean los nombres correctos de tus columnas
+
+    try (Connection con = new ConexionBDD().conectar();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setString(1, numeroLote);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            id = rs.getInt("id");
+        }
+    } catch (SQLException e) {
+        System.out.println("Error al consultar ID del lote: " + e.getMessage());
+    }
+    return id;
+}
 }
 

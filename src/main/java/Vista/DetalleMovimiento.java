@@ -4,6 +4,8 @@
  */
 package Vista;
 
+import javax.swing.JComboBox;
+
 /**
  *
  * @author KEVIN
@@ -31,7 +33,6 @@ public class DetalleMovimiento extends javax.swing.JFrame {
         lblLote = new javax.swing.JLabel();
         lblProducto = new javax.swing.JLabel();
         lblCantidad = new javax.swing.JLabel();
-        txtLote = new javax.swing.JTextField();
         txtProducto = new javax.swing.JTextField();
         txtCantidad = new javax.swing.JTextField();
         lblNotaId = new javax.swing.JLabel();
@@ -41,9 +42,11 @@ public class DetalleMovimiento extends javax.swing.JFrame {
         btnGuardar = new javax.swing.JButton();
         cmbMovimientoId = new javax.swing.JComboBox<>();
         btnRegresar = new javax.swing.JButton();
+        cmbLote = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
         jLabel1.setText("DETALLE DE MOVIMIENTO");
 
         lblLote.setText("Lote:");
@@ -92,17 +95,14 @@ public class DetalleMovimiento extends javax.swing.JFrame {
             }
         });
 
+        cmbLote.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnRegresar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(16, 16, 16))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(63, 63, 63)
                         .addComponent(btnPdf)
@@ -122,14 +122,20 @@ public class DetalleMovimiento extends javax.swing.JFrame {
                                 .addComponent(lblNotaId)))
                         .addGap(37, 37, 37)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtLote)
                             .addComponent(txtProducto)
+                            .addComponent(txtCantidad)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(cmbMovimientoId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(txtCantidad))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cmbMovimientoId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cmbLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap(98, Short.MAX_VALUE))
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(btnRegresar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(74, 74, 74))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -140,24 +146,25 @@ public class DetalleMovimiento extends javax.swing.JFrame {
                     .addComponent(btnRegresar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblNotaId)
+                        .addComponent(cmbMovimientoId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel2))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblNotaId)
-                            .addComponent(cmbMovimientoId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(71, 71, 71)
+                        .addGap(34, 34, 34)
+                        .addComponent(lblLote))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(31, 31, 31)
+                        .addComponent(cmbLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblProducto)
                             .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblCantidad)
-                            .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(62, 62, 62)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblLote))))
+                            .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(43, 43, 43)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(44, 44, 44)
@@ -186,10 +193,13 @@ public class DetalleMovimiento extends javax.swing.JFrame {
     return cmbMovimientoId; // Reemplaza por el nombre de tu JComboBox
 }
 
-public javax.swing.JTextField getTxtLote() {
-    return txtLote; // Reemplaza por el nombre de tu JTextField de Lote
-}
+//public javax.swing.JTextField getTxtLote() {
+//    return txtLote; // Reemplaza por el nombre de tu JTextField de Lote
+//}
 
+    public JComboBox<String> getCmbLote() { return cmbLote; }
+    
+    
 public javax.swing.JTextField getTxtProducto() {
     return txtProducto; // Reemplaza por el nombre de tu JTextField de Producto
 }
@@ -252,6 +262,7 @@ public javax.swing.JButton getBtnGuardar() {
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnPdf;
     private javax.swing.JButton btnRegresar;
+    private javax.swing.JComboBox<String> cmbLote;
     private javax.swing.JComboBox<String> cmbMovimientoId;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -262,7 +273,6 @@ public javax.swing.JButton getBtnGuardar() {
     private javax.swing.JLabel lblProducto;
     private javax.swing.JTable tblDetalle;
     private javax.swing.JTextField txtCantidad;
-    private javax.swing.JTextField txtLote;
     private javax.swing.JTextField txtProducto;
     // End of variables declaration//GEN-END:variables
 }

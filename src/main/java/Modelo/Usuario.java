@@ -21,16 +21,18 @@ public class Usuario {
     private String email;
     private String contrasena;
     private String rol ;
+    private String estado;
 
     public Usuario() {
     }
     
-    public Usuario(int id, String nombres, String email, String contrasena, String rol) {
+    public Usuario(int id, String nombres, String email, String contrasena, String rol,String estado) {
         this.id = id;
         this.nombres = nombres;
         this.email = email;
         this.contrasena = contrasena;
         this.rol = rol;
+        this.estado= estado;
     }
 
     public int getId() {
@@ -72,6 +74,16 @@ public class Usuario {
     public void setRol(String rol) {
         this.rol = rol;
     }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+    
+    
     
    public ArrayList<String[]> obtenerTodosLosUsuarios() {
     ConexionBDD conexion = new ConexionBDD();
@@ -130,25 +142,25 @@ public boolean cambiarEstado(int idUsuario, int nuevoEstado) {
 }
 
 public ArrayList<String[]> listarUsuarios() {
-    Controlador.ConexionBDD conexion = new Controlador.ConexionBDD();
     ArrayList<String[]> lista = new ArrayList<>();
-    String sql = "SELECT id, nombres, email, contrasena, rol FROM usuarios";
+    String sql = "SELECT id, nombres, email, contrasena, rol, estado FROM usuarios ORDER BY id DESC";
 
-    try (Connection conectado = conexion.conectar();
-         PreparedStatement ps = conectado.prepareStatement(sql);
+    try (Connection con = new ConexionBDD().conectar();
+         PreparedStatement ps = con.prepareStatement(sql);
          ResultSet rs = ps.executeQuery()) {
 
         while (rs.next()) {
-            String[] fila = new String[5];
-            fila[0] = String.valueOf(rs.getInt("id"));
-            fila[1] = rs.getString("nombres");
-            fila[2] = rs.getString("email");
-            fila[3] = rs.getString("contrasena");
-            fila[4] = rs.getString("rol");
-            lista.add(fila);
+            lista.add(new String[]{
+                String.valueOf(rs.getInt("id")),
+                rs.getString("nombres"),
+                rs.getString("email"),
+                rs.getString("contrasena"),
+                rs.getString("rol"),
+                rs.getString("estado") != null ? rs.getString("estado") : "ACTIVO"
+            });
         }
     } catch (SQLException e) {
-        System.err.println("Error al listar usuarios: " + e.getMessage());
+        System.out.println(">>> ERROR LISTAR USUARIOS: " + e.getMessage());
     }
     return lista;
 }
@@ -179,4 +191,19 @@ public boolean actualizarUsuario(int id, String nombres, String email, String co
     }
 }
     
+
+public boolean deshabilitarUsuario() {
+    String sql = "DELETE FROM usuarios WHERE id = ?";
+
+    try (Connection con = new ConexionBDD().conectar();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, this.id);
+        return ps.executeUpdate() > 0;
+
+    } catch (SQLException e) {
+        System.out.println(">>> ERROR ELIMINAR USUARIO: " + e.getMessage());
+        return false;
+    }
+}
 }
