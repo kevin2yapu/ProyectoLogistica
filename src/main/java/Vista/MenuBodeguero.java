@@ -31,7 +31,7 @@ public class MenuBodeguero extends javax.swing.JFrame {
         btnRegistroProductos = new javax.swing.JButton();
         btnMovimientoAlmacen = new javax.swing.JButton();
         btnCerrarSesion = new javax.swing.JButton();
-        btnInventarioBodegas = new javax.swing.JButton();
+        btnInventarioBodega = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,7 +61,7 @@ public class MenuBodeguero extends javax.swing.JFrame {
 
         btnCerrarSesion.setText("CERRAR SESIÓN ");
 
-        btnInventarioBodegas.setText("INVENTARIO BODEGAS ");
+        btnInventarioBodega.setText("INVENTARIO BODEGAS ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -79,7 +79,7 @@ public class MenuBodeguero extends javax.swing.JFrame {
                             .addComponent(btnRegistroLotes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnMovimientoAlmacen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnCerrarSesion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnInventarioBodegas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btnInventarioBodega, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 186, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -95,7 +95,7 @@ public class MenuBodeguero extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addComponent(btnMovimientoAlmacen)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addComponent(btnInventarioBodegas)
+                .addComponent(btnInventarioBodega)
                 .addGap(18, 18, 18)
                 .addComponent(btnCerrarSesion)
                 .addGap(27, 27, 27))
@@ -130,6 +130,10 @@ public javax.swing.JButton getBtnMovimientoAlmacen() {
     
     public javax.swing.JButton getBtnCerrarSesion() {
     return btnCerrarSesion; // Verifica que coincide con el nombre del botón en el Designer
+}
+    
+    public javax.swing.JButton getBtnInventarioBodega() {
+    return btnInventarioBodega; // Asegúrate de que este nombre coincida con la variable de tu JButton
 }
     /**
      * @param args the command line arguments
@@ -168,7 +172,7 @@ public javax.swing.JButton getBtnMovimientoAlmacen() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCerrarSesion;
-    private javax.swing.JButton btnInventarioBodegas;
+    private javax.swing.JButton btnInventarioBodega;
     private javax.swing.JButton btnMovimientoAlmacen;
     private javax.swing.JButton btnRegistroLotes;
     private javax.swing.JButton btnRegistroProductos;

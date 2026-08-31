@@ -92,212 +92,129 @@ public class Lote {
 
    public ArrayList<String[]> obtenerLotes() {
         ArrayList<String[]> lista = new ArrayList<>();
-        String sql = "{call sp_obtener_lotes()}";
+        // INNER JOIN corregido usando la tabla 'bodegas'
+        String sql = "SELECT l.id, l.numero_lote, l.bodega_id, b.nombre AS nombre_bodega, " +
+                     "l.fecha_vencimiento, l.estado " +
+                     "FROM lotes l " +
+                     "INNER JOIN bodegas b ON l.bodega_id = b.id ORDER BY l.id DESC";
 
-        try (Connection con = conectar.conectar();
-             CallableStatement cs = con.prepareCall(sql);
-             ResultSet rs = cs.executeQuery()) {
+        try (Connection con = new ConexionBDD().conectar();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                String[] fila = new String[7];
-                fila[0] = String.valueOf(rs.getInt("id"));             
-                fila[1] = rs.getString("numero_lote");                
-                fila[2] = String.valueOf(rs.getInt("producto_id"));    
-                fila[3] = rs.getString("nombre_producto");            
-                fila[4] = rs.getString("nombre_bodega");            
-                fila[5] = rs.getString("fecha_vencimiento");          
-                fila[6] = rs.getString("estado");                     
-                lista.add(fila);
+                lista.add(new String[]{
+                    String.valueOf(rs.getInt("id")),
+                    rs.getString("numero_lote"),
+                    String.valueOf(rs.getInt("bodega_id")),
+                    rs.getString("nombre_bodega"),
+                    rs.getString("fecha_vencimiento"),
+                    rs.getString("estado")
+                });
             }
         } catch (SQLException e) {
-            System.out.println("Error al obtener lotes: " + e.getMessage());
+            System.out.println(">>> ERROR OBTENER LOTES: " + e.getMessage());
         }
         return lista;
     }
 
-    // INSERTAR
-  public boolean insertarLote() {
-        String sql = "{call sp_insertar_lote(?, ?, ?)}"; 
-        try (Connection con = conectar.conectar();
-             CallableStatement cs = con.prepareCall(sql)) {
+    public boolean insertarLote() {
+    String sql = "INSERT INTO lotes (numero_lote, bodega_id, fecha_vencimiento, estado) VALUES (?, ?, ?, 'ACTIVO')";
 
-            cs.setString(1, this.codigoLote);
-            cs.setInt(2, this.idBodega);
-            cs.setString(3, this.fechaVencimiento);
+    try (Connection con = new ConexionBDD().conectar();
+         PreparedStatement ps = con.prepareStatement(sql)) {
 
-            cs.executeUpdate();
-            return true;
+        ps.setString(1, this.codigoLote);
+        ps.setInt(2, this.idBodega);
+        ps.setString(3, this.fechaVencimiento);
+
+        return ps.executeUpdate() > 0;
+
+    } catch (SQLException e) {
+        System.out.println(">>> ERROR INSERTAR LOTE: " + e.getMessage());
+        return false;
+    }
+}
+
+    public boolean editarLote() {
+        String sql = "UPDATE lotes SET numero_lote = ?, bodega_id = ?, fecha_vencimiento = ? WHERE id = ?";
+
+        try (Connection con = new ConexionBDD().conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, this.codigoLote);
+            ps.setInt(2, this.idBodega);
+            ps.setString(3, this.fechaVencimiento);
+            ps.setInt(4, this.id);
+
+            return ps.executeUpdate() > 0;
+
         } catch (SQLException e) {
-            System.out.println("Error al insertar lote: " + e.getMessage());
+            System.out.println(">>> ERROR EDITAR LOTE: " + e.getMessage());
             return false;
         }
     }
 
-    // EDITAR
-   public boolean editarLote() {
-        String sql = "{call sp_editar_lote(?, ?, ?, ?)}";
-        try (Connection con = conectar.conectar();
-             CallableStatement cs = con.prepareCall(sql)) {
+    public boolean deshabilitarLote() {
+        String sql = "UPDATE lotes SET estado = 'INACTIVO' WHERE id = ?";
 
-            cs.setInt(1, this.id);
-            cs.setString(2, this.codigoLote);
-            cs.setInt(3, this.idBodega);
-            cs.setString(4, this.fechaVencimiento);
+        try (Connection con = new ConexionBDD().conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            cs.executeUpdate();
-            return true;
+            ps.setInt(1, this.id);
+            return ps.executeUpdate() > 0;
+
         } catch (SQLException e) {
-            System.out.println("Error al editar lote: " + e.getMessage());
+            System.out.println(">>> ERROR DESHABILITAR LOTE: " + e.getMessage());
             return false;
         }
     }
 
-    // DESHABILITAR
-   public boolean deshabilitarLote() {
-        String sql = "{call sp_deshabilitar_lote(?)}";
-        try (Connection con = conectar.conectar();
-             CallableStatement cs = con.prepareCall(sql)) {
-
-            cs.setString(1, this.codigoLote);
-            cs.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println("Error al deshabilitar lote: " + e.getMessage());
-            return false;
-        }
-    }
-   
-   public ArrayList<String[]> buscarLotes(String criterio) {
+    public ArrayList<String[]> buscarLotes(String criterio) {
         ArrayList<String[]> lista = new ArrayList<>();
-        String sql = "{call sp_buscar_lotes(?)}";
+        String sql = "SELECT l.id, l.numero_lote, l.bodega_id, b.nombre AS nombre_bodega, " +
+                     "l.fecha_vencimiento, l.estado " +
+                     "FROM lotes l " +
+                     "INNER JOIN bodegas b ON l.bodega_id = b.id " +
+                     "WHERE l.numero_lote LIKE ? ORDER BY l.id DESC";
 
-        try (Connection con = conectar.conectar();
-             CallableStatement cs = con.prepareCall(sql)) {
+        try (Connection con = new ConexionBDD().conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            cs.setString(1, criterio);
-            ResultSet rs = cs.executeQuery();
+            ps.setString(1, "%" + criterio + "%");
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                String[] fila = new String[7];
-                fila[0] = String.valueOf(rs.getInt("id"));
-                fila[1] = rs.getString("numero_lote");
-                fila[2] = String.valueOf(rs.getInt("producto_id"));
-                fila[3] = rs.getString("nombre_producto");
-                fila[4] = rs.getString("nombre_bodega");
-                fila[5] = rs.getString("fecha_vencimiento");
-                fila[6] = rs.getString("estado");
-                lista.add(fila);
+                lista.add(new String[]{
+                    String.valueOf(rs.getInt("id")),
+                    rs.getString("numero_lote"),
+                    String.valueOf(rs.getInt("bodega_id")),
+                    rs.getString("nombre_bodega"),
+                    rs.getString("fecha_vencimiento"),
+                    rs.getString("estado")
+                });
             }
         } catch (SQLException e) {
-            System.out.println("Error al buscar lotes: " + e.getMessage());
+            System.out.println(">>> ERROR BUSCAR LOTES: " + e.getMessage());
         }
         return lista;
     }
-   public ArrayList<String> obtenerComboBodegas() {
-        ArrayList<String> lista = new ArrayList<>();
-        String sql = "SELECT id, nombre FROM bodegas WHERE estado = 'ACTIVO'";
 
-        try (Connection con = conectar.conectar();
-             CallableStatement cs = con.prepareCall(sql);
-             ResultSet rs = cs.executeQuery()) {
+    public ArrayList<String> obtenerComboBodegas() {
+        ArrayList<String> lista = new ArrayList<>();
+        String sql = "SELECT id, nombre FROM bodegas ORDER BY nombre ASC";
+
+        try (Connection con = new ConexionBDD().conectar();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 lista.add(rs.getInt("id") + " - " + rs.getString("nombre"));
             }
         } catch (SQLException e) {
-            System.out.println("Error al cargar combo bodegas: " + e.getMessage());
+            System.out.println(">>> ERROR COMBO BODEGAS: " + e.getMessage());
         }
         return lista;
     }
-   
-  public boolean guardarLote(String numeroLote, int bodegaId, String fechaVencimiento) {
-    String sqlLote = "INSERT INTO lotes (numero_lote, bodega_id, fecha_vencimiento) VALUES (?, ?, ?)";
-    
-    // Evita el error "Duplicate Entry" usando ON DUPLICATE KEY UPDATE
-    String sqlInventario = "INSERT INTO inventario_bodega (bodega_id, lote_id, stock_actual) VALUES (?, ?, 0) " +
-                           "ON DUPLICATE KEY UPDATE stock_actual = stock_actual";
-
-    ConexionBDD conectar = new ConexionBDD();
-
-    try (Connection conectado = conectar.conectar()) {
-        conectado.setAutoCommit(false); // Transacción manual
-
-        int nuevoLoteId = -1;
-
-        // 1. Insertar el Lote
-        try (PreparedStatement psLote = conectado.prepareStatement(sqlLote, Statement.RETURN_GENERATED_KEYS)) {
-            psLote.setString(1, numeroLote);
-            psLote.setInt(2, bodegaId);
-            psLote.setString(3, fechaVencimiento);
-            psLote.executeUpdate();
-
-            try (ResultSet rsKey = psLote.getGeneratedKeys()) {
-                if (rsKey.next()) {
-                    nuevoLoteId = rsKey.getInt(1);
-                }
-            }
-        }
-
-        // 2. Insertar/Actualizar en Inventario Bodega sin lanzar excepción
-        if (nuevoLoteId != -1) {
-            try (PreparedStatement psInv = conectado.prepareStatement(sqlInventario)) {
-                psInv.setInt(1, bodegaId);
-                psInv.setInt(2, nuevoLoteId);
-                psInv.executeUpdate();
-            }
-        }
-
-        conectado.commit(); // Aplicar cambios
-        return true;
-
-    } catch (SQLException e) {
-        System.err.println("Error al insertar lote: " + e.getMessage());
-        return false;
-    }
 }
-  
-  
-   public boolean registrarLote(String numeroLote, int bodegaId, int stockInicial) {
-    String sqlLote = "INSERT INTO lotes (numero_lote, bodega_id, fecha_vencimiento) VALUES (?, ?, NOW())";
-    String sqlInventario = "INSERT INTO inventario_bodega (bodega_id, lote_id, stock_actual) VALUES (?, ?, ?)";
-
-    ConexionBDD conectar = new ConexionBDD();
-
-    try (Connection conectado = conectar.conectar()) {
-        // Desactivamos auto-commit para asegurar la transacción
-        conectado.setAutoCommit(false);
-
-        // 1. Insertar el lote
-        try (PreparedStatement psLote = conectado.prepareStatement(sqlLote, Statement.RETURN_GENERATED_KEYS)) {
-            psLote.setString(1, numeroLote);
-            psLote.setInt(2, bodegaId);
-            psLote.executeUpdate();
-
-            // Obtener el ID que se le asignó al lote
-            ResultSet rsKeys = psLote.getGeneratedKeys();
-            if (rsKeys.next()) {
-                int idLoteGenerado = rsKeys.getInt(1);
-
-                // 2. Insertar en inventario_bodega con el ID generado
-                try (PreparedStatement psInv = conectado.prepareStatement(sqlInventario)) {
-                    psInv.setInt(1, bodegaId);
-                    psInv.setInt(2, idLoteGenerado);
-                    psInv.setInt(3, stockInicial);
-                    psInv.executeUpdate();
-                }
-            }
-        }
-
-        conectado.commit(); // Confirmar cambios en la BD
-        return true;
-
-    } catch (SQLException e) {
-        System.out.println("Error al registrar lote e inventario: " + e.getMessage());
-        return false;
-    }
-}
-}
-
-    
-    
 

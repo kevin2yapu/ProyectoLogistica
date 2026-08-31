@@ -23,9 +23,7 @@ public class LoteControlador {
     private Lote lmodelo;
     private LoteVista lvista;
     private int idLoteSeleccionado = -1;
-private Vista.LoteVista vista; // O el nombre exacto de tu clase Vista (ej. LoteVista, RegistrarLoteVista, etc.)
-    private Modelo.Lote modelo;
-    
+
     public LoteControlador(Lote lmodelo, LoteVista lvista) {
         this.lmodelo = lmodelo;
         this.lvista = lvista;
@@ -35,8 +33,10 @@ private Vista.LoteVista vista; // O el nombre exacto de tu clase Vista (ej. Lote
     public void cargarComboBodegas() {
         lvista.getCbxBodega().removeAllItems();
         ArrayList<String> bodegas = lmodelo.obtenerComboBodegas();
-        for (String b : bodegas) {
-            lvista.getCbxBodega().addItem(b);
+        if (bodegas != null) {
+            for (String b : bodegas) {
+                lvista.getCbxBodega().addItem(b);
+            }
         }
     }
 
@@ -45,24 +45,24 @@ private Vista.LoteVista vista; // O el nombre exacto de tu clase Vista (ej. Lote
         String seleccion = (String) lvista.getCbxBodega().getSelectedItem();
         if (seleccion != null && seleccion.contains(" - ")) {
             String[] partes = seleccion.split(" - ");
-            return Integer.parseInt(partes[0]);
+            return Integer.parseInt(partes[0].trim());
         }
         return -1;
     }
 
-    // Carga las 4 columnas que exige la vista actual
-    public void cargarDatosTabla() {
-        lvista.getModeloTabla().setRowCount(0);
-        ArrayList<String[]> lLotes = lmodelo.obtenerLotes();
+    // Carga las columnas en la tabla
+   public void cargarDatosTabla() {
+    lvista.getModeloTabla().setRowCount(0);
+    ArrayList<String[]> lLotes = lmodelo.obtenerLotes();
 
-        if (lLotes != null) {
-            for (String[] l : lLotes) {
-                // Fila visual: [0]Codigo Lote, [1]Ubicacion (Nombre Bodega), [2]Fecha Vencimiento, [3]Estado
-                Object[] fila = {l[1], l[4], l[5], l[6]};
-                lvista.getModeloTabla().addRow(fila);
-            }
+    if (lLotes != null) {
+        for (String[] l : lLotes) {
+            // [1] Numero Lote, [3] Nombre Bodega, [4] Fecha Vencimiento, [5] Estado
+            Object[] fila = {l[1], l[3], l[4], l[5]};
+            lvista.getModeloTabla().addRow(fila);
         }
     }
+}
 
     public void seleccionarFila() {
         int fila = lvista.getFilaSeleccionada();
@@ -91,26 +91,33 @@ private Vista.LoteVista vista; // O el nombre exacto de tu clase Vista (ej. Lote
     }
 
     public void agregarLote() {
-        String codigoLote = lvista.getCodigoLote().trim();
-        int idBodega = obtenerIdBodegaSeleccionada();
-        String fecha = lvista.getFechaVencimiento().trim();
+    String codigoLote = lvista.getCodigoLote().trim();
+    int idBodega = obtenerIdBodegaSeleccionada();
+    String fecha = lvista.getFechaVencimiento().trim();
 
-        if (!codigoLote.isEmpty() && idBodega != -1 && !fecha.isEmpty()) {
-            lmodelo.setCodigoLote(codigoLote);
-            lmodelo.setIdBodega(idBodega);
-            lmodelo.setFechaVencimiento(fecha);
-
-            if (lmodelo.insertarLote()) {
-                JOptionPane.showMessageDialog(lvista, "Lote guardado con éxito.");
-                limpiarCampos();
-                cargarDatosTabla();
-            } else {
-                JOptionPane.showMessageDialog(lvista, "Error al guardar en la base de datos.");
-            }
-        } else {
-            JOptionPane.showMessageDialog(lvista, "Por favor complete todos los campos.");
-        }
+    if (codigoLote.isEmpty() || idBodega == -1 || fecha.isEmpty()) {
+        JOptionPane.showMessageDialog(lvista, "Por favor complete todos los campos.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
+        return;
     }
+
+    if (!fecha.matches("\\d{4}-\\d{2}-\\d{2}")) {
+        JOptionPane.showMessageDialog(lvista, "Formato de fecha inválido. Use AAAA-MM-DD", "Fecha Incorrecta", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    lmodelo.setCodigoLote(codigoLote);
+    lmodelo.setIdBodega(idBodega);
+    lmodelo.setFechaVencimiento(fecha);
+
+    // Inserción directa en la tabla lotes
+    if (lmodelo.insertarLote()) {
+        JOptionPane.showMessageDialog(lvista, "Lote guardado con éxito.");
+        limpiarCampos();
+        cargarDatosTabla();
+    } else {
+        JOptionPane.showMessageDialog(lvista, "Error al guardar en la base de datos.", "Error SQL", JOptionPane.ERROR_MESSAGE);
+    }
+}
 
     public void editarLote() {
         if (idLoteSeleccionado == -1) {
@@ -124,6 +131,11 @@ private Vista.LoteVista vista; // O el nombre exacto de tu clase Vista (ej. Lote
 
         if (codigoLote.isEmpty() || idBodega == -1 || fecha.isEmpty()) {
             JOptionPane.showMessageDialog(lvista, "Por favor complete todos los campos.");
+            return;
+        }
+
+        if (!fecha.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            JOptionPane.showMessageDialog(lvista, "Formato de fecha inválido. Use: AAAA-MM-DD", "Fecha Incorrecta", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -155,22 +167,23 @@ private Vista.LoteVista vista; // O el nombre exacto de tu clase Vista (ej. Lote
     }
 
     public void buscarLote() {
-        String criterio = lvista.getCodigoLote().trim();
+    String criterio = lvista.getCodigoLote().trim();
 
-        if (criterio.isEmpty()) {
-            cargarDatosTabla();
-        } else {
-            lvista.getModeloTabla().setRowCount(0);
-            ArrayList<String[]> lLotes = lmodelo.buscarLotes(criterio);
+    if (criterio.isEmpty()) {
+        cargarDatosTabla();
+    } else {
+        lvista.getModeloTabla().setRowCount(0);
+        ArrayList<String[]> lLotes = lmodelo.buscarLotes(criterio);
 
-            if (lLotes != null) {
-                for (String[] l : lLotes) {
-                    Object[] fila = {l[1], l[4], l[5], l[6]};
-                    lvista.getModeloTabla().addRow(fila);
-                }
+        if (lLotes != null) {
+            for (String[] l : lLotes) {
+                // [1] Numero Lote, [3] Nombre Bodega, [4] Fecha Vencimiento, [5] Estado
+                Object[] fila = {l[1], l[3], l[4], l[5]};
+                lvista.getModeloTabla().addRow(fila);
             }
         }
     }
+}
 
     private void limpiarCampos() {
         this.idLoteSeleccionado = -1;
@@ -190,7 +203,10 @@ private Vista.LoteVista vista; // O el nombre exacto de tu clase Vista (ej. Lote
         lvista.addDeshabilitarListener(e -> deshabilitarLote());
         lvista.addBuscarListener(e -> buscarLote());
         lvista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
-        lvista.getBtnCrearProducto().addActionListener(e -> irACrearProducto()); 
+        
+        if (lvista.getBtnCrearProducto() != null) {
+            lvista.getBtnCrearProducto().addActionListener(e -> irACrearProducto());
+        } 
         
         lvista.addTablaListener(new MouseAdapter() {
             @Override
@@ -206,7 +222,6 @@ private Vista.LoteVista vista; // O el nombre exacto de tu clase Vista (ej. Lote
     private void regresarAlMenu() {
         lvista.dispose(); 
         
-        // Verificamos el rol guardado en la sesión
         String rolActivo = SesionUsuario.getRol();
 
         if (rolActivo != null && rolActivo.trim().toUpperCase().contains("ADMIN")) {
@@ -230,38 +245,4 @@ private Vista.LoteVista vista; // O el nombre exacto de tu clase Vista (ej. Lote
         
         ctrlProducto.iniciar(); 
     }
-    
-    public void guardarLote() {
-    String codigo = vista.getTxtCodigoLote().getText().trim();
-    String fechaStr = vista.getTxtFechaVencimiento().getText().trim();
-
-    // Validar formato YYYY-MM-DD con Expresión Regular limpia
-    if (!fechaStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
-        javax.swing.JOptionPane.showMessageDialog(vista, 
-            "Formato de fecha inválido. Debe usar el formato: AAAA-MM-DD (Ejemplo: 2026-12-31)", 
-            "Fecha Incorrecta", 
-            javax.swing.JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    int idBodega = obtenerIdBodegaSeleccionada();
-    boolean guardado = modelo.guardarLote(codigo, idBodega, fechaStr);
-
-    if (guardado) {
-        javax.swing.JOptionPane.showMessageDialog(vista, "Lote e Inventario guardados correctamente");
-        cargarTablaLotes();
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(vista, "Error al guardar en la base de datos");
-    }
-}
-    
-   public void cargarTablaLotes() {
-    javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) vista.getTblLotes().getModel();
-    model.setRowCount(0); // Limpiar la tabla actual
-
-    java.util.ArrayList<String[]> lista = modelo.obtenerLotes(); 
-    for (String[] fila : lista) {
-        model.addRow(fila); // Agrega directamente el arreglo de String
-    }
-}
 }

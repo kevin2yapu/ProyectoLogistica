@@ -6,11 +6,13 @@ package Controlador;
 
 import Modelo.Bodega;
 import Modelo.EntradaAlmacen;
+import Modelo.InventarioBodega;
 import Modelo.Lote;
 import Modelo.MovimientoAlmacen;
 import Modelo.Producto;
 import Modelo.Usuario;
 import Vista.InicioSesion;
+import Vista.InventarioBodegaVista;
 import Vista.LoteVista;
 import Vista.MenuBodeguero;
 import Vista.MovimientoAlmacenVista;
@@ -33,17 +35,22 @@ public class MenuBodegueroControlador {
         this.vistaMenu.getBtnRegistroProductos().addActionListener(e -> abrirProductos());
         this.vistaMenu.getBtnMovimientoAlmacen().addActionListener(e -> abrirMovimientos());
 
+        // Evento para INVENTARIO DE BODEGA
+        if (this.vistaMenu.getBtnInventarioBodega() != null) {
+            this.vistaMenu.getBtnInventarioBodega().addActionListener(e -> abrirInventarioBodega());
+        }
+
         // Evento para CERRAR SESIÓN
         this.vistaMenu.getBtnCerrarSesion().addActionListener(e -> {
-    vistaMenu.dispose(); // Cierra el menú actual
-    
-    InicioSesion loginVista = new InicioSesion();
-    Usuario loginModelo = new Usuario();
-    
-    // Conectar el controlador para activar el botón "Ingresar"
-    UsuarioControlador loginCtrl = new UsuarioControlador(loginModelo, loginVista);
-    loginCtrl.iniciar();
-});
+            vistaMenu.dispose(); // Cierra el menú actual
+            
+            InicioSesion loginVista = new InicioSesion();
+            Usuario loginModelo = new Usuario();
+            
+            // Conectar el controlador para activar el botón "Ingresar"
+            UsuarioControlador loginCtrl = new UsuarioControlador(loginModelo, loginVista);
+            loginCtrl.iniciar();
+        });
 
         // Configuración y muestra de la vista del menú
         this.vistaMenu.setLocationRelativeTo(null);
@@ -81,5 +88,16 @@ public class MenuBodegueroControlador {
         mControlador.iniciar();
     }
     
-    
+    private void abrirInventarioBodega() {
+        // Oculta/Cierra el menú actual del bodeguero
+        this.vistaMenu.dispose();
+
+        // Instancia el Modelo, la Vista y el Controlador del Inventario de Bodega
+        InventarioBodega modelo = new InventarioBodega();
+        InventarioBodegaVista vistaInventario = new InventarioBodegaVista();
+        InventarioBodegaControlador controlador = new InventarioBodegaControlador(modelo, vistaInventario);
+
+        // Inicia el módulo de inventario
+        controlador.iniciar();
+    }
 }

@@ -25,22 +25,26 @@ public class InventarioBodegaControlador {
     }
 
     public void iniciar() {
-        // 1. Cargar datos iniciales de combos y tabla
+        // 1. Cargar datos en los ComboBox de forma limpia (SIN disparar eventos prematuros)
         cargarComboBodegas();
         cargarComboLotes();
-        cargarDatosTabla();
 
-        // 2. Eventos para actualización automática al cambiar selección en ComboBoxes
+        // 2. Registrar eventos DESPUÉS de llenar los combos
         ivista.getCmbBodega().addActionListener(e -> buscarInventario());
         ivista.getCmbLote().addActionListener(e -> buscarInventario());
 
-        // 3. Evento del botón buscar (si la vista dispone de uno)
+        // Evento del botón buscar
         if (ivista.getBtnBuscar() != null) {
             ivista.getBtnBuscar().addActionListener(e -> buscarInventario());
         }
 
-        // 4. Evento para regresar al menú principal
-        ivista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
+        // Evento para regresar al menú principal
+        if (ivista.getBtnRegresar() != null) {
+            ivista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
+        }
+
+        // 3. Cargar datos en la tabla por primera vez
+        buscarInventario();
 
         ivista.setLocationRelativeTo(null);
         ivista.setVisible(true);
@@ -70,24 +74,25 @@ public class InventarioBodegaControlador {
         }
     }
 
-    public void cargarDatosTabla() {
-        // Carga inicial pasando filtros vacíos/predeterminados
-        buscarInventario();
-    }
-
-    public void buscarInventario() {
+   public void buscarInventario() {
         String bodegaSel = (String) ivista.getCmbBodega().getSelectedItem();
         String loteSel = (String) ivista.getCmbLote().getSelectedItem();
         
-        // Limpiar filas previas de la tabla
-        ivista.getModeloTabla().setRowCount(0);
+        // Evita consultas cuando el combo está reiniciándose
+        if (bodegaSel == null || loteSel == null) {
+            return;
+        }
+
+        // Usar directamente el modelo de la tabla que ya expone tu Vista
+        DefaultTableModel modelTabla = ivista.getModeloTabla();
+        modelTabla.setRowCount(0); // Limpiar filas anteriores
         
-        // Obtener datos consultados dinámicamente desde el modelo
+        // Consultar dinámicamente desde el modelo
         List<String[]> datosFiltrados = imodelo.buscarInventario(bodegaSel, loteSel);
 
         if (datosFiltrados != null) {
             for (String[] fila : datosFiltrados) {
-                ivista.getModeloTabla().addRow(new Object[]{fila[0], fila[1], fila[2], fila[3]});
+                modelTabla.addRow(new Object[]{fila[0], fila[1], fila[2], fila[3]});
             }
         }
     }
