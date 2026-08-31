@@ -9,6 +9,8 @@ import Modelo.EntradaAlmacen;
 import Modelo.Lote;
 import Modelo.MovimientoAlmacen;
 import Modelo.Producto;
+import Modelo.Usuario;
+import Vista.InicioSesion;
 import Vista.LoteVista;
 import Vista.MenuBodeguero;
 import Vista.MovimientoAlmacenVista;
@@ -26,42 +28,50 @@ public class MenuBodegueroControlador {
     }
 
     public void iniciar() {
-        // Asignación de eventos a los botones de la vista
+        // Asignación de eventos a los botones de navegación
         this.vistaMenu.getBtnRegistroLotes().addActionListener(e -> abrirLotes());
         this.vistaMenu.getBtnRegistroProductos().addActionListener(e -> abrirProductos());
         this.vistaMenu.getBtnMovimientoAlmacen().addActionListener(e -> abrirMovimientos());
 
+        // Evento para CERRAR SESIÓN
+        this.vistaMenu.getBtnCerrarSesion().addActionListener(e -> {
+    vistaMenu.dispose(); // Cierra el menú actual
+    
+    InicioSesion loginVista = new InicioSesion();
+    Usuario loginModelo = new Usuario();
+    
+    // Conectar el controlador para activar el botón "Ingresar"
+    UsuarioControlador loginCtrl = new UsuarioControlador(loginModelo, loginVista);
+    loginCtrl.iniciar();
+});
+
+        // Configuración y muestra de la vista del menú
         this.vistaMenu.setLocationRelativeTo(null);
         this.vistaMenu.setVisible(true);
     }
 
-   private void abrirLotes() {
-        this.vistaMenu.dispose(); // Cierra el menú actual
+    private void abrirLotes() {
+        this.vistaMenu.dispose();
         
         LoteVista vistaLotes = new LoteVista();
         Lote modeloLote = new Lote();
 
-        // Inicializamos el controlador pasándole modelo y vista
         LoteControlador lControlador = new LoteControlador(modeloLote, vistaLotes);
         lControlador.iniciar();
     }
 
-private void abrirProductos() {
-    this.vistaMenu.dispose(); // Cierra el menú principal
-    
-    ProductoIngreso vistaProductos = new ProductoIngreso();
-    Producto modeloProducto = new Producto();
+    private void abrirProductos() {
+        this.vistaMenu.dispose();
+        
+        ProductoIngreso vistaProductos = new ProductoIngreso();
+        Producto modeloProducto = new Producto();
 
-    // Se instancia el controlador pasándole sus dependencias
-    ProductoControlador pControlador = new ProductoControlador(modeloProducto, vistaProductos);
-    
-    // Se arranca el controlador que configura la vista y la hace visible
-    pControlador.iniciar();
-}
-    
+        ProductoControlador pControlador = new ProductoControlador(modeloProducto, vistaProductos);
+        pControlador.iniciar();
+    }
 
     private void abrirMovimientos() {
-        this.vistaMenu.dispose(); // Cierra el menú
+        this.vistaMenu.dispose();
 
         MovimientoAlmacenVista mVista = new MovimientoAlmacenVista();
         MovimientoAlmacen mModelo = new EntradaAlmacen();
@@ -71,6 +81,5 @@ private void abrirProductos() {
         mControlador.iniciar();
     }
     
-  
-
+    
 }

@@ -5,14 +5,18 @@
 package Controlador;
 
 import Modelo.Usuario;
+import Vista.GestionUsuarioVista;
 import Vista.InicioSesion;
+import Vista.MenuAdmin;
 import Vista.MenuBodeguero;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -20,93 +24,221 @@ import javax.swing.JOptionPane;
  */
 public class UsuarioControlador {
 
-    private Usuario modelo;
-    private InicioSesion uvista;
+  private Usuario modelo;
+    private InicioSesion uvista; // Vista para Login
+    private GestionUsuarioVista vistaGestion;
+    private int idUsuarioSeleccionado = -1;
+    
+    // Lista en memoria para almacenar los objetos Usuario (incluye el ID)
+    private ArrayList<Usuario> listaUsuariosActual = new ArrayList<>();
 
     public UsuarioControlador() {
     }
 
+    // Constructor para el Login
     public UsuarioControlador(Usuario modelo, InicioSesion uvista) {
         this.modelo = modelo;
         this.uvista = uvista;
     }
 
-    // MÉTODO DE INICIALIZACIÓN DE LA VISTA
-    public void iniciar() {
-        // Vinculamos el botón de la vista al método de recuperación/autenticación
-        this.uvista.getBtnIngresar().addActionListener(e -> recuperarUsuario());
-        this.uvista.setLocationRelativeTo(null);
-        this.uvista.setVisible(true);
+    // Constructor para la Gestión de Usuarios (Admin)
+    public UsuarioControlador(Usuario modelo, GestionUsuarioVista vistaGestion) {
+        this.modelo = modelo;
+        this.vistaGestion = vistaGestion;
     }
 
-    // CONSULTA A LA BASE DE DATOS
-    public Usuario inicioSesion(String email, String contrasena, String rol) {
-        Usuario u = null;
-        String sql = "{call sp_validar_login(?, ?, ?)}";
-        ConexionBDD conectar = new ConexionBDD();
+    // --- MÉTODOS DE LOGIN ---
 
-        try (Connection conectado = conectar.conectar();
-             CallableStatement cs = conectado.prepareCall(sql)) {
+   public void iniciar() {
+    // 1. Remover listeners anteriores del botón para evitar congelamiento
+    for (java.awt.event.ActionListener al : this.uvista.getBtnIngresar().getActionListeners()) {
+        this.uvista.getBtnIngresar().removeActionListener(al);
+    }
 
-            cs.setString(1, email);
-            cs.setString(2, contrasena);
-            cs.setString(3, rol);
+    // 2. Asignar el nuevo listener
+    this.uvista.getBtnIngresar().addActionListener(e -> recuperarUsuario());
 
-            ResultSet resultado = cs.executeQuery();
+    // 3. Mostrar la vista centrada
+    this.uvista.setLocationRelativeTo(null);
+    this.uvista.setVisible(true);
+}
 
-            if (resultado.next()) {
-                u = new Usuario(
-                    resultado.getInt("id"),
-                    resultado.getString("nombres"),
-                    resultado.getString("email"),
-                    resultado.getString("contrasena"),
-                    resultado.getString("rol")
-                );
-            }
+    public Usuario inicioSesion(String email, String contrasena) {
+    Usuario u = null;
+    // Pasamos solo email y contraseña al procedimiento
+    String sql = "{call sp_validar_login(?, ?)}";
+    ConexionBDD conectar = new ConexionBDD();
 
-        } catch (SQLException e) {
-            System.out.println("Error en el SP de login: " + e.getMessage());
+    try (Connection conectado = conectar.conectar();
+         CallableStatement cs = conectado.prepareCall(sql)) {
+
+        cs.setString(1, email);
+        cs.setString(2, contrasena);
+
+        ResultSet resultado = cs.executeQuery();
+
+        if (resultado.next()) {
+            u = new Usuario(
+                resultado.getInt("id"),
+                resultado.getString("nombres"),
+                resultado.getString("email"),
+                resultado.getString("contrasena"),
+                resultado.getString("rol") // Traemos el rol guardado en la BD
+            );
         }
 
-        return u;
+    } catch (SQLException e) {
+        System.out.println("Error en el SP de login: " + e.getMessage());
     }
 
-    // LÓGICA DE NAVEGACIÓN Y SESIÓN
+    return u;
+}
+
     public void recuperarUsuario() {
-        String email = uvista.getEmail();
-        String contrasena = uvista.getContrasena();
-        String rol = uvista.getRol();
+    String email = uvista.getEmail();
+    String contrasena = uvista.getContrasena();
+    String rolSeleccionado = uvista.getRol(); // Rol elegido en el ComboBox de la vista
 
-        if (!email.isEmpty() && !contrasena.isEmpty()) {
+    if (!email.isEmpty() && !contrasena.isEmpty()) {
 
-            Usuario usuarioEncontrado = inicioSesion(email, contrasena, rol);
+        // Buscamos el usuario únicamente por credenciales
+        Usuario usuarioEncontrado = inicioSesion(email, contrasena);
 
-            if (usuarioEncontrado != null) {
-                // 1. Guardar la sesión activa dinámicamente desde la BDD
-                SesionUsuario.iniciarSesion(usuarioEncontrado.getId(), usuarioEncontrado.getNombres());
+        if (usuarioEncontrado != null) {
+            
+            // Validamos que el rol elegido en el combo coincida o contenga el rol de la BD
+            String rolBD = usuarioEncontrado.getRol().trim().toUpperCase();
+            String rolInterfaz = rolSeleccionado.trim().toUpperCase();
+
+            if (rolBD.contains(rolInterfaz) || rolInterfaz.contains(rolBD)) {
+                
+                // Guardamos la sesión
+                SesionUsuario.iniciarSesion(
+                    usuarioEncontrado.getId(), 
+                    usuarioEncontrado.getNombres(), 
+                    usuarioEncontrado.getRol()
+                );
 
                 JOptionPane.showMessageDialog(uvista, "¡Bienvenido/a: " + usuarioEncontrado.getNombres() + "!");
 
-                // 2. Evaluar el Rol para la redirección
-                if (usuarioEncontrado.getRol().equalsIgnoreCase("BODEGUERO")) {
-                    // Cierra la vista del Login
+                // Redirección
+                if (rolBD.contains("ADMIN")) {
                     uvista.dispose();
-
-                    // Instancia y abre el menú del Bodeguero
+                    MenuAdmin vistaAdmin = new MenuAdmin();
+                    MenuAdministradorControlador adminCtrl = new MenuAdministradorControlador(vistaAdmin);
+                    adminCtrl.iniciar();
+                } else {
+                    uvista.dispose();
                     MenuBodeguero vistaMenu = new MenuBodeguero();
                     MenuBodegueroControlador menuCtrl = new MenuBodegueroControlador(vistaMenu);
                     menuCtrl.iniciar();
-                } else if (usuarioEncontrado.getRol().equalsIgnoreCase("ADMINISTRADOR")) {
-                    // Aquí agregas la vista del Administrador cuando la tengas lista
-                    uvista.dispose();
                 }
 
             } else {
-                JOptionPane.showMessageDialog(uvista, "Credenciales incorrectas o rol no autorizado.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(uvista, "El rol seleccionado no corresponde a este usuario.", "Rol Incorrecto", JOptionPane.WARNING_MESSAGE);
             }
 
         } else {
-            JOptionPane.showMessageDialog(uvista, "Por favor complete todos los campos.", "Atención", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(uvista, "Credenciales incorrectas.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    } else {
+        JOptionPane.showMessageDialog(uvista, "Por favor complete todos los campos.", "Atención", JOptionPane.WARNING_MESSAGE);
+    }
+}
+
+    // --- MÉTODOS DE GESTIÓN DE USUARIOS ---
+
+    public void iniciarGestion() {
+        cargarTablaUsuarios();
+
+        // Evento al hacer clic en la tabla para pasar datos a los campos
+        this.vistaGestion.getTblUsuarios().addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int fila = vistaGestion.getTblUsuarios().getSelectedRow();
+                if (fila >= 0 && fila < listaUsuariosActual.size()) {
+                    Usuario seleccionado = listaUsuariosActual.get(fila);
+                    idUsuarioSeleccionado = seleccionado.getId();
+
+                    vistaGestion.setCampos(
+                        seleccionado.getNombres(),
+                        seleccionado.getEmail(),
+                        seleccionado.getContrasena(),
+                        seleccionado.getRol()
+                    );
+                }
+            }
+        });
+
+        // Evento del botón EDITAR
+        this.vistaGestion.getBtnEditar().addActionListener(e -> editarUsuario());
+
+        // Evento dinámico para REGRESAR al menú según la sesión activa
+        this.vistaGestion.getBtnVolver().addActionListener(e -> regresarAlMenu());
+
+        this.vistaGestion.setLocationRelativeTo(null);
+        this.vistaGestion.setVisible(true);
+    }
+
+    private void cargarTablaUsuarios() {
+        DefaultTableModel tableModel = (DefaultTableModel) vistaGestion.getTblUsuarios().getModel();
+        tableModel.setRowCount(0);
+
+        ArrayList<String[]> datos = modelo.listarUsuarios(); 
+        listaUsuariosActual.clear();
+
+        for (String[] fila : datos) {
+            Usuario u = new Usuario(
+                Integer.parseInt(fila[0]),
+                fila[1],
+                fila[2],
+                fila[3],
+                fila[4]
+            );
+            listaUsuariosActual.add(u);
+            tableModel.addRow(new Object[]{u.getNombres(), u.getEmail(), u.getContrasena(), u.getRol()});
+        }
+    }
+
+    private void editarUsuario() {
+        if (idUsuarioSeleccionado == -1) {
+            JOptionPane.showMessageDialog(vistaGestion, "Seleccione un usuario de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        boolean exito = modelo.actualizarUsuario(
+            idUsuarioSeleccionado,
+            vistaGestion.getNombres(),
+            vistaGestion.getEmail(),
+            vistaGestion.getContrasena(),
+            vistaGestion.getRol()
+        );
+
+        if (exito) {
+            JOptionPane.showMessageDialog(vistaGestion, "Usuario actualizado correctamente.");
+            cargarTablaUsuarios();
+            vistaGestion.limpiarCampos();
+            idUsuarioSeleccionado = -1;
+        } else {
+            JOptionPane.showMessageDialog(vistaGestion, "Error al actualizar el usuario.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Método general para redirigir al menú correcto
+    private void regresarAlMenu() {
+        this.vistaGestion.dispose();
+        
+        String rolSesion = SesionUsuario.getRol();
+        
+        if (rolSesion != null && rolSesion.trim().toUpperCase().contains("ADMIN")) {
+            MenuAdmin vistaAdmin = new MenuAdmin();
+            MenuAdministradorControlador adminCtrl = new MenuAdministradorControlador(vistaAdmin);
+            adminCtrl.iniciar();
+        } else {
+            MenuBodeguero vistaBodeguero = new MenuBodeguero();
+            MenuBodegueroControlador bodegueroCtrl = new MenuBodegueroControlador(vistaBodeguero);
+            bodegueroCtrl.iniciar();
         }
     }
 }

@@ -45,6 +45,7 @@ public class LoteVista extends javax.swing.JFrame {
         txtFechaVencimiento = new javax.swing.JTextField();
         cbxBodega = new javax.swing.JComboBox<>();
         btnRegresar = new javax.swing.JButton();
+        btnCrearProducto = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -89,6 +90,8 @@ public class LoteVista extends javax.swing.JFrame {
 
         btnRegresar.setText("<");
 
+        btnCrearProducto.setText("Crear Producto");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -97,11 +100,17 @@ public class LoteVista extends javax.swing.JFrame {
                 .addComponent(btnBuscar)
                 .addGap(44, 44, 44)
                 .addComponent(btnGuardar)
-                .addGap(49, 49, 49)
+                .addGap(38, 38, 38)
                 .addComponent(btnEditar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                .addComponent(btnDeshabilitar))
+                .addGap(29, 29, 29)
+                .addComponent(btnDeshabilitar)
+                .addGap(0, 14, Short.MAX_VALUE))
             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(btnRegresar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(65, 65, 65))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -116,10 +125,8 @@ public class LoteVista extends javax.swing.JFrame {
                             .addComponent(txtFechaVencimiento)
                             .addComponent(cbxBodega, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnRegresar)
-                        .addGap(55, 55, 55)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(153, 153, 153)
+                        .addComponent(btnCrearProducto)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -127,12 +134,10 @@ public class LoteVista extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(btnRegresar)))
-                .addGap(33, 33, 33)
+                        .addComponent(jLabel1))
+                    .addComponent(btnRegresar))
+                .addGap(45, 45, 45)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCodigoLote)
                     .addComponent(txtCodigoLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -152,7 +157,9 @@ public class LoteVista extends javax.swing.JFrame {
                     .addComponent(btnEditar)
                     .addComponent(btnBuscar)
                     .addComponent(btnDeshabilitar))
-                .addContainerGap(135, Short.MAX_VALUE))
+                .addGap(30, 30, 30)
+                .addComponent(btnCrearProducto)
+                .addContainerGap(78, Short.MAX_VALUE))
         );
 
         pack();
@@ -222,6 +229,21 @@ public JComboBox<String> getCbxBodega() {
     public javax.swing.JButton getBtnRegresar() {
     return btnRegresar; 
 }
+    
+    public javax.swing.JButton getBtnCrearProducto() {
+    return btnCrearProducto;
+    
+}
+    public javax.swing.JTextField getTxtCodigoLote() {
+    return txtCodigoLote; // Reemplaza "txtCodigoLote" por el nombre exacto de tu JTextField si es distinto (ej. txtCodigo, txtLote)
+}
+
+public javax.swing.JTextField getTxtFechaVencimiento() {
+    return txtFechaVencimiento; // Reemplaza por el nombre exacto de tu componente de fecha
+}
+    public javax.swing.JTable getTblLotes() {
+    return tblLotes; // Cambia 'tblLotes' por el nombre exacto de la variable de tu JTable si difiere (ej. jTable1, tablaLotes)
+}
 
     /**
      * @param args the command line arguments
@@ -260,6 +282,7 @@ public JComboBox<String> getCbxBodega() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnCrearProducto;
     private javax.swing.JButton btnDeshabilitar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnGuardar;

@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -208,6 +209,93 @@ public class Lote {
         }
         return lista;
     }
+   
+  public boolean guardarLote(String numeroLote, int bodegaId, String fechaVencimiento) {
+    String sqlLote = "INSERT INTO lotes (numero_lote, bodega_id, fecha_vencimiento) VALUES (?, ?, ?)";
+    
+    // Evita el error "Duplicate Entry" usando ON DUPLICATE KEY UPDATE
+    String sqlInventario = "INSERT INTO inventario_bodega (bodega_id, lote_id, stock_actual) VALUES (?, ?, 0) " +
+                           "ON DUPLICATE KEY UPDATE stock_actual = stock_actual";
+
+    ConexionBDD conectar = new ConexionBDD();
+
+    try (Connection conectado = conectar.conectar()) {
+        conectado.setAutoCommit(false); // Transacción manual
+
+        int nuevoLoteId = -1;
+
+        // 1. Insertar el Lote
+        try (PreparedStatement psLote = conectado.prepareStatement(sqlLote, Statement.RETURN_GENERATED_KEYS)) {
+            psLote.setString(1, numeroLote);
+            psLote.setInt(2, bodegaId);
+            psLote.setString(3, fechaVencimiento);
+            psLote.executeUpdate();
+
+            try (ResultSet rsKey = psLote.getGeneratedKeys()) {
+                if (rsKey.next()) {
+                    nuevoLoteId = rsKey.getInt(1);
+                }
+            }
+        }
+
+        // 2. Insertar/Actualizar en Inventario Bodega sin lanzar excepción
+        if (nuevoLoteId != -1) {
+            try (PreparedStatement psInv = conectado.prepareStatement(sqlInventario)) {
+                psInv.setInt(1, bodegaId);
+                psInv.setInt(2, nuevoLoteId);
+                psInv.executeUpdate();
+            }
+        }
+
+        conectado.commit(); // Aplicar cambios
+        return true;
+
+    } catch (SQLException e) {
+        System.err.println("Error al insertar lote: " + e.getMessage());
+        return false;
+    }
+}
+  
+  
+   public boolean registrarLote(String numeroLote, int bodegaId, int stockInicial) {
+    String sqlLote = "INSERT INTO lotes (numero_lote, bodega_id, fecha_vencimiento) VALUES (?, ?, NOW())";
+    String sqlInventario = "INSERT INTO inventario_bodega (bodega_id, lote_id, stock_actual) VALUES (?, ?, ?)";
+
+    ConexionBDD conectar = new ConexionBDD();
+
+    try (Connection conectado = conectar.conectar()) {
+        // Desactivamos auto-commit para asegurar la transacción
+        conectado.setAutoCommit(false);
+
+        // 1. Insertar el lote
+        try (PreparedStatement psLote = conectado.prepareStatement(sqlLote, Statement.RETURN_GENERATED_KEYS)) {
+            psLote.setString(1, numeroLote);
+            psLote.setInt(2, bodegaId);
+            psLote.executeUpdate();
+
+            // Obtener el ID que se le asignó al lote
+            ResultSet rsKeys = psLote.getGeneratedKeys();
+            if (rsKeys.next()) {
+                int idLoteGenerado = rsKeys.getInt(1);
+
+                // 2. Insertar en inventario_bodega con el ID generado
+                try (PreparedStatement psInv = conectado.prepareStatement(sqlInventario)) {
+                    psInv.setInt(1, bodegaId);
+                    psInv.setInt(2, idLoteGenerado);
+                    psInv.setInt(3, stockInicial);
+                    psInv.executeUpdate();
+                }
+            }
+        }
+
+        conectado.commit(); // Confirmar cambios en la BD
+        return true;
+
+    } catch (SQLException e) {
+        System.out.println("Error al registrar lote e inventario: " + e.getMessage());
+        return false;
+    }
+}
 }
 
     

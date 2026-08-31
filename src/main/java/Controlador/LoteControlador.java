@@ -20,10 +20,12 @@ import javax.swing.JOptionPane;
  * @author KEVIN
  */
 public class LoteControlador {
- private Lote lmodelo;
+    private Lote lmodelo;
     private LoteVista lvista;
     private int idLoteSeleccionado = -1;
-
+private Vista.LoteVista vista; // O el nombre exacto de tu clase Vista (ej. LoteVista, RegistrarLoteVista, etc.)
+    private Modelo.Lote modelo;
+    
     public LoteControlador(Lote lmodelo, LoteVista lvista) {
         this.lmodelo = lmodelo;
         this.lvista = lvista;
@@ -180,16 +182,16 @@ public class LoteControlador {
     }
 
     public void iniciar() {
-        // Carga inicial de base de datos
         cargarComboBodegas();
         cargarDatosTabla();
         
-        // Listeners de la vista
         lvista.addGuardarListener(e -> agregarLote());
         lvista.addEditarListener(e -> editarLote());
         lvista.addDeshabilitarListener(e -> deshabilitarLote());
         lvista.addBuscarListener(e -> buscarLote());
         lvista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
+        lvista.getBtnCrearProducto().addActionListener(e -> irACrearProducto()); 
+        
         lvista.addTablaListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -197,16 +199,69 @@ public class LoteControlador {
             }
         });
 
-        // Despliegue de pantalla
         lvista.setLocationRelativeTo(null);
         lvista.setVisible(true);
     }
     
     private void regresarAlMenu() {
-    lvista.dispose(); // Destruye la vista de Lote
+        lvista.dispose(); 
+        
+        // Verificamos el rol guardado en la sesión
+        String rolActivo = SesionUsuario.getRol();
+
+        if (rolActivo != null && rolActivo.trim().toUpperCase().contains("ADMIN")) {
+            Vista.MenuAdmin vistaAdmin = new Vista.MenuAdmin();
+            Controlador.MenuAdministradorControlador adminCtrl = new Controlador.MenuAdministradorControlador(vistaAdmin);
+            adminCtrl.iniciar();
+        } else {
+            Vista.MenuBodeguero vistaMenu = new Vista.MenuBodeguero();
+            Controlador.MenuBodegueroControlador menuControlador = new Controlador.MenuBodegueroControlador(vistaMenu);
+            menuControlador.iniciar();
+        }
+    }
     
-    Vista.MenuBodeguero vistaMenu = new Vista.MenuBodeguero();
-    Controlador.MenuBodegueroControlador menuControlador = new Controlador.MenuBodegueroControlador(vistaMenu);
-    menuControlador.iniciar(); // Despliega nuevamente el menú principal
+    private void irACrearProducto() {
+        lvista.dispose();
+
+        Vista.ProductoIngreso vistaProducto = new Vista.ProductoIngreso();
+        Modelo.Producto modeloProducto = new Modelo.Producto();
+        Controlador.ProductoControlador ctrlProducto = 
+                new Controlador.ProductoControlador(modeloProducto, vistaProducto);
+        
+        ctrlProducto.iniciar(); 
+    }
+    
+    public void guardarLote() {
+    String codigo = vista.getTxtCodigoLote().getText().trim();
+    String fechaStr = vista.getTxtFechaVencimiento().getText().trim();
+
+    // Validar formato YYYY-MM-DD con Expresión Regular limpia
+    if (!fechaStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
+        javax.swing.JOptionPane.showMessageDialog(vista, 
+            "Formato de fecha inválido. Debe usar el formato: AAAA-MM-DD (Ejemplo: 2026-12-31)", 
+            "Fecha Incorrecta", 
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    int idBodega = obtenerIdBodegaSeleccionada();
+    boolean guardado = modelo.guardarLote(codigo, idBodega, fechaStr);
+
+    if (guardado) {
+        javax.swing.JOptionPane.showMessageDialog(vista, "Lote e Inventario guardados correctamente");
+        cargarTablaLotes();
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(vista, "Error al guardar en la base de datos");
+    }
+}
+    
+   public void cargarTablaLotes() {
+    javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) vista.getTblLotes().getModel();
+    model.setRowCount(0); // Limpiar la tabla actual
+
+    java.util.ArrayList<String[]> lista = modelo.obtenerLotes(); 
+    for (String[] fila : lista) {
+        model.addRow(fila); // Agrega directamente el arreglo de String
+    }
 }
 }

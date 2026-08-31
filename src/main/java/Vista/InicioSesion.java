@@ -5,6 +5,7 @@
 package Vista;
 
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.JButton;
 
 /**
@@ -147,7 +148,7 @@ public class InicioSesion extends javax.swing.JFrame {
         btnIngresar.addActionListener(listener);
     }
 
-    
+ 
     
     /**
      * @param args the command line arguments

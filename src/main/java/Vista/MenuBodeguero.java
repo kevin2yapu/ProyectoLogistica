@@ -30,6 +30,8 @@ public class MenuBodeguero extends javax.swing.JFrame {
         btnRegistroLotes = new javax.swing.JButton();
         btnRegistroProductos = new javax.swing.JButton();
         btnMovimientoAlmacen = new javax.swing.JButton();
+        btnCerrarSesion = new javax.swing.JButton();
+        btnInventarioBodegas = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -57,6 +59,10 @@ public class MenuBodeguero extends javax.swing.JFrame {
             }
         });
 
+        btnCerrarSesion.setText("CERRAR SESIÓN ");
+
+        btnInventarioBodegas.setText("INVENTARIO BODEGAS ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -68,10 +74,12 @@ public class MenuBodeguero extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(157, 157, 157)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnRegistroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnRegistroLotes, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnMovimientoAlmacen))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnRegistroProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnRegistroLotes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnMovimientoAlmacen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnCerrarSesion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnInventarioBodegas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 186, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -86,7 +94,11 @@ public class MenuBodeguero extends javax.swing.JFrame {
                 .addComponent(btnRegistroProductos)
                 .addGap(32, 32, 32)
                 .addComponent(btnMovimientoAlmacen)
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(btnInventarioBodegas)
+                .addGap(18, 18, 18)
+                .addComponent(btnCerrarSesion)
+                .addGap(27, 27, 27))
         );
 
         pack();
@@ -116,7 +128,9 @@ public javax.swing.JButton getBtnMovimientoAlmacen() {
     return btnMovimientoAlmacen;
 }
     
-    
+    public javax.swing.JButton getBtnCerrarSesion() {
+    return btnCerrarSesion; // Verifica que coincide con el nombre del botón en el Designer
+}
     /**
      * @param args the command line arguments
      */
@@ -153,6 +167,8 @@ public javax.swing.JButton getBtnMovimientoAlmacen() {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCerrarSesion;
+    private javax.swing.JButton btnInventarioBodegas;
     private javax.swing.JButton btnMovimientoAlmacen;
     private javax.swing.JButton btnRegistroLotes;
     private javax.swing.JButton btnRegistroProductos;

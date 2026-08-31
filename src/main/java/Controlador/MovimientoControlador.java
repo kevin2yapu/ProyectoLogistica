@@ -67,19 +67,28 @@ public class MovimientoControlador {
         menuCtrl.iniciar();
     }
 
-   private void gestionarCamposBodega() {
+//   private void gestionarCamposBodega() {
+//    String tipo = mvista.getCmbTipoMovimiento().getSelectedItem().toString();
+//    
+//    if (tipo.equalsIgnoreCase("ENTRADA DE PRODUCTO")) {
+//        mvista.getCmbBodegaOrigen().setEnabled(false);
+//        mvista.getCmbBodegaDestino().setEnabled(true);
+//    } else if (tipo.equalsIgnoreCase("SALIDA DE PRODUCTO")) {
+//        mvista.getCmbBodegaOrigen().setEnabled(true);
+//        mvista.getCmbBodegaDestino().setEnabled(true); 
+//    } else {
+//        mvista.getCmbBodegaOrigen().setEnabled(true);
+//        mvista.getCmbBodegaDestino().setEnabled(true);
+//    }
+//}
+    
+    
+    private void gestionarCamposBodega() {
     String tipo = mvista.getCmbTipoMovimiento().getSelectedItem().toString();
     
-    if (tipo.equalsIgnoreCase("ENTRADA DE PRODUCTO")) {
-        mvista.getCmbBodegaOrigen().setEnabled(false);
-        mvista.getCmbBodegaDestino().setEnabled(true);
-    } else if (tipo.equalsIgnoreCase("SALIDA DE PRODUCTO")) {
-        mvista.getCmbBodegaOrigen().setEnabled(true);
-        mvista.getCmbBodegaDestino().setEnabled(true); 
-    } else {
-        mvista.getCmbBodegaOrigen().setEnabled(true);
-        mvista.getCmbBodegaDestino().setEnabled(true);
-    }
+    // Habilitar ambos combos sin importar si es Entrada o Salida
+    mvista.getCmbBodegaOrigen().setEnabled(true);
+    mvista.getCmbBodegaDestino().setEnabled(true);
 }
     public void cargarDatosTabla() {
         DefaultTableModel model = (DefaultTableModel) mvista.getTblMovimientos().getModel();
@@ -99,6 +108,48 @@ public class MovimientoControlador {
         }
     }
 
+//    public void registrarMovimiento() {
+//    String tipoStr = mvista.getCmbTipoMovimiento().getSelectedItem().toString();
+//    String observacion = mvista.getTxtObservacion().getText().trim();
+//
+//    Bodega bOrigen = (Bodega) mvista.getCmbBodegaOrigen().getSelectedItem();
+//    Bodega bDestino = (Bodega) mvista.getCmbBodegaDestino().getSelectedItem();
+//
+//    Integer bodegaOrigenId = mvista.getCmbBodegaOrigen().isEnabled() && bOrigen != null ? bOrigen.getId() : null;
+//    Integer bodegaDestinoId = mvista.getCmbBodegaDestino().isEnabled() && bDestino != null ? bDestino.getId() : null;
+//
+//    int responsableId = SesionUsuario.getIdUsuario();
+//    String fechaActual = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+//
+//    if (observacion.isEmpty()) {
+//        JOptionPane.showMessageDialog(mvista, "Por favor complete la observación.");
+//        return;
+//    }
+//
+//    int idGenerado = -1;
+//    String tipoMovimientoBD = "";
+//
+//    if (tipoStr.equalsIgnoreCase("ENTRADA DE PRODUCTO")) {
+//        tipoMovimientoBD = "ENTRADA";
+//        mmodelo = new EntradaAlmacen(0, tipoMovimientoBD, bodegaOrigenId, bodegaDestinoId, responsableId, fechaActual, observacion);
+//        idGenerado = mmodelo.insertarMovimiento(tipoMovimientoBD);
+//    } else if (tipoStr.equalsIgnoreCase("SALIDA DE PRODUCTO")) {
+//        tipoMovimientoBD = "SALIDA";
+//        mmodelo = new SalidaAlmacen(0, tipoMovimientoBD, bodegaOrigenId, bodegaDestinoId, responsableId, fechaActual, observacion);
+//        idGenerado = mmodelo.insertarMovimiento(tipoMovimientoBD);
+//    }
+//
+//    if (idGenerado > 0) {
+//        mvista.getTxtObservacion().setText("");
+//        cargarDatosTabla();
+//        
+//        // Cierra la vista actual y abre la vista Detalle pasando el ID
+//        abrirDetalleMovimiento(idGenerado, tipoMovimientoBD);
+//    } else {
+//        JOptionPane.showMessageDialog(mvista, "Error al generar la nota de movimiento.");
+//    }
+//}
+//    
     public void registrarMovimiento() {
     String tipoStr = mvista.getCmbTipoMovimiento().getSelectedItem().toString();
     String observacion = mvista.getTxtObservacion().getText().trim();
@@ -106,8 +157,9 @@ public class MovimientoControlador {
     Bodega bOrigen = (Bodega) mvista.getCmbBodegaOrigen().getSelectedItem();
     Bodega bDestino = (Bodega) mvista.getCmbBodegaDestino().getSelectedItem();
 
-    Integer bodegaOrigenId = mvista.getCmbBodegaOrigen().isEnabled() && bOrigen != null ? bOrigen.getId() : null;
-    Integer bodegaDestinoId = mvista.getCmbBodegaDestino().isEnabled() && bDestino != null ? bDestino.getId() : null;
+    // Ahora captura el ID de Origen directamente al estar habilitado el combo
+    Integer bodegaOrigenId = (bOrigen != null) ? bOrigen.getId() : null;
+    Integer bodegaDestinoId = (bDestino != null) ? bDestino.getId() : null;
 
     int responsableId = SesionUsuario.getIdUsuario();
     String fechaActual = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -133,15 +185,11 @@ public class MovimientoControlador {
     if (idGenerado > 0) {
         mvista.getTxtObservacion().setText("");
         cargarDatosTabla();
-        
-        // Cierra la vista actual y abre la vista Detalle pasando el ID
         abrirDetalleMovimiento(idGenerado, tipoMovimientoBD);
     } else {
         JOptionPane.showMessageDialog(mvista, "Error al generar la nota de movimiento.");
     }
 }
-    
-    
     
     private void abrirDetalleMovimiento(int notaMovimientoId, String tipoMovimiento) {
     mvista.dispose(); // Oculta la vista principal de cabecera

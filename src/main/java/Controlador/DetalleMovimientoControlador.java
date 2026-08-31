@@ -33,18 +33,27 @@ public class DetalleMovimientoControlador {
         vista.getCmbMovimientoId().addItem(String.valueOf(notaMovimientoId));
         vista.getCmbMovimientoId().setEnabled(false); // Bloqueado para mantener coherencia con la nota generada
         vista.getBtnPdf().addActionListener(e -> generarPDF());
-        // Configurar Modelo de la Tabla
         tablaModelo = (DefaultTableModel) vista.getTblDetalle().getModel();
-
-        // Eventos
+        vista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
         vista.getBtnGuardar().addActionListener(e -> agregarYGuardarDetalle());
         
-        // Cargar detalles que ya existan para este movimiento
+        
         cargarDetallesEnTabla();
 
         vista.setLocationRelativeTo(null);
         vista.setVisible(true);
     }
+    
+    private void regresarAlMenu() {
+   
+    vista.dispose();
+
+  
+    Vista.MenuBodeguero vistaMenu = new Vista.MenuBodeguero();
+    Controlador.MenuBodegueroControlador menuCtrl = new Controlador.MenuBodegueroControlador(vistaMenu);
+    
+    menuCtrl.iniciar();
+}
 
     private void agregarYGuardarDetalle() {
         try {
@@ -74,7 +83,6 @@ public class DetalleMovimientoControlador {
                 // Agregar fila a la JTable visual
                 tablaModelo.addRow(new Object[]{notaMovimientoId, loteId, productoStr, cantidad});
                 
-                // Limpiar campos
                 vista.getTxtLote().setText("");
                 vista.getTxtProducto().setText("");
                 vista.getTxtCantidad().setText("");
@@ -113,4 +121,6 @@ public class DetalleMovimientoControlador {
         JOptionPane.showMessageDialog(vista, "Error al generar el archivo PDF.");
     }
     }
+    
+    
 }

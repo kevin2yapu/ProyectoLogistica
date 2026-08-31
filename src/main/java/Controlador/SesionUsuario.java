@@ -9,24 +9,17 @@ package Controlador;
  * @author KEVIN
  */
 public class SesionUsuario {
-  private static int idUsuario;
-    private static String nombreUsuario;
+ private static int idUsuario;
+    private static String nombre;
+    private static String rol;
 
-    public static void iniciarSesion(int id, String nombre) {
+    public static void iniciarSesion(int id, String nombreUsuario, String rolUsuario) {
         idUsuario = id;
-        nombreUsuario = nombre;
+        nombre = nombreUsuario;
+        rol = rolUsuario;
     }
 
-    public static int getIdUsuario() {
-        return idUsuario;
-    }
-
-    public static String getNombreUsuario() {
-        return nombreUsuario;
-    }
-
-    public static void cerrarSesion() {
-        idUsuario = 0;
-        nombreUsuario = null;
-    }  
+    public static int getIdUsuario() { return idUsuario; }
+    public static String getNombre() { return nombre; }
+    public static String getRol() { return rol; }
 }

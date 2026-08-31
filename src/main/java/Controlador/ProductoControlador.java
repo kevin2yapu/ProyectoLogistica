@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
  * @author KEVIN
  */
 public class ProductoControlador {
-  private Producto pmodelo;
+    private Producto pmodelo;
     private ProductoIngreso pvista;
     private int idProductoSeleccionado = -1;
 
@@ -30,85 +30,87 @@ public class ProductoControlador {
         this.pvista = pvista;
     }
 
-   public void iniciar() {
-    // Cargar combos iniciales y la tabla con los datos de la BDD
-    cargarCombos();
-    cargarDatosTabla(); // Asegúrate de tener este método para llenar la JTable
+    public void iniciar() {
+        cargarCombos();
+        cargarDatosTabla(); 
 
-    // 1. Enlazar Listeners de los botones
-    pvista.addGuardarListener(e -> agregarProducto());
-    pvista.addEditarListener(e -> actualizarProducto());
-    pvista.addDeshabilitarListener(e -> deshabilitarProducto());
-    pvista.addBuscarListener(e -> buscarProducto());
-    pvista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
-    // 2. Enlazar el clic en la JTable
-    pvista.addTablaListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent evt) {
-            seleccionarFila();
-        }
-    });
+        pvista.addGuardarListener(e -> agregarProducto());
+        pvista.addEditarListener(e -> actualizarProducto());
+        pvista.addDeshabilitarListener(e -> deshabilitarProducto());
+        pvista.addBuscarListener(e -> buscarProducto());
+        pvista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
+        
+        pvista.addTablaListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                seleccionarFila();
+            }
+        });
 
-    pvista.setLocationRelativeTo(null);
-    pvista.setVisible(true);
-}
-   
-   private void regresarAlMenu() {
-    pvista.dispose(); 
+        pvista.setLocationRelativeTo(null);
+        pvista.setVisible(true);
+    }
     
-    Vista.MenuBodeguero vistaMenu = new Vista.MenuBodeguero();
-    Controlador.MenuBodegueroControlador menuCtrl = new Controlador.MenuBodegueroControlador(vistaMenu);
-    menuCtrl.iniciar(); 
-}
+    private void regresarAlMenu() {
+        pvista.dispose(); 
+        
+        String rolActivo = SesionUsuario.getRol();
+
+        if (rolActivo != null && rolActivo.trim().toUpperCase().contains("ADMIN")) {
+            Vista.MenuAdmin vistaAdmin = new Vista.MenuAdmin();
+            Controlador.MenuAdministradorControlador adminCtrl = new Controlador.MenuAdministradorControlador(vistaAdmin);
+            adminCtrl.iniciar();
+        } else {
+            Vista.MenuBodeguero vistaMenu = new Vista.MenuBodeguero();
+            Controlador.MenuBodegueroControlador menuCtrl = new Controlador.MenuBodegueroControlador(vistaMenu);
+            menuCtrl.iniciar(); 
+        }
+    }
 
     public void cargarDatosTabla() {
-    pvista.getModeloTabla().setRowCount(0);
-    ArrayList<String[]> lProds = pmodelo.obtenerProductos();
+        pvista.getModeloTabla().setRowCount(0);
+        ArrayList<String[]> lProds = pmodelo.obtenerProductos();
 
-    if (lProds != null) {
-        int num = 1;
-        for (String[] p : lProds) {
-            Object[] fila = {
-                p[0], 
-                p[1], 
-                p[2], 
-                p[3], 
-                p[4], 
-                p[6], 
-                p[7], 
-                p[5]
-            };
-            pvista.getModeloTabla().addRow(fila);
+        if (lProds != null) {
+            for (String[] p : lProds) {
+                Object[] fila = {
+                    p[0], 
+                    p[1], 
+                    p[2], 
+                    p[3], 
+                    p[4], 
+                    p[6], 
+                    p[7], 
+                    p[5]
+                };
+                pvista.getModeloTabla().addRow(fila);
+            }
         }
     }
-}
 
-   
     public void seleccionarFila() {
-    int fila = pvista.getFilaSeleccionada();
+        int fila = pvista.getFilaSeleccionada();
 
-    if (fila >= 0) {
-       
-        this.idProductoSeleccionado = Integer.parseInt(pvista.getModeloTabla().getValueAt(fila, 0).toString());
+        if (fila >= 0) {
+            this.idProductoSeleccionado = Integer.parseInt(pvista.getModeloTabla().getValueAt(fila, 0).toString());
 
-        // 2. Leemos los campos con sus columnas correctas
-        String codigo = pvista.getModeloTabla().getValueAt(fila, 1).toString();
-        String nombre = pvista.getModeloTabla().getValueAt(fila, 2).toString();
-        String descripcion = pvista.getModeloTabla().getValueAt(fila, 3).toString();
-        String stock = pvista.getModeloTabla().getValueAt(fila, 4).toString();
+            String codigo = pvista.getModeloTabla().getValueAt(fila, 1).toString();
+            String nombre = pvista.getModeloTabla().getValueAt(fila, 2).toString();
+            String descripcion = pvista.getModeloTabla().getValueAt(fila, 3).toString();
+            String stock = pvista.getModeloTabla().getValueAt(fila, 4).toString();
 
-        pvista.setCodigo(codigo);
-        pvista.setNombre(nombre);
-        pvista.setDescripcion(descripcion);
-        pvista.setStock(stock);
+            pvista.setCodigo(codigo);
+            pvista.setNombre(nombre);
+            pvista.setDescripcion(descripcion);
+            pvista.setStock(stock);
 
-        if (pvista.getModeloTabla().getValueAt(fila, 5) != null) {
-            pvista.getCbxEstadoProducto().setSelectedItem(pvista.getModeloTabla().getValueAt(fila, 5).toString());
+            if (pvista.getModeloTabla().getValueAt(fila, 5) != null) {
+                pvista.getCbxEstadoProducto().setSelectedItem(pvista.getModeloTabla().getValueAt(fila, 5).toString());
+            }
+
+            System.out.println("-> Producto listo para editar. ID Real: " + this.idProductoSeleccionado);
         }
-
-        System.out.println("-> Producto listo para editar. ID Real: " + this.idProductoSeleccionado);
     }
-}
 
     public void agregarProducto() {
         pmodelo.setCodigo(pvista.getCodigo());
@@ -191,30 +193,29 @@ public class ProductoControlador {
     }
 
     public void buscarProducto() {
-    String codigo = pvista.getCodigo().trim();
-    String nombre = pvista.getNombre().trim();
+        String codigo = pvista.getCodigo().trim();
+        String nombre = pvista.getNombre().trim();
 
-    String criterio = !codigo.isEmpty() ? codigo : nombre;
+        String criterio = !codigo.isEmpty() ? codigo : nombre;
 
-    if (criterio.isEmpty()) {
-        cargarDatosTabla();
-    } else {
-        pvista.getModeloTabla().setRowCount(0);
-        ArrayList<String[]> lProductos = pmodelo.buscarProductos(criterio);
-        
-        if (lProductos != null && !lProductos.isEmpty()) {
-            for (String[] p : lProductos) {
-                // p[0]=ID, p[1]=Codigo, p[2]=Nombre, p[3]=Descripcion, p[4]=Stock, p[5]=Estado, p[6]=EstadoProducto, p[7]=Lote
-                Object[] fila = {
-                    p[0], p[1], p[2], p[3], p[4], p[6], p[7], p[5]
-                };
-                pvista.getModeloTabla().addRow(fila);
-            }
+        if (criterio.isEmpty()) {
+            cargarDatosTabla();
         } else {
-            JOptionPane.showMessageDialog(null, "No se encontraron productos con el criterio: " + criterio);
+            pvista.getModeloTabla().setRowCount(0);
+            ArrayList<String[]> lProductos = pmodelo.buscarProductos(criterio);
+            
+            if (lProductos != null && !lProductos.isEmpty()) {
+                for (String[] p : lProductos) {
+                    Object[] fila = {
+                        p[0], p[1], p[2], p[3], p[4], p[6], p[7], p[5]
+                    };
+                    pvista.getModeloTabla().addRow(fila);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "No se encontraron productos con el criterio: " + criterio);
+            }
         }
     }
-}
 
     public void cargarCombos() {
         pvista.getCbxEstadoProducto().removeAllItems();

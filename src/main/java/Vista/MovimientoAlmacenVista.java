@@ -61,7 +61,11 @@ public class MovimientoAlmacenVista extends javax.swing.JFrame {
 
         lblObservacion.setText("Observación:");
 
-        txtObservacion.setText("jTextField2");
+        txtObservacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtObservacionActionPerformed(evt);
+            }
+        });
 
         tblMovimientos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -180,6 +184,10 @@ public class MovimientoAlmacenVista extends javax.swing.JFrame {
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnRegresarActionPerformed
+
+    private void txtObservacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtObservacionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtObservacionActionPerformed
 
     
     public javax.swing.JComboBox getCmbTipoMovimiento() {
