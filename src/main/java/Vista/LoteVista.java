@@ -4,10 +4,14 @@
  */
 package Vista;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -20,6 +24,7 @@ public class LoteVista extends javax.swing.JFrame {
      */
     public LoteVista() {
         initComponents();
+        aplicarEstilosLotes();
     }
 
     /**
@@ -35,7 +40,7 @@ public class LoteVista extends javax.swing.JFrame {
         btnEditar = new javax.swing.JButton();
         btnBuscar = new javax.swing.JButton();
         btnDeshabilitar = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        lblTitulo = new javax.swing.JLabel();
         lblCodigoLote = new javax.swing.JLabel();
         lblDescripcion = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -57,9 +62,9 @@ public class LoteVista extends javax.swing.JFrame {
 
         btnDeshabilitar.setText("Deshabilitar");
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI Light", 3, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 255));
-        jLabel1.setText("REGISTRO DE LOTE");
+        lblTitulo.setFont(new java.awt.Font("Segoe UI Light", 3, 18)); // NOI18N
+        lblTitulo.setForeground(new java.awt.Color(0, 0, 255));
+        lblTitulo.setText("REGISTRO DE LOTE");
 
         lblCodigoLote.setText("Codigo Lote:");
 
@@ -109,8 +114,8 @@ public class LoteVista extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(btnRegresar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(65, 65, 65))
+                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(81, 81, 81))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -133,11 +138,11 @@ public class LoteVista extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnRegresar)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1))
-                    .addComponent(btnRegresar))
-                .addGap(45, 45, 45)
+                        .addGap(16, 16, 16)
+                        .addComponent(lblTitulo)))
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCodigoLote)
                     .addComponent(txtCodigoLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -244,6 +249,95 @@ public javax.swing.JTextField getTxtFechaVencimiento() {
     public javax.swing.JTable getTblLotes() {
     return tblLotes; // Cambia 'tblLotes' por el nombre exacto de la variable de tu JTable si difiere (ej. jTable1, tablaLotes)
 }
+    
+    
+    public void aplicarEstilosLotes() {
+    // 1. Colores y fuentes del ecosistema de logística
+    Color azulBodega = new Color(15, 23, 42);      // #0F172A (Azul marino industrial)
+    Color azulAccion = new Color(37, 99, 235);     // #2563EB (Azul primario para Guardar/Crear)
+    Color verdeAccion = new Color(16, 185, 129);   // #10B981 (Verde esmeralda para Editar)
+    Color rojoPeligro = new Color(220, 38, 38);    // #DC2626 (Rojo advertencia para Deshabilitar)
+    Color grisBoton = new Color(100, 116, 139);    // #64748B (Gris neutro para Buscar)
+    Color grisLineas = new Color(226, 232, 240);   // #E2E8F0
+
+    Font fuenteBase = new Font("Segoe UI", Font.PLAIN, 13);
+    Font fuenteNegrita = new Font("Segoe UI", Font.BOLD, 13);
+    Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 18);
+
+    // 2. Título de la Vista y Botón Regresar
+    if (lblTitulo != null) {
+        lblTitulo.setText("REGISTRO Y CONTROL DE LOTES");
+        lblTitulo.setFont(fuenteTitulo);
+        lblTitulo.setForeground(azulBodega);
+    }
+    
+    btnRegresar.setText("← Volver");
+    btnRegresar.setFont(fuenteBase);
+
+    // 3. Estilizar Botones de Operación
+    // Botón Buscar (Gris Neutro)
+    btnBuscar.setText("BUSCAR");
+    btnBuscar.setBackground(grisBoton);
+    btnBuscar.setForeground(Color.WHITE);
+    btnBuscar.setFont(fuenteNegrita);
+    btnBuscar.setOpaque(true);
+    btnBuscar.setBorderPainted(false);
+    btnBuscar.setFocusPainted(false);
+
+    // Botón Guardar (Azul Corporativo)
+    btnGuardar.setText("GUARDAR");
+    btnGuardar.setBackground(azulAccion);
+    btnGuardar.setForeground(Color.WHITE);
+    btnGuardar.setFont(fuenteNegrita);
+    btnGuardar.setOpaque(true);
+    btnGuardar.setBorderPainted(false);
+    btnGuardar.setFocusPainted(false);
+
+    // Botón Editar (Verde Operativo)
+    btnEditar.setText("EDITAR");
+    btnEditar.setBackground(verdeAccion);
+    btnEditar.setForeground(Color.WHITE);
+    btnEditar.setFont(fuenteNegrita);
+    btnEditar.setOpaque(true);
+    btnEditar.setBorderPainted(false);
+    btnEditar.setFocusPainted(false);
+
+    // Botón Deshabilitar (Rojo Advertencia)
+    btnDeshabilitar.setText("DESHABILITAR");
+    btnDeshabilitar.setBackground(rojoPeligro);
+    btnDeshabilitar.setForeground(Color.WHITE);
+    btnDeshabilitar.setFont(fuenteNegrita);
+    btnDeshabilitar.setOpaque(true);
+    btnDeshabilitar.setBorderPainted(false);
+    btnDeshabilitar.setFocusPainted(false);
+
+    // Botón Crear Producto (Azul Principal)
+    if (btnCrearProducto != null) {
+        btnCrearProducto.setText("CREAR PRODUCTO");
+        btnCrearProducto.setBackground(azulBodega);
+        btnCrearProducto.setForeground(Color.WHITE);
+        btnCrearProducto.setFont(fuenteNegrita);
+        btnCrearProducto.setOpaque(true);
+        btnCrearProducto.setBorderPainted(false);
+        btnCrearProducto.setFocusPainted(false);
+    }
+
+    // 4. Estilizar Tabla (JTable)
+    if (tblLotes != null) {
+        JTableHeader header = tblLotes.getTableHeader();
+        header.setBackground(azulBodega);
+        header.setForeground(Color.WHITE);
+        header.setFont(fuenteNegrita);
+        header.setPreferredSize(new Dimension(header.getWidth(), 35));
+
+        tblLotes.setRowHeight(28);
+        tblLotes.setFont(fuenteBase);
+        tblLotes.setGridColor(grisLineas);
+        tblLotes.setShowVerticalLines(false);
+        tblLotes.setSelectionBackground(new Color(219, 234, 254));
+        tblLotes.setSelectionForeground(Color.BLACK);
+    }
+}
 
     /**
      * @param args the command line arguments
@@ -288,11 +382,11 @@ public javax.swing.JTextField getTxtFechaVencimiento() {
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnRegresar;
     private javax.swing.JComboBox<String> cbxBodega;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblCodigoLote;
     private javax.swing.JLabel lblDescripcion;
     private javax.swing.JLabel lblFechaVencimiento;
+    private javax.swing.JLabel lblTitulo;
     private javax.swing.JTable tblLotes;
     private javax.swing.JTextField txtCodigoLote;
     private javax.swing.JTextField txtFechaVencimiento;

@@ -4,6 +4,10 @@
  */
 package Vista;
 
+import java.awt.Color;
+import java.awt.Font;
+import javax.swing.JButton;
+
 /**
  *
  * @author KEVIN
@@ -15,6 +19,7 @@ public class MenuBodeguero extends javax.swing.JFrame {
      */
     public MenuBodeguero() {
         initComponents();
+        aplicarEstilosMenuBodeguero();
     }
 
     /**
@@ -26,7 +31,7 @@ public class MenuBodeguero extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        lblBienVenido = new javax.swing.JLabel();
         btnRegistroLotes = new javax.swing.JButton();
         btnRegistroProductos = new javax.swing.JButton();
         btnMovimientoAlmacen = new javax.swing.JButton();
@@ -35,8 +40,8 @@ public class MenuBodeguero extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Showcard Gothic", 3, 36)); // NOI18N
-        jLabel1.setText("Bienvenido al sistema de logistica XYZ");
+        lblBienVenido.setFont(new java.awt.Font("Showcard Gothic", 3, 36)); // NOI18N
+        lblBienVenido.setText("Bienvenido al sistema de logistica XYZ");
 
         btnRegistroLotes.setText("REGISTRO DE LOTES");
         btnRegistroLotes.addActionListener(new java.awt.event.ActionListener() {
@@ -71,7 +76,7 @@ public class MenuBodeguero extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(22, 22, 22)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(lblBienVenido, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(157, 157, 157)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -87,7 +92,7 @@ public class MenuBodeguero extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(jLabel1)
+                .addComponent(lblBienVenido)
                 .addGap(42, 42, 42)
                 .addComponent(btnRegistroLotes)
                 .addGap(29, 29, 29)
@@ -135,6 +140,52 @@ public javax.swing.JButton getBtnMovimientoAlmacen() {
     public javax.swing.JButton getBtnInventarioBodega() {
     return btnInventarioBodega; // Asegúrate de que este nombre coincida con la variable de tu JButton
 }
+    
+    public void aplicarEstilosMenuBodeguero() {
+    // 1. Paleta de colores institucional
+    Color azulOscuro = new Color(15, 23, 42);      // #0F172A
+    Color azulBoton = new Color(30, 58, 138);      // #1E3A8A
+    Color rojoCerrar = new Color(220, 38, 38);     // #DC2626
+
+    Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 20);
+    Font fuenteBoton = new Font("Segoe UI", Font.BOLD, 13);
+
+    // 2. Encabezado principal
+    if (lblBienVenido != null) {
+        lblBienVenido.setText("BIENVENIDO AL SISTEMA DE LOGÍSTICA");
+        lblBienVenido.setFont(fuenteTitulo);
+        lblBienVenido.setForeground(azulOscuro);
+    }
+
+    // 3. Botones del menú operativo
+    JButton[] botonesOperacion = {btnRegistroLotes, btnRegistroProductos, btnMovimientoAlmacen, btnInventarioBodega};
+    
+    for (JButton btn : botonesOperacion) {
+        if (btn != null) {
+            btn.setBackground(azulBoton);
+            btn.setForeground(Color.WHITE);
+            btn.setFont(fuenteBoton);
+            btn.setOpaque(true);
+            btn.setBorderPainted(false);
+            btn.setFocusPainted(false);
+            btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        }
+    }
+
+    // 4. Salida de sesión
+    if (btnCerrarSesion != null) {
+        btnCerrarSesion.setText("CERRAR SESIÓN");
+        btnCerrarSesion.setBackground(rojoCerrar);
+        btnCerrarSesion.setForeground(Color.WHITE);
+        btnCerrarSesion.setFont(fuenteBoton);
+        btnCerrarSesion.setOpaque(true);
+        btnCerrarSesion.setBorderPainted(false);
+        btnCerrarSesion.setFocusPainted(false);
+        btnCerrarSesion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+}
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -176,6 +227,6 @@ public javax.swing.JButton getBtnMovimientoAlmacen() {
     private javax.swing.JButton btnMovimientoAlmacen;
     private javax.swing.JButton btnRegistroLotes;
     private javax.swing.JButton btnRegistroProductos;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel lblBienVenido;
     // End of variables declaration//GEN-END:variables
 }

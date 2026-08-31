@@ -4,7 +4,11 @@
  */
 package Vista;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import javax.swing.JButton;
+import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -17,6 +21,7 @@ public class GestionUsuarioVista extends javax.swing.JFrame {
      */
     public GestionUsuarioVista() {
         initComponents();
+        aplicarEstilosLogistica();
     }
 
     /**
@@ -88,8 +93,18 @@ public class GestionUsuarioVista extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(56, 56, 56)
+                .addComponent(btnEditar)
+                .addGap(79, 79, 79)
+                .addComponent(btnDeshabilitar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnRegresar)
+                        .addGap(107, 107, 107)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(22, 22, 22)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -112,32 +127,19 @@ public class GestionUsuarioVista extends javax.swing.JFrame {
                                         .addGap(56, 56, 56)
                                         .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(19, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnRegresar)
-                        .addGap(56, 56, 56)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(56, 56, 56)
-                        .addComponent(btnEditar)
-                        .addGap(79, 79, 79)
-                        .addComponent(btnDeshabilitar)))
-                .addContainerGap(84, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(19, 19, 19))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(jLabel1))
-                    .addComponent(btnRegresar))
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnRegresar)
+                    .addComponent(jLabel1))
+                .addGap(33, 33, 33)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNombres)
                     .addComponent(txtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -214,6 +216,62 @@ public JButton getBtnDeshabilitar() {
 
 public javax.swing.JButton getBtnVolver() {
     return btnRegresar; // Reemplaza "btnVolver" por el nombre de tu variable JButton
+}
+
+
+public void aplicarEstilosLogistica() {
+    // 1. Paleta de Colores Logística / Cadena de Suministro
+    Color azulBodega = new Color(15, 23, 42);      // #0F172A (Azul marino industrial)
+    Color azulAccion = new Color(37, 99, 235);     // #2563EB (Azul corporativo para Editar)
+    Color rojoPeligro = new Color(220, 38, 38);    // #DC2626 (Rojo advertencia para Deshabilitar)
+    Color grisCampos = new Color(248, 250, 252);   // #F8FAFC (Gris claro limpio)
+    Color grisLineas = new Color(226, 232, 240);   // #E2E8F0 (Bordes suaves)
+
+    Font fuenteBase = new Font("Segoe UI", Font.PLAIN, 13);
+    Font fuenteNegrita = new Font("Segoe UI", Font.BOLD, 13);
+    Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 18);
+
+    // 2. Título de la Vista
+//    lblTitulo.setText("GESTIÓN DE USUARIOS Y PERSONAL");
+//    lblTitulo.setFont(fuenteTitulo);
+//    lblTitulo.setForeground(azulBodega);
+
+    // 3. Botón Regresar
+    btnRegresar.setText("← Volver");
+    btnRegresar.setFont(fuenteBase);
+
+    // 4. Estilizar Botones de Acción
+    btnEditar.setText("EDITAR USUARIO");
+    btnEditar.setBackground(azulAccion);
+    btnEditar.setForeground(Color.WHITE);
+    btnEditar.setFont(fuenteNegrita);
+    btnEditar.setOpaque(true);
+    btnEditar.setBorderPainted(false);
+    btnEditar.setFocusPainted(false);
+
+    btnDeshabilitar.setText("DESHABILITAR");
+    btnDeshabilitar.setBackground(rojoPeligro);
+    btnDeshabilitar.setForeground(Color.WHITE);
+    btnDeshabilitar.setFont(fuenteNegrita);
+    btnDeshabilitar.setOpaque(true);
+    btnDeshabilitar.setBorderPainted(false);
+    btnDeshabilitar.setFocusPainted(false);
+
+    // 5. Estilizar Tabla (JTable)
+    if (tblUsuarios != null) {
+        JTableHeader header = tblUsuarios.getTableHeader();
+        header.setBackground(azulBodega);
+        header.setForeground(Color.WHITE);
+        header.setFont(fuenteNegrita);
+        header.setPreferredSize(new Dimension(header.getWidth(), 35));
+
+        tblUsuarios.setRowHeight(28);
+        tblUsuarios.setFont(fuenteBase);
+        tblUsuarios.setGridColor(grisLineas);
+        tblUsuarios.setShowVerticalLines(false);
+        tblUsuarios.setSelectionBackground(new Color(219, 234, 254)); // Azul claro al seleccionar fila
+        tblUsuarios.setSelectionForeground(Color.BLACK);
+    }
 }
     
     /**

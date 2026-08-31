@@ -4,6 +4,12 @@
  */
 package Vista;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import javax.swing.JLabel;
+import javax.swing.table.JTableHeader;
+
 /**
  *
  * @author KEVIN
@@ -15,6 +21,7 @@ public class MovimientoAlmacenVista extends javax.swing.JFrame {
      */
     public MovimientoAlmacenVista() {
         initComponents();
+        aplicarEstilosMovimientoAlmacen();
     }
 
     /**
@@ -26,7 +33,7 @@ public class MovimientoAlmacenVista extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        lblTitulo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         lblBodegaOrigen = new javax.swing.JLabel();
         lblBodegaDestino = new javax.swing.JLabel();
@@ -44,7 +51,7 @@ public class MovimientoAlmacenVista extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Tipo Movimiento");
 
-        jLabel1.setText("SOLICITUD MOVIMIENTO DE ALMACEN ");
+        lblTitulo.setText("SOLICITUD MOVIMIENTO DE ALMACEN ");
 
         lblBodegaOrigen.setText("Bodega de Origen:");
 
@@ -121,17 +128,17 @@ public class MovimientoAlmacenVista extends javax.swing.JFrame {
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btnRegresar)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 214, Short.MAX_VALUE)
-                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lblTipoMovimiento)
-                                        .addGap(274, 274, 274)
-                                        .addComponent(lblBodegaOrigen)))
+                                .addGap(0, 18, Short.MAX_VALUE)
+                                .addComponent(lblTipoMovimiento)
+                                .addGap(274, 274, 274)
+                                .addComponent(lblBodegaOrigen)
                                 .addGap(46, 46, 46)))
-                        .addComponent(cmbBodegaOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cmbBodegaOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnRegresar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(75, 75, 75)))
                 .addGap(19, 19, 19))
             .addComponent(jScrollPane1)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -145,7 +152,7 @@ public class MovimientoAlmacenVista extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(17, 17, 17)
-                        .addComponent(jLabel1))
+                        .addComponent(lblTitulo))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(btnRegresar)))
@@ -218,6 +225,70 @@ public javax.swing.JButton getBtnRegresar() {
     return btnRegresar; 
 }
     
+
+
+public void aplicarEstilosMovimientoAlmacen() {
+    // 1. Colores y fuentes de la línea gráfica
+    Color azulBodega = new Color(15, 23, 42);      // #0F172A (Encabezados y títulos)
+    Color azulAccion = new Color(37, 99, 235);     // #2563EB (Azul corporativo)
+    Color textoGris = new Color(71, 85, 105);      // #475569
+    Color grisLineas = new Color(226, 232, 240);   // #E2E8F0
+
+    Font fuenteBase = new Font("Segoe UI", Font.PLAIN, 13);
+    Font fuenteNegrita = new Font("Segoe UI", Font.BOLD, 13);
+    Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 18);
+
+    // 2. Título Principal y Botón Regresar
+    if (lblTitulo != null) {
+        lblTitulo.setText("SOLICITUD MOVIMIENTO DE ALMACÉN");
+        lblTitulo.setFont(fuenteTitulo);
+        lblTitulo.setForeground(azulBodega);
+    }
+    
+    if (btnRegresar != null) {
+        btnRegresar.setText("← Volver");
+        btnRegresar.setFont(fuenteBase);
+    }
+
+    // 3. Estilo de Etiquetas (Labels)
+    JLabel[] etiquetas = {lblTipoMovimiento, lblBodegaOrigen, lblBodegaDestino, lblObservacion};
+    for (JLabel lbl : etiquetas) {
+        if (lbl != null) {
+            lbl.setFont(fuenteNegrita);
+            lbl.setForeground(textoGris);
+        }
+    }
+
+    // 4. Botón Generar (Acción Principal)
+    if (btnGenerar != null) {
+        btnGenerar.setText("GENERAR MOVIMIENTO");
+        btnGenerar.setBackground(azulAccion);
+        btnGenerar.setForeground(Color.WHITE);
+        btnGenerar.setFont(fuenteNegrita);
+        btnGenerar.setOpaque(true);
+        btnGenerar.setBorderPainted(false);
+        btnGenerar.setFocusPainted(false);
+        btnGenerar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+
+    // 5. Estilizar Tabla (JTable)
+    if (tblMovimientos != null) {
+        JTableHeader header = tblMovimientos.getTableHeader();
+        header.setBackground(azulBodega);
+        header.setForeground(Color.WHITE);
+        header.setFont(fuenteNegrita);
+        header.setPreferredSize(new Dimension(header.getWidth(), 35));
+
+        tblMovimientos.setRowHeight(28);
+        tblMovimientos.setFont(fuenteBase);
+        tblMovimientos.setGridColor(grisLineas);
+        tblMovimientos.setShowVerticalLines(false);
+        tblMovimientos.setSelectionBackground(new Color(219, 234, 254));
+        tblMovimientos.setSelectionForeground(Color.BLACK);
+    }
+}
+
+
     /**
      * @param args the command line arguments
      */
@@ -259,13 +330,13 @@ public javax.swing.JButton getBtnRegresar() {
     private javax.swing.JComboBox<String> cmbBodegaDestino;
     private javax.swing.JComboBox<String> cmbBodegaOrigen;
     private javax.swing.JComboBox<String> cmbTipoMovimiento;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblBodegaDestino;
     private javax.swing.JLabel lblBodegaOrigen;
     private javax.swing.JLabel lblObservacion;
     private javax.swing.JLabel lblTipoMovimiento;
+    private javax.swing.JLabel lblTitulo;
     private javax.swing.JTable tblMovimientos;
     private javax.swing.JTextField txtObservacion;
     // End of variables declaration//GEN-END:variables

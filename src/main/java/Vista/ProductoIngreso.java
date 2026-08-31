@@ -4,9 +4,12 @@
  */
 package Vista;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -26,6 +29,7 @@ public class ProductoIngreso extends javax.swing.JFrame {
         initComponents();
         this.estiloJtable();
         this.modelo();
+        aplicarEstilosProductos();
     
     }
     
@@ -48,7 +52,7 @@ public class ProductoIngreso extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        lblTitulo = new javax.swing.JLabel();
         lblCodigo = new javax.swing.JLabel();
         lblNombre = new javax.swing.JLabel();
         lblDescripcion = new javax.swing.JLabel();
@@ -71,9 +75,9 @@ public class ProductoIngreso extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI Light", 3, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 255));
-        jLabel1.setText("REGISTRO DE PRODUCTOS");
+        lblTitulo.setFont(new java.awt.Font("Segoe UI Light", 3, 18)); // NOI18N
+        lblTitulo.setForeground(new java.awt.Color(0, 0, 255));
+        lblTitulo.setText("REGISTRO DE PRODUCTOS");
 
         lblCodigo.setText("Codigo Producto:");
 
@@ -131,30 +135,28 @@ public class ProductoIngreso extends javax.swing.JFrame {
                         .addComponent(btnDeshabilitar))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(20, 20, 20)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(40, 40, 40)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtCodigo)
-                                    .addComponent(txtNombres)
-                                    .addComponent(txtDescripcion)
-                                    .addComponent(txtCantidad)
-                                    .addComponent(cbxEstadoProducto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(cbxLote, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(btnRegresar)
-                                .addGap(56, 56, 56)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(40, 40, 40)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtCodigo)
+                            .addComponent(txtNombres)
+                            .addComponent(txtDescripcion)
+                            .addComponent(txtCantidad)
+                            .addComponent(cbxEstadoProducto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbxLote, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 160, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnRegresar)
+                        .addGap(56, 56, 56)
+                        .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -166,7 +168,7 @@ public class ProductoIngreso extends javax.swing.JFrame {
                         .addComponent(btnRegresar))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(17, 17, 17)
-                        .addComponent(jLabel1)))
+                        .addComponent(lblTitulo)))
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCodigo)
@@ -293,6 +295,104 @@ public void addDeshabilitarListener(ActionListener l) {
     return btnRegresar; 
 }
     
+    
+    
+    public void aplicarEstilosProductos() {
+    // 1. Colores y fuentes del sistema
+    Color azulBodega = new Color(15, 23, 42);      // #0F172A (Azul marino industrial)
+    Color azulAccion = new Color(37, 99, 235);     // #2563EB (Azul corporativo para Guardar)
+    Color verdeAccion = new Color(16, 185, 129);   // #10B981 (Verde esmeralda para Editar)
+    Color rojoPeligro = new Color(220, 38, 38);    // #DC2626 (Rojo advertencia para Deshabilitar)
+    Color grisBoton = new Color(100, 116, 139);    // #64748B (Gris neutro para Buscar)
+    Color textoGris = new Color(71, 85, 105);      // #475569
+    Color grisLineas = new Color(226, 232, 240);   // #E2E8F0
+
+    Font fuenteBase = new Font("Segoe UI", Font.PLAIN, 13);
+    Font fuenteNegrita = new Font("Segoe UI", Font.BOLD, 13);
+    Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 18);
+
+    // 2. Título de la Vista y Botón Regresar
+    if (lblTitulo != null) {
+        lblTitulo.setText("REGISTRO Y CATALOGACIÓN DE PRODUCTOS");
+        lblTitulo.setFont(fuenteTitulo);
+        lblTitulo.setForeground(azulBodega);
+    }
+    
+    if (btnRegresar != null) {
+        btnRegresar.setText("← Volver");
+        btnRegresar.setFont(fuenteBase);
+    }
+
+    // 3. Estilo de Etiquetas (Labels)
+//    JLabel[] etiquetas = {lblCodigo, lblNombre, lblDescripcion, lblCantidad, cbxEstadoProducto, cbxLote};
+//    for (JLabel lbl : etiquetas) {
+//        if (lbl != null) {
+//            lbl.setFont(fuenteNegrita);
+//            lbl.setForeground(textoGris);
+//        }
+//    }
+
+    // 4. Estilizar Botones de Operación
+    if (btnBuscar != null) {
+        btnBuscar.setText("BUSCAR");
+        btnBuscar.setBackground(grisBoton);
+        btnBuscar.setForeground(Color.WHITE);
+        btnBuscar.setFont(fuenteNegrita);
+        btnBuscar.setOpaque(true);
+        btnBuscar.setBorderPainted(false);
+        btnBuscar.setFocusPainted(false);
+        btnBuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+
+    if (btnGuardar != null) {
+        btnGuardar.setText("GUARDAR");
+        btnGuardar.setBackground(azulAccion);
+        btnGuardar.setForeground(Color.WHITE);
+        btnGuardar.setFont(fuenteNegrita);
+        btnGuardar.setOpaque(true);
+        btnGuardar.setBorderPainted(false);
+        btnGuardar.setFocusPainted(false);
+        btnGuardar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+
+    if (btnEditar != null) {
+        btnEditar.setText("EDITAR");
+        btnEditar.setBackground(verdeAccion);
+        btnEditar.setForeground(Color.WHITE);
+        btnEditar.setFont(fuenteNegrita);
+        btnEditar.setOpaque(true);
+        btnEditar.setBorderPainted(false);
+        btnEditar.setFocusPainted(false);
+        btnEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+
+    if (btnDeshabilitar != null) {
+        btnDeshabilitar.setText("DESHABILITAR");
+        btnDeshabilitar.setBackground(rojoPeligro);
+        btnDeshabilitar.setForeground(Color.WHITE);
+        btnDeshabilitar.setFont(fuenteNegrita);
+        btnDeshabilitar.setOpaque(true);
+        btnDeshabilitar.setBorderPainted(false);
+        btnDeshabilitar.setFocusPainted(false);
+        btnDeshabilitar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+
+    // 5. Estilizar Tabla (JTable)
+    if (tblProductos != null) {
+        JTableHeader header = tblProductos.getTableHeader();
+        header.setBackground(azulBodega);
+        header.setForeground(Color.WHITE);
+        header.setFont(fuenteNegrita);
+        header.setPreferredSize(new Dimension(header.getWidth(), 35));
+
+        tblProductos.setRowHeight(28);
+        tblProductos.setFont(fuenteBase);
+        tblProductos.setGridColor(grisLineas);
+        tblProductos.setShowVerticalLines(false);
+        tblProductos.setSelectionBackground(new Color(219, 234, 254));
+        tblProductos.setSelectionForeground(Color.BLACK);
+    }
+}
 
     /**
      * @param args the command line arguments
@@ -337,7 +437,6 @@ public void addDeshabilitarListener(ActionListener l) {
     private javax.swing.JButton btnRegresar;
     private javax.swing.JComboBox<String> cbxEstadoProducto;
     private javax.swing.JComboBox<String> cbxLote;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
@@ -345,6 +444,7 @@ public void addDeshabilitarListener(ActionListener l) {
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblDescripcion;
     private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblTitulo;
     private javax.swing.JTable tblProductos;
     private javax.swing.JTextField txtCantidad;
     private javax.swing.JTextField txtCodigo;

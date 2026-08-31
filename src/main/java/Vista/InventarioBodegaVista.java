@@ -4,7 +4,11 @@
  */
 package Vista;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.ArrayList;
+import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -17,6 +21,7 @@ public class InventarioBodegaVista extends javax.swing.JFrame {
      */
     public InventarioBodegaVista() {
         initComponents();
+        aplicarEstilosInventario();
     }
 
     /**
@@ -28,7 +33,7 @@ public class InventarioBodegaVista extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        lblTitulo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         cmbBodega = new javax.swing.JComboBox<>();
@@ -40,7 +45,7 @@ public class InventarioBodegaVista extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("INVENTARIO DE BODEGA");
+        lblTitulo.setText("INVENTARIO DE BODEGA");
 
         jLabel2.setText("ID Bodega:");
 
@@ -79,7 +84,7 @@ public class InventarioBodegaVista extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(btnRegresar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(110, 110, 110))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,7 +111,7 @@ public class InventarioBodegaVista extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(14, 14, 14)
-                        .addComponent(jLabel1))
+                        .addComponent(lblTitulo))
                     .addComponent(btnRegresar))
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -160,6 +165,62 @@ public javax.swing.table.DefaultTableModel getModeloTabla() {
     cmbLote.removeAllItems();
     for (String l : lotes) cmbLote.addItem(l);
 }
+       
+       public void aplicarEstilosInventario() {
+    // 1. Colores y fuentes corporativas
+    Color azulBodega = new Color(15, 23, 42);      // #0F172A (Azul marino industrial)
+    Color azulAccion = new Color(37, 99, 235);     // #2563EB (Azul corporativo)
+    Color textoGris = new Color(71, 85, 105);      // #475569
+    Color grisLineas = new Color(226, 232, 240);   // #E2E8F0
+
+    Font fuenteBase = new Font("Segoe UI", Font.PLAIN, 13);
+    Font fuenteNegrita = new Font("Segoe UI", Font.BOLD, 13);
+    Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 18);
+
+    // 2. Título de la Vista
+    lblTitulo.setText("INVENTARIO Y STOCK DE BODEGA");
+    lblTitulo.setFont(fuenteTitulo);
+    lblTitulo.setForeground(azulBodega);
+
+    // 3. Botón Regresar y Etiquetas
+    btnRegresar.setText("← Volver");
+    btnRegresar.setFont(fuenteBase);
+
+    if (cmbBodega != null) {
+        cmbBodega.setFont(fuenteNegrita);
+        cmbBodega.setForeground(textoGris);
+    }
+    if (cmbLote != null) {
+        cmbLote.setFont(fuenteNegrita);
+        cmbLote.setForeground(textoGris);
+    }
+
+    // 4. Botón Buscar
+    btnBuscar.setText("BUSCAR STOCK");
+    btnBuscar.setBackground(azulAccion);
+    btnBuscar.setForeground(Color.WHITE);
+    btnBuscar.setFont(fuenteNegrita);
+    btnBuscar.setOpaque(true);
+    btnBuscar.setBorderPainted(false);
+    btnBuscar.setFocusPainted(false);
+    btnBuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+    // 5. Estilizar Tabla de Stock (JTable)
+    if (tblInventario != null) {
+        JTableHeader header = tblInventario.getTableHeader();
+        header.setBackground(azulBodega);
+        header.setForeground(Color.WHITE);
+        header.setFont(fuenteNegrita);
+        header.setPreferredSize(new Dimension(header.getWidth(), 35));
+
+        tblInventario.setRowHeight(28);
+        tblInventario.setFont(fuenteBase);
+        tblInventario.setGridColor(grisLineas);
+        tblInventario.setShowVerticalLines(false);
+        tblInventario.setSelectionBackground(new Color(219, 234, 254)); // Azul claro al seleccionar fila
+        tblInventario.setSelectionForeground(Color.BLACK);
+    }
+}
     /**
      * @param args the command line arguments
      */
@@ -200,10 +261,10 @@ public javax.swing.table.DefaultTableModel getModeloTabla() {
     private javax.swing.JButton btnRegresar;
     private javax.swing.JComboBox<String> cmbBodega;
     private javax.swing.JComboBox<String> cmbLote;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblTitulo;
     private javax.swing.JTable tblInventario;
     // End of variables declaration//GEN-END:variables
 }

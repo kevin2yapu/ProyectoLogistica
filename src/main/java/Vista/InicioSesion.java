@@ -4,6 +4,8 @@
  */
 package Vista;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
@@ -19,6 +21,7 @@ public class InicioSesion extends javax.swing.JFrame {
      */
     public InicioSesion() {
         initComponents();
+        aplicarEstilosLogin();
     }
 
     /**
@@ -30,7 +33,7 @@ public class InicioSesion extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        lblTitulo = new javax.swing.JLabel();
         lblUsuario = new javax.swing.JLabel();
         lblContrasena = new javax.swing.JLabel();
         txtUsuario = new javax.swing.JTextField();
@@ -41,8 +44,8 @@ public class InicioSesion extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI Emoji", 3, 24)); // NOI18N
-        jLabel1.setText("LOGISTICA XYZ");
+        lblTitulo.setFont(new java.awt.Font("Segoe UI Emoji", 3, 24)); // NOI18N
+        lblTitulo.setText("LOGISTICA XYZ");
 
         lblUsuario.setText("Usuario:");
 
@@ -65,10 +68,6 @@ public class InicioSesion extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(147, 147, 147)
-                .addComponent(btnIngresar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblContrasena, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -79,19 +78,27 @@ public class InicioSesion extends javax.swing.JFrame {
                         .addGap(0, 4, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(txtUsuario)
                         .addComponent(pwdContrasena, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE))
                     .addComponent(cbxRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(115, Short.MAX_VALUE))
+                .addContainerGap(178, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(98, 98, 98)
+                        .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(96, 96, 96)
+                        .addComponent(btnIngresar)))
+                .addContainerGap(104, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                .addGap(20, 20, 20)
+                .addComponent(lblTitulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblUsuario))
@@ -103,9 +110,9 @@ public class InicioSesion extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbxRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblRol))
-                .addGap(41, 41, 41)
+                .addGap(35, 35, 35)
                 .addComponent(btnIngresar)
-                .addGap(39, 39, 39))
+                .addGap(45, 45, 45))
         );
 
         pack();
@@ -148,6 +155,42 @@ public class InicioSesion extends javax.swing.JFrame {
         btnIngresar.addActionListener(listener);
     }
 
+    
+    public void aplicarEstilosLogin() {
+    // 1. Colores y fuentes
+    Color azulBodega = new Color(15, 23, 42);      // #0F172A (Azul marino industrial)
+    Color azulAccion = new Color(37, 99, 235);     // #2563EB (Azul corporativo)
+    Color textoGris = new Color(71, 85, 105);      // #475569
+
+    Font fuenteLabel = new Font("Segoe UI", Font.BOLD, 13);
+    Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 22);
+    Font fuenteBoton = new Font("Segoe UI", Font.BOLD, 14);
+
+    // 2. Estilo del Título Principal
+   lblTitulo.setText("LOGÍSTICA XYZ");
+    lblTitulo.setFont(fuenteTitulo);
+    lblTitulo.setForeground(azulBodega);
+
+    // 3. Estilo de Etiquetas (Labels)
+    lblUsuario.setFont(fuenteLabel);
+    lblUsuario.setForeground(textoGris);
+    
+    lblContrasena.setFont(fuenteLabel);
+    lblContrasena.setForeground(textoGris);
+    
+    lblRol.setFont(fuenteLabel);
+    lblRol.setForeground(textoGris);
+
+    // 4. Estilo del Botón Ingresar
+    btnIngresar.setText("INGRESAR AL SISTEMA");
+    btnIngresar.setBackground(azulAccion);
+    btnIngresar.setForeground(Color.WHITE);
+    btnIngresar.setFont(fuenteBoton);
+    btnIngresar.setOpaque(true);
+    btnIngresar.setBorderPainted(false);
+    btnIngresar.setFocusPainted(false);
+    btnIngresar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}
  
     
     /**
@@ -188,9 +231,9 @@ public class InicioSesion extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnIngresar;
     private javax.swing.JComboBox<String> cbxRol;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblContrasena;
     private javax.swing.JLabel lblRol;
+    private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblUsuario;
     private javax.swing.JPasswordField pwdContrasena;
     private javax.swing.JTextField txtUsuario;
