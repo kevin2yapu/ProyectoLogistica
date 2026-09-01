@@ -8,6 +8,7 @@ import Modelo.InventarioBodega;
 import Vista.InventarioBodegaVista;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -25,30 +26,56 @@ public class InventarioBodegaControlador {
     }
 
     public void iniciar() {
-        // 1. Cargar datos en los ComboBox de forma limpia (SIN disparar eventos prematuros)
+        // 1. Cargar datos en los ComboBox
         cargarComboBodegas();
         cargarComboLotes();
 
-        // 2. Registrar eventos DESPUÉS de llenar los combos
+        // 2. Aplicar restricción por Rol de Usuario
+        aplicarRestriccionPorRol();
+
+        // 3. Registrar eventos DESPUÉS de llenar y ajustar los combos
         ivista.getCmbBodega().addActionListener(e -> buscarInventario());
         ivista.getCmbLote().addActionListener(e -> buscarInventario());
 
-        // Evento del botón buscar
         if (ivista.getBtnBuscar() != null) {
             ivista.getBtnBuscar().addActionListener(e -> buscarInventario());
         }
 
-        // Evento para regresar al menú principal
         if (ivista.getBtnRegresar() != null) {
             ivista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
         }
 
-        // 3. Cargar datos en la tabla por primera vez
+        // 4. Cargar datos en la tabla por primera vez
         buscarInventario();
 
         ivista.setLocationRelativeTo(null);
         ivista.setVisible(true);
     }
+
+    private void aplicarRestriccionPorRol() {
+    String rolActivo = SesionUsuario.getRol();
+
+    // Si NO es Administrador (es Bodeguero), forzamos la selección de su bodega
+    if (rolActivo != null && !rolActivo.trim().toUpperCase().contains("ADMIN")) {
+        Integer idBodegaSesion = SesionUsuario.getIdBodega();
+
+        if (idBodegaSesion != null && idBodegaSesion > 0) {
+            // Recorremos los ítems del combo para encontrar el que corresponde al ID de la sesión
+            for (int i = 0; i < ivista.getCmbBodega().getItemCount(); i++) {
+                String item = ivista.getCmbBodega().getItemAt(i);
+                
+                // Si el combo tiene formato "1" o "1 - Bodega Norte", comparamos con el ID
+                if (item.startsWith(String.valueOf(idBodegaSesion))) {
+                    ivista.getCmbBodega().setSelectedIndex(i);
+                    break;
+                }
+            }
+
+            // Desactivar el combo para que el bodeguero no pueda cambiarlo a "TODAS"
+            ivista.getCmbBodega().setEnabled(false);
+        }
+    }
+}
 
     public void cargarComboBodegas() {
         ivista.getCmbBodega().removeAllItems();
@@ -74,20 +101,17 @@ public class InventarioBodegaControlador {
         }
     }
 
-   public void buscarInventario() {
+    public void buscarInventario() {
         String bodegaSel = (String) ivista.getCmbBodega().getSelectedItem();
         String loteSel = (String) ivista.getCmbLote().getSelectedItem();
         
-        // Evita consultas cuando el combo está reiniciándose
         if (bodegaSel == null || loteSel == null) {
             return;
         }
 
-        // Usar directamente el modelo de la tabla que ya expone tu Vista
         DefaultTableModel modelTabla = ivista.getModeloTabla();
-        modelTabla.setRowCount(0); // Limpiar filas anteriores
+        modelTabla.setRowCount(0); 
         
-        // Consultar dinámicamente desde el modelo
         List<String[]> datosFiltrados = imodelo.buscarInventario(bodegaSel, loteSel);
 
         if (datosFiltrados != null) {
@@ -112,4 +136,6 @@ public class InventarioBodegaControlador {
             bodegueroCtrl.iniciar();
         }
     }
+    
+    
 }

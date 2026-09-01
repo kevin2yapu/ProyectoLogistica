@@ -64,84 +64,100 @@ public class UsuarioControlador {
     }
 
     public Usuario inicioSesion(String email, String contrasena) {
-        Usuario u = null;
-        String sql = "{call sp_validar_login(?, ?)}";
-        ConexionBDD conectar = new ConexionBDD();
+    Usuario u = null;
+    // Consulta SQL que une usuarios con bodegas
+    String sql = "SELECT u.id, u.nombres, u.email, u.contrasena, u.rol, u.estado, u.bodega_id, b.nombre AS nombre_bodega " +
+                 "FROM usuarios u " +
+                 "LEFT JOIN bodegas b ON u.bodega_id = b.id " +
+                 "WHERE u.email = ? AND u.contrasena = ? AND u.estado = 'ACTIVO'";
 
-        try (Connection conectado = conectar.conectar();
-             CallableStatement cs = conectado.prepareCall(sql)) {
+    ConexionBDD conectar = new ConexionBDD();
 
-            cs.setString(1, email);
-            cs.setString(2, contrasena);
+    try (Connection conectado = conectar.conectar();
+         PreparedStatement ps = conectado.prepareStatement(sql)) {
 
-            ResultSet resultado = cs.executeQuery();
+        ps.setString(1, email);
+        ps.setString(2, contrasena);
 
-            if (resultado.next()) {
-               u = new Usuario(
-    resultado.getInt("id"),
-    resultado.getString("nombres"),
-    resultado.getString("email"),
-    resultado.getString("contrasena"),
-    resultado.getString("rol"),
-    "ACTIVO" // 6to parámetro que requiere tu constructor
-);
-            }
+        ResultSet resultado = ps.executeQuery();
 
-        } catch (SQLException e) {
-            System.out.println("Error en el SP de login: " + e.getMessage());
+        if (resultado.next()) {
+            u = new Usuario(
+                resultado.getInt("id"),
+                resultado.getString("nombres"),
+                resultado.getString("email"),
+                resultado.getString("contrasena"),
+                resultado.getString("rol"),
+                resultado.getString("estado")
+            );
+            
+            // Si tu objeto Usuario admite almacenar la bodega, o la extraemos para la sesión:
+            // Guardamos temporalmente idBodega y nombreBodega usando variables locales / atributos auxiliares
+            int bodegaId = resultado.getInt("bodega_id");
+            String nombreBodega = resultado.getString("nombre_bodega");
+
+            // Si bodega_id resulta 0/NULL (ej. para administradores)
+            Integer idBodegaObj = resultado.wasNull() ? null : bodegaId;
+
+            // Registrar en SesionUsuario inmediatamente
+            SesionUsuario.iniciarSesion(
+                u.getId(), 
+                u.getNombres(), 
+                u.getRol(), 
+                idBodegaObj, 
+                nombreBodega
+            );
         }
 
-        return u;
+    } catch (SQLException e) {
+        System.out.println("Error en el login: " + e.getMessage());
     }
 
+    return u;
+}
+
     public void recuperarUsuario() {
-        String email = uvista.getEmail();
-        String contrasena = uvista.getContrasena();
-        String rolSeleccionado = uvista.getRol();
+    String email = uvista.getEmail();
+    String contrasena = uvista.getContrasena();
+    String rolSeleccionado = uvista.getRol();
 
-        if (!email.isEmpty() && !contrasena.isEmpty()) {
+    if (!email.isEmpty() && !contrasena.isEmpty()) {
 
-            Usuario usuarioEncontrado = inicioSesion(email, contrasena);
+        Usuario usuarioEncontrado = inicioSesion(email, contrasena);
 
-            if (usuarioEncontrado != null) {
+        if (usuarioEncontrado != null) {
 
-                String rolBD = usuarioEncontrado.getRol().trim().toUpperCase();
-                String rolInterfaz = rolSeleccionado.trim().toUpperCase();
+            String rolBD = usuarioEncontrado.getRol().trim().toUpperCase();
+            String rolInterfaz = rolSeleccionado.trim().toUpperCase();
 
-                if (rolBD.contains(rolInterfaz) || rolInterfaz.contains(rolBD)) {
+            if (rolBD.contains(rolInterfaz) || rolInterfaz.contains(rolBD)) {
 
-                    SesionUsuario.iniciarSesion(
-                        usuarioEncontrado.getId(), 
-                        usuarioEncontrado.getNombres(), 
-                        usuarioEncontrado.getRol()
-                    );
+                JOptionPane.showMessageDialog(uvista, "¡Bienvenido/a: " + usuarioEncontrado.getNombres() + "!");
 
-                    JOptionPane.showMessageDialog(uvista, "¡Bienvenido/a: " + usuarioEncontrado.getNombres() + "!");
-
-                    if (rolBD.contains("ADMIN")) {
-                        uvista.dispose();
-                        MenuAdmin vistaAdmin = new MenuAdmin();
-                        MenuAdministradorControlador adminCtrl = new MenuAdministradorControlador(vistaAdmin);
-                        adminCtrl.iniciar();
-                    } else {
-                        uvista.dispose();
-                        MenuBodeguero vistaMenu = new MenuBodeguero();
-                        MenuBodegueroControlador menuCtrl = new MenuBodegueroControlador(vistaMenu);
-                        menuCtrl.iniciar();
-                    }
-
+                if (rolBD.contains("ADMIN")) {
+                    uvista.dispose();
+                    MenuAdmin vistaAdmin = new MenuAdmin();
+                    MenuAdministradorControlador adminCtrl = new MenuAdministradorControlador(vistaAdmin);
+                    adminCtrl.iniciar();
                 } else {
-                    JOptionPane.showMessageDialog(uvista, "El rol seleccionado no corresponde a este usuario.", "Rol Incorrecto", JOptionPane.WARNING_MESSAGE);
+                    uvista.dispose();
+                    MenuBodeguero vistaMenu = new MenuBodeguero();
+                    MenuBodegueroControlador menuCtrl = new MenuBodegueroControlador(vistaMenu);
+                    menuCtrl.iniciar();
                 }
 
             } else {
-                JOptionPane.showMessageDialog(uvista, "Credenciales incorrectas.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(uvista, "El rol seleccionado no corresponde a este usuario.", "Rol Incorrecto", JOptionPane.WARNING_MESSAGE);
             }
 
         } else {
-            JOptionPane.showMessageDialog(uvista, "Por favor complete todos los campos.", "Atención", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(uvista, "Credenciales incorrectas.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
+    } else {
+        JOptionPane.showMessageDialog(uvista, "Por favor complete todos los campos.", "Atención", JOptionPane.WARNING_MESSAGE);
     }
+}
 
     // --- MÉTODOS DE GESTIÓN DE USUARIOS ---
 

@@ -38,7 +38,6 @@ public class DetalleMovimiento extends javax.swing.JFrame {
         lblLote = new javax.swing.JLabel();
         lblProducto = new javax.swing.JLabel();
         lblCantidad = new javax.swing.JLabel();
-        txtProducto = new javax.swing.JTextField();
         txtCantidad = new javax.swing.JTextField();
         lblNotaId = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -48,6 +47,7 @@ public class DetalleMovimiento extends javax.swing.JFrame {
         cmbMovimientoId = new javax.swing.JComboBox<>();
         btnRegresar = new javax.swing.JButton();
         cmbLote = new javax.swing.JComboBox<>();
+        cmbProductos = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -59,12 +59,6 @@ public class DetalleMovimiento extends javax.swing.JFrame {
         lblProducto.setText("Producto:");
 
         lblCantidad.setText("Cantidad:");
-
-        txtProducto.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtProductoActionPerformed(evt);
-            }
-        });
 
         txtCantidad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -102,6 +96,8 @@ public class DetalleMovimiento extends javax.swing.JFrame {
 
         cmbLote.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        cmbProductos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -130,12 +126,12 @@ public class DetalleMovimiento extends javax.swing.JFrame {
                                         .addComponent(lblNotaId)))
                                 .addGap(37, 37, 37)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtProducto)
                                     .addComponent(txtCantidad)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(cmbMovimientoId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(cmbLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(cmbLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(cmbProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGap(0, 0, Short.MAX_VALUE)))))
                         .addGap(0, 92, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
@@ -167,7 +163,7 @@ public class DetalleMovimiento extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblProducto)
-                            .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cmbProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblCantidad)
@@ -183,10 +179,6 @@ public class DetalleMovimiento extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void txtProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProductoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtProductoActionPerformed
 
     private void txtCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadActionPerformed
         // TODO add your handling code here:
@@ -207,9 +199,7 @@ public class DetalleMovimiento extends javax.swing.JFrame {
     public JComboBox<String> getCmbLote() { return cmbLote; }
     
     
-public javax.swing.JTextField getTxtProducto() {
-    return txtProducto; // Reemplaza por el nombre de tu JTextField de Producto
-}
+
 
 public javax.swing.JTextField getTxtCantidad() {
     return txtCantidad; // Reemplaza por el nombre de tu JTextField de Cantidad
@@ -231,6 +221,14 @@ public javax.swing.JButton getBtnGuardar() {
     return btnRegresar; 
 }
     
+    public javax.swing.JComboBox<String> getCbxLote() {
+    return cmbLote; // O regresa cmbLote si en tu diseñador se llama cmbLote
+}
+
+public javax.swing.JComboBox<String> getCbxProducto() {
+    return cmbProductos;
+}
+    
     
     public void aplicarEstilos() {
     // 1. Tipografía general y colores principales
@@ -241,9 +239,9 @@ public javax.swing.JButton getBtnGuardar() {
     Color grisLectura = new Color(241, 245, 249);  // #F1F5F9
 
     // 2. Campo Producto en solo lectura con color diferenciado
-    txtProducto.setEditable(false);
-    txtProducto.setBackground(grisLectura);
-    txtProducto.setFont(fuenteBase);
+//    txtProducto.setEditable(false);
+//    txtProducto.setBackground(grisLectura);
+//    txtProducto.setFont(fuenteBase);
 
     // 3. Estilizar botones principales
     btnGuardar.setBackground(azulPrimario);
@@ -312,6 +310,7 @@ public javax.swing.JButton getBtnGuardar() {
     private javax.swing.JButton btnRegresar;
     private javax.swing.JComboBox<String> cmbLote;
     private javax.swing.JComboBox<String> cmbMovimientoId;
+    private javax.swing.JComboBox<String> cmbProductos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -321,6 +320,5 @@ public javax.swing.JButton getBtnGuardar() {
     private javax.swing.JLabel lblProducto;
     private javax.swing.JTable tblDetalle;
     private javax.swing.JTextField txtCantidad;
-    private javax.swing.JTextField txtProducto;
     // End of variables declaration//GEN-END:variables
 }

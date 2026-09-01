@@ -14,6 +14,9 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author KEVIN
  */
+
+ 
+
 public class DetalleMovimientoControlador {
     private Vista.DetalleMovimiento vista;
     private Modelo.DetalleMovimiento modelo;
@@ -31,22 +34,27 @@ public class DetalleMovimientoControlador {
     }
 
     public void iniciar() {
-        // 1. Asignar y fijar el ID de Nota de Movimiento
+        // 1. Fijar el ID de la Nota de Movimiento
         vista.getCmbMovimientoId().removeAllItems();
         vista.getCmbMovimientoId().addItem(String.valueOf(notaMovimientoId));
         vista.getCmbMovimientoId().setEnabled(false);
 
-        // 2. Cargar lista de lotes en el ComboBox
+        // 2. Cargar lotes iniciales
         cargarLotesEnCombo();
 
-        // 3. Evento al cambiar de Lote: Carga automática del Producto
-        vista.getCmbLote().addActionListener(e -> actualizarProductoSegunLote());
+        // 3. Escuchador: Al cambiar Lote en cbxLote, cargar productos en cbxProducto
+        vista.getCbxLote().addItemListener(e -> {
+            if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+                cargarProductosPorLote();
+            }
+        });
 
-        // 4. Asignación de Listeners
+        // 4. Escuchadores de botones
+        vista.getBtnGuardar().addActionListener(e -> agregarYGuardarDetalle());
         vista.getBtnPdf().addActionListener(e -> generarPDF());
         vista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
-        vista.getBtnGuardar().addActionListener(e -> agregarYGuardarDetalle());
 
+        // 5. Cargar tabla de detalles existentes
         tablaModelo = (DefaultTableModel) vista.getTblDetalle().getModel();
         cargarDetallesEnTabla();
 
@@ -55,25 +63,89 @@ public class DetalleMovimientoControlador {
     }
 
     private void cargarLotesEnCombo() {
-        vista.getCmbLote().removeAllItems();
-        vista.getCmbLote().addItem("Seleccione...");
+        vista.getCbxLote().removeAllItems();
+        vista.getCbxLote().addItem("Seleccione Lote...");
 
+        // Llamada general al modelo de Lotes
         ArrayList<String> listaLotes = modeloLote.obtenerListaLotes();
-        if (listaLotes != null) {
+        
+        if (listaLotes != null && !listaLotes.isEmpty()) {
             for (String lote : listaLotes) {
-                vista.getCmbLote().addItem(lote);
+                vista.getCbxLote().addItem(lote);
             }
         }
     }
 
-    private void actualizarProductoSegunLote() {
-        String loteSeleccionado = (String) vista.getCmbLote().getSelectedItem();
+   private void cargarProductosPorLote() {
+        vista.getCbxProducto().removeAllItems();
+        vista.getCbxProducto().addItem("Seleccione Producto...");
 
-        if (loteSeleccionado != null && !loteSeleccionado.equals("Seleccione...")) {
-            String nombreProducto = modeloLote.obtenerProductoPorLote(loteSeleccionado);
-            vista.getTxtProducto().setText(nombreProducto);
-        } else {
-            vista.getTxtProducto().setText("");
+        Object itemSeleccionado = vista.getCbxLote().getSelectedItem();
+
+        if (itemSeleccionado != null) {
+            String textoLote = itemSeleccionado.toString().trim();
+
+            if (!textoLote.isEmpty() && !textoLote.startsWith("Seleccione")) {
+                ArrayList<String> productos = modelo.obtenerProductosPorNumeroLote(textoLote);
+                
+                if (productos != null && !productos.isEmpty()) {
+                    for (String prod : productos) {
+                        vista.getCbxProducto().addItem(prod);
+                    }
+                }
+            }
+        }
+    }
+
+    private void agregarYGuardarDetalle() {
+        try {
+            if (vista.getCbxLote().getSelectedIndex() <= 0 || vista.getCbxProducto().getSelectedItem() == null) {
+                JOptionPane.showMessageDialog(vista, "Seleccione un lote y un producto válidos.");
+                return;
+            }
+
+            String loteSeleccionado = vista.getCbxLote().getSelectedItem().toString().trim();
+            String productoSeleccionado = vista.getCbxProducto().getSelectedItem().toString().trim();
+            int cantidad = Integer.parseInt(vista.getTxtCantidad().getText().trim());
+
+            if (cantidad <= 0) {
+                JOptionPane.showMessageDialog(vista, "La cantidad debe ser mayor a 0.");
+                return;
+            }
+
+            // Extraemos el id del producto (formato "1 - NombreProducto")
+            int productoId = Integer.parseInt(productoSeleccionado.split(" - ")[0].trim());
+
+            // Usamos la variable directa del constructor (notaMovimientoId)
+            boolean exito = modelo.registrarDetalleYActualizarStock(notaMovimientoId, loteSeleccionado, productoId, cantidad);
+
+            if (exito) {
+                JOptionPane.showMessageDialog(vista, "Detalle guardado y stock actualizado correctamente.");
+                cargarDetallesEnTabla();
+
+                // Limpiar entradas
+                if (vista.getCbxLote().getItemCount() > 0) {
+                    vista.getCbxLote().setSelectedIndex(0);
+                }
+                vista.getCbxProducto().removeAllItems();
+                vista.getTxtCantidad().setText("");
+            } else {
+                JOptionPane.showMessageDialog(vista, "Error al guardar el detalle o stock insuficiente en bodega.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(vista, "Por favor, ingrese un número entero válido en la cantidad.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(vista, "Ocurrió un error inesperado: " + e.getMessage());
+        }
+    }
+    
+    
+
+    private void cargarDetallesEnTabla() {
+        tablaModelo.setRowCount(0);
+        ArrayList<String[]> lista = modelo.obtenerDetallesPorNota(notaMovimientoId);
+        for (String[] fila : lista) {
+            tablaModelo.addRow(fila);
         }
     }
 
@@ -82,62 +154,6 @@ public class DetalleMovimientoControlador {
         Vista.MenuBodeguero vistaMenu = new Vista.MenuBodeguero();
         Controlador.MenuBodegueroControlador menuCtrl = new Controlador.MenuBodegueroControlador(vistaMenu);
         menuCtrl.iniciar();
-    }
-
-  private void agregarYGuardarDetalle() {
-    String loteStr = (String) vista.getCmbLote().getSelectedItem();
-    String productoStr = vista.getTxtProducto().getText().trim();
-    String cantidadStr = vista.getTxtCantidad().getText().trim();
-
-    // Validar selección y campo vacío
-    if (loteStr == null || loteStr.equals("Seleccione...") || cantidadStr.isEmpty()) {
-        JOptionPane.showMessageDialog(vista, "Por favor seleccione un Lote e ingrese la Cantidad.");
-        return;
-    }
-
-    int cantidad;
-    try {
-        cantidad = Integer.parseInt(cantidadStr);
-    } catch (NumberFormatException ex) {
-        JOptionPane.showMessageDialog(vista, "Ingrese un número entero válido para la Cantidad.");
-        return;
-    }
-
-    if (cantidad <= 0) {
-        JOptionPane.showMessageDialog(vista, "La cantidad debe ser mayor a cero.");
-        return;
-    }
-
-    // Obtener el ID numérico del lote seleccionado
-    int loteId = modeloLote.obtenerIdPorNumeroLote(loteStr);
-    
-    if (loteId == -1) {
-        JOptionPane.showMessageDialog(vista, "Error: No se encontró el ID del lote seleccionado.");
-        return;
-    }
-
-    // Ahora pasamos loteId (int) tal como requiere guardarDetalleConSP
-    boolean exito = modelo.guardarDetalleConSP(notaMovimientoId, loteId, cantidad, tipoMovimiento);
-
-    if (exito) {
-        JOptionPane.showMessageDialog(vista, "Detalle registrado e inventario actualizado correctamente.");
-
-        // Refrescar la tabla visual usando el código de lote y limpiar los campos
-        tablaModelo.addRow(new Object[]{notaMovimientoId, loteStr, productoStr, cantidad});
-        
-        vista.getCmbLote().setSelectedIndex(0);
-        vista.getTxtProducto().setText("");
-        vista.getTxtCantidad().setText("");
-    } else {
-        JOptionPane.showMessageDialog(vista, "Error: No se pudo actualizar el inventario. Verifique el stock disponible.");
-    }
-}
-    private void cargarDetallesEnTabla() {
-        tablaModelo.setRowCount(0);
-        ArrayList<String[]> lista = modelo.obtenerDetallesPorNota(notaMovimientoId);
-        for (String[] fila : lista) {
-            tablaModelo.addRow(fila);
-        }
     }
 
     private void generarPDF() {
@@ -158,4 +174,6 @@ public class DetalleMovimientoControlador {
             JOptionPane.showMessageDialog(vista, "Error al generar el archivo PDF.");
         }
     }
+    
+   
 }

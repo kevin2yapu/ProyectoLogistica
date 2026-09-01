@@ -56,48 +56,89 @@ public class InventarioBodega {
     }
 
     // Método principal para cargar la JTable (Trae el producto y el stock real)
-    public List<String[]> buscarInventario(String bodegaSel, String loteSel) {
+   public List<String[]> buscarInventario(String bodegaNombre, String loteNumero) {
     List<String[]> lista = new ArrayList<>();
-
-    // Consulta directa leyendo productos y lotes
+    
     StringBuilder sql = new StringBuilder(
-        "SELECT 'Bodega Principal' AS bodega, l.numero_lote AS lote, " +
-        "p.nombre AS producto, p.stock AS stock_actual " +
-        "FROM productos p " +
-        "INNER JOIN lotes l ON p.lote_id = l.id " +
+        "SELECT p.codigo AS codigo_producto, p.nombre AS producto, l.numero_lote, ib.stock " +
+        "FROM inventario_bodega ib " +
+        "INNER JOIN productos p ON ib.producto_id = p.id " +
+        "INNER JOIN lotes l ON ib.lote_id = l.id " +
+        "INNER JOIN bodegas b ON ib.bodega_id = b.id " +
         "WHERE 1=1 "
     );
 
-    String idLote = "";
-    if (loteSel != null && !loteSel.trim().equalsIgnoreCase("TODOS") && loteSel.contains("-")) {
-        idLote = loteSel.split("-")[0].trim();
-        sql.append(" AND l.id = ?");
+    // Filtrar por ID de bodega o Nombre según lo seleccionado
+    if (bodegaNombre != null && !bodegaNombre.equalsIgnoreCase("TODAS")) {
+        // Extrae el número ID por si el combo viene como "1 - Bodega Norte" o simplemente "1"
+        String idExtraido = bodegaNombre.split(" ")[0].replace("-", "").trim();
+        sql.append(" AND (b.id = ? OR b.nombre = ?) ");
+    }
+    
+    if (loteNumero != null && !loteNumero.equalsIgnoreCase("TODOS")) {
+        sql.append(" AND l.numero_lote = ? ");
     }
 
-    ConexionBDD conectar = new ConexionBDD();
+    ConexionBDD c = new ConexionBDD();
+    try (Connection con = c.conectar();
+         PreparedStatement ps = con.prepareStatement(sql.toString())) {
 
-    try (Connection conectado = conectar.conectar();
-         PreparedStatement ps = conectado.prepareStatement(sql.toString())) {
-
-        if (!idLote.isEmpty()) {
-            ps.setInt(1, Integer.parseInt(idLote));
+        int paramIndex = 1;
+        if (bodegaNombre != null && !bodegaNombre.equalsIgnoreCase("TODAS")) {
+            String idExtraido = bodegaNombre.split(" ")[0].replace("-", "").trim();
+            ps.setString(paramIndex++, idExtraido);
+            ps.setString(paramIndex++, bodegaNombre);
+        }
+        if (loteNumero != null && !loteNumero.equalsIgnoreCase("TODOS")) {
+            ps.setString(paramIndex++, loteNumero);
         }
 
         try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                lista.add(new String[]{
-                    rs.getString("bodega"),
-                    rs.getString("lote"),
-                    rs.getString("producto"),
-                    String.valueOf(rs.getBigDecimal("stock_actual"))
-                });
+                String[] fila = new String[4];
+                fila[0] = rs.getString("codigo_producto");
+                fila[1] = rs.getString("producto");
+                fila[2] = rs.getString("numero_lote");
+                fila[3] = String.valueOf(rs.getDouble("stock"));
+                lista.add(fila);
             }
         }
-
     } catch (SQLException e) {
-        System.out.println(">>> ERROR SQL BUSCAR: " + e.getMessage());
+        System.err.println(">>> ERROR SQL BUSCAR: " + e.getMessage());
     }
-
     return lista;
 }
+    
+    public ArrayList<String[]> obtenerInventarioPorBodega(int bodegaId) {
+        ArrayList<String[]> lista = new ArrayList<>();
+        String sql = "SELECT p.codigo_producto, p.nombre AS producto, l.numero_lote, ib.stock " +
+                     "FROM inventario_bodega ib " +
+                     "INNER JOIN productos p ON ib.producto_id = p.id " +
+                     "INNER JOIN lotes l ON ib.lote_id = l.id " +
+                     "WHERE ib.bodega_id = ? AND ib.stock > 0";
+
+        ConexionBDD c = new ConexionBDD();
+        try (Connection con = c.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, bodegaId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String[] fila = new String[4];
+                    fila[0] = rs.getString("codigo_producto");
+                    fila[1] = rs.getString("producto");
+                    fila[2] = rs.getString("numero_lote");
+                    fila[3] = String.valueOf(rs.getDouble("stock"));
+                    lista.add(fila);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al cargar inventario de bodega: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    
+    
 }

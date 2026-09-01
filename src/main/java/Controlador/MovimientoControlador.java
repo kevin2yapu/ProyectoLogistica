@@ -32,17 +32,24 @@ public class MovimientoControlador {
     }
 
     public void iniciar() {
-        mvista.getBtnGenerar().addActionListener(e -> registrarMovimiento());
-        mvista.getCmbTipoMovimiento().addActionListener(e -> gestionarCamposBodega());
-        mvista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
-        
-        cargarCatalogoBodegas();
-        cargarDatosTabla();
+    mvista.getBtnGenerar().addActionListener(e -> registrarMovimiento());
+    mvista.getCmbTipoMovimiento().addActionListener(e -> {
         gestionarCamposBodega();
+        aplicarRestriccionBodegaOrigen();
+    });
+    
+    mvista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
+    
+    cargarCatalogoBodegas();
+    cargarDatosTabla();
+    gestionarCamposBodega();
+    
+ 
+    aplicarRestriccionBodegaOrigen();
 
-        mvista.setLocationRelativeTo(null);
-        mvista.setVisible(true);
-    }
+    mvista.setLocationRelativeTo(null);
+    mvista.setVisible(true);
+}
 
     private void cargarCatalogoBodegas() {
         ArrayList<Bodega> lista = bmodelo.obtenerCatalogo();
@@ -85,11 +92,26 @@ public class MovimientoControlador {
     
     private void gestionarCamposBodega() {
     String tipo = mvista.getCmbTipoMovimiento().getSelectedItem().toString();
-    
-    // Habilitar ambos combos sin importar si es Entrada o Salida
-    mvista.getCmbBodegaOrigen().setEnabled(true);
-    mvista.getCmbBodegaDestino().setEnabled(true);
+
+    if (tipo.equalsIgnoreCase("ENTRADA DE PRODUCTO")) {
+        // En una Entrada, los productos vienen de fuera (Proveedor/Producción).
+        // No hay Bodega Origen: se deshabilita y se limpia la selección.
+        mvista.getCmbBodegaOrigen().setSelectedIndex(-1);
+        mvista.getCmbBodegaOrigen().setEnabled(false);
+        
+        // La Bodega Destino debe estar activa para elegir a dónde entra el stock
+        mvista.getCmbBodegaDestino().setEnabled(true);
+
+    } else if (tipo.equalsIgnoreCase("SALIDA DE PRODUCTO")) {
+        // En una Salida/Transferencia, se requieren ambas bodegas
+        mvista.getCmbBodegaOrigen().setEnabled(true);
+        mvista.getCmbBodegaDestino().setEnabled(true);
+
+        // Se vuelve a aplicar la restricción de rol para fijar la Bodega Origen al bodeguero
+        aplicarRestriccionBodegaOrigen();
+    }
 }
+    
     public void cargarDatosTabla() {
         DefaultTableModel model = (DefaultTableModel) mvista.getTblMovimientos().getModel();
         model.setRowCount(0);
@@ -209,4 +231,26 @@ public class MovimientoControlador {
         cargarDatosTabla(); // Refresca los datos reales desde la BDD
         JOptionPane.showMessageDialog(mvista, "Movimiento Registrado Correctamente.");
     }
+    
+    private void aplicarRestriccionBodegaOrigen() {
+    if (SesionUsuario.getIdBodega() != null) {
+        int idBodegaSesion = SesionUsuario.getIdBodega();
+
+        // Recorrer los objetos Bodega dentro del ComboBox
+        for (int i = 0; i < mvista.getCmbBodegaOrigen().getItemCount(); i++) {
+            Bodega b = (Bodega) mvista.getCmbBodegaOrigen().getItemAt(i);
+            
+            if (b != null && b.getId() == idBodegaSesion) {
+                mvista.getCmbBodegaOrigen().setSelectedIndex(i);
+                break;
+            }
+        }
+
+        // Bloquear selección si el rol es Bodeguero
+        String rol = SesionUsuario.getRol();
+        if (rol != null && !rol.trim().toUpperCase().contains("ADMIN")) {
+            mvista.getCmbBodegaOrigen().setEnabled(false);
+        }
+    }
+}
 }

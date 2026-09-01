@@ -218,11 +218,12 @@ public class Lote {
     }
     
     
-    public ArrayList<String> obtenerListaLotes() {
+   public ArrayList<String> obtenerListaLotes() {
     ArrayList<String> lista = new ArrayList<>();
-    String sql = "SELECT numero_lote FROM lotes"; // Reemplaza 'numero_lote' por tu columna exacta
+    String sql = "SELECT numero_lote FROM lotes";
 
-    try (Connection con = new ConexionBDD().conectar();
+    Controlador.ConexionBDD c = new Controlador.ConexionBDD();
+    try (Connection con = c.conectar();
          PreparedStatement ps = con.prepareStatement(sql);
          ResultSet rs = ps.executeQuery()) {
 
@@ -230,7 +231,7 @@ public class Lote {
             lista.add(rs.getString("numero_lote"));
         }
     } catch (SQLException e) {
-        System.out.println("Error al obtener lotes: " + e.getMessage());
+        System.err.println("Error al consultar lotes: " + e.getMessage());
     }
     return lista;
 }
@@ -274,6 +275,49 @@ public int obtenerIdPorNumeroLote(String numeroLote) {
         System.out.println("Error al consultar ID del lote: " + e.getMessage());
     }
     return id;
+}
+
+public int obtenerProductoIdPorLote(int loteId) {
+    int productoId = -1;
+    String sql = "SELECT producto_id FROM inventario_bodega WHERE lote_id = ? LIMIT 1";
+    
+    ConexionBDD c = new ConexionBDD();
+    try (Connection con = c.conectar();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setInt(1, loteId);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                productoId = rs.getInt("producto_id");
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return productoId;
+}
+
+public ArrayList<String> obtenerListaLotesPorBodega(int bodegaId) {
+    ArrayList<String> lista = new ArrayList<>();
+    String sql = "SELECT DISTINCT l.numero_lote " +
+                 "FROM inventario_bodega ib " +
+                 "INNER JOIN lotes l ON ib.lote_id = l.id " +
+                 "WHERE ib.bodega_id = ? AND ib.stock > 0";
+
+    Controlador.ConexionBDD c = new Controlador.ConexionBDD();
+    try (Connection con = c.conectar();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, bodegaId);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                lista.add(rs.getString("numero_lote"));
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al cargar lotes por bodega: " + e.getMessage());
+    }
+    return lista;
 }
 }
 

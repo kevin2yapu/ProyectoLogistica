@@ -30,6 +30,7 @@ public class LoteControlador {
     }
 
     // Carga el catálogo desplegable JComboBox
+    // Carga el catálogo desplegable JComboBox
     public void cargarComboBodegas() {
         lvista.getCbxBodega().removeAllItems();
         ArrayList<String> bodegas = lmodelo.obtenerComboBodegas();
@@ -40,7 +41,29 @@ public class LoteControlador {
         }
     }
 
-    // Extrae sólo el número ID de la selección del combo (ej: de "1 - Bodega Norte" toma el 1)
+    // Selecciona automáticamente la bodega en la que el usuario inició sesión
+    // y deshabilita el ComboBox si el rol es BODEGUERO.
+    private void aplicarRestriccionBodega() {
+        if (SesionUsuario.getIdBodega() != null) {
+            int bodegaSesionId = SesionUsuario.getIdBodega();
+
+            for (int i = 0; i < lvista.getCbxBodega().getItemCount(); i++) {
+                String item = lvista.getCbxBodega().getItemAt(i);
+                if (item.startsWith(bodegaSesionId + " - ") || item.contains(SesionUsuario.getNombreBodega())) {
+                    lvista.getCbxBodega().setSelectedIndex(i);
+                    break;
+                }
+            }
+
+            // Si es bodeguero, bloquea el combo para evitar selección de otras bodegas
+            String rol = SesionUsuario.getRol();
+            if (rol != null && !rol.trim().toUpperCase().contains("ADMIN")) {
+                lvista.getCbxBodega().setEnabled(false);
+            }
+        }
+    }
+
+    // Extrae sólo el número ID de la selección del combo (ej: "1 - Bodega Norte" -> 1)
     private int obtenerIdBodegaSeleccionada() {
         String seleccion = (String) lvista.getCbxBodega().getSelectedItem();
         if (seleccion != null && seleccion.contains(" - ")) {
@@ -51,18 +74,17 @@ public class LoteControlador {
     }
 
     // Carga las columnas en la tabla
-   public void cargarDatosTabla() {
-    lvista.getModeloTabla().setRowCount(0);
-    ArrayList<String[]> lLotes = lmodelo.obtenerLotes();
+    public void cargarDatosTabla() {
+        lvista.getModeloTabla().setRowCount(0);
+        ArrayList<String[]> lLotes = lmodelo.obtenerLotes();
 
-    if (lLotes != null) {
-        for (String[] l : lLotes) {
-            // [1] Numero Lote, [3] Nombre Bodega, [4] Fecha Vencimiento, [5] Estado
-            Object[] fila = {l[1], l[3], l[4], l[5]};
-            lvista.getModeloTabla().addRow(fila);
+        if (lLotes != null) {
+            for (String[] l : lLotes) {
+                Object[] fila = {l[1], l[3], l[4], l[5]};
+                lvista.getModeloTabla().addRow(fila);
+            }
         }
     }
-}
 
     public void seleccionarFila() {
         int fila = lvista.getFilaSeleccionada();
@@ -80,44 +102,59 @@ public class LoteControlador {
             lvista.setCodigoLote(codigoLote);
             lvista.setFechaVencimiento(fecha);
 
-            // Seleccionar automáticamente la bodega correspondiente en el ComboBox
-            for (int i = 0; i < lvista.getCbxBodega().getItemCount(); i++) {
-                if (lvista.getCbxBodega().getItemAt(i).contains(nombreBodega)) {
-                    lvista.getCbxBodega().setSelectedIndex(i);
-                    break;
+            // Permite cambiar la selección en pantalla solo si es Administrador
+            String rol = SesionUsuario.getRol();
+            if (rol != null && rol.trim().toUpperCase().contains("ADMIN")) {
+                for (int i = 0; i < lvista.getCbxBodega().getItemCount(); i++) {
+                    if (lvista.getCbxBodega().getItemAt(i).contains(nombreBodega)) {
+                        lvista.getCbxBodega().setSelectedIndex(i);
+                        break;
+                    }
                 }
             }
         }
     }
 
     public void agregarLote() {
-    String codigoLote = lvista.getCodigoLote().trim();
-    int idBodega = obtenerIdBodegaSeleccionada();
-    String fecha = lvista.getFechaVencimiento().trim();
+        String codigoLote = lvista.getCodigoLote().trim();
+        int idBodega = obtenerIdBodegaSeleccionada();
+        String fecha = lvista.getFechaVencimiento().trim();
 
-    if (codigoLote.isEmpty() || idBodega == -1 || fecha.isEmpty()) {
-        JOptionPane.showMessageDialog(lvista, "Por favor complete todos los campos.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
-        return;
+        if (codigoLote.isEmpty() || idBodega == -1 || fecha.isEmpty()) {
+            JOptionPane.showMessageDialog(lvista, "Por favor complete todos los campos.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (!fecha.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            JOptionPane.showMessageDialog(lvista, "Formato de fecha inválido. Use AAAA-MM-DD", "Fecha Incorrecta", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        try {
+            java.time.LocalDate fechaVencimiento = java.time.LocalDate.parse(fecha);
+            java.time.LocalDate fechaActual = java.time.LocalDate.now();
+
+            if (fechaVencimiento.isBefore(fechaActual)) {
+                JOptionPane.showMessageDialog(lvista, "La fecha de vencimiento no puede ser anterior a la fecha actual (" + fechaActual + ").", "Fecha Inválida", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(lvista, "La fecha ingresada no es válida.", "Error de Fecha", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        lmodelo.setCodigoLote(codigoLote);
+        lmodelo.setIdBodega(idBodega);
+        lmodelo.setFechaVencimiento(fecha);
+
+        if (lmodelo.insertarLote()) {
+            JOptionPane.showMessageDialog(lvista, "Lote guardado con éxito.");
+            limpiarCampos();
+            cargarDatosTabla();
+        } else {
+            JOptionPane.showMessageDialog(lvista, "Error al guardar en la base de datos.", "Error SQL", JOptionPane.ERROR_MESSAGE);
+        }
     }
-
-    if (!fecha.matches("\\d{4}-\\d{2}-\\d{2}")) {
-        JOptionPane.showMessageDialog(lvista, "Formato de fecha inválido. Use AAAA-MM-DD", "Fecha Incorrecta", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    lmodelo.setCodigoLote(codigoLote);
-    lmodelo.setIdBodega(idBodega);
-    lmodelo.setFechaVencimiento(fecha);
-
-    // Inserción directa en la tabla lotes
-    if (lmodelo.insertarLote()) {
-        JOptionPane.showMessageDialog(lvista, "Lote guardado con éxito.");
-        limpiarCampos();
-        cargarDatosTabla();
-    } else {
-        JOptionPane.showMessageDialog(lvista, "Error al guardar en la base de datos.", "Error SQL", JOptionPane.ERROR_MESSAGE);
-    }
-}
 
     public void editarLote() {
         if (idLoteSeleccionado == -1) {
@@ -167,47 +204,47 @@ public class LoteControlador {
     }
 
     public void buscarLote() {
-    String criterio = lvista.getCodigoLote().trim();
+        String criterio = lvista.getCodigoLote().trim();
 
-    if (criterio.isEmpty()) {
-        cargarDatosTabla();
-    } else {
-        lvista.getModeloTabla().setRowCount(0);
-        ArrayList<String[]> lLotes = lmodelo.buscarLotes(criterio);
+        if (criterio.isEmpty()) {
+            cargarDatosTabla();
+        } else {
+            lvista.getModeloTabla().setRowCount(0);
+            ArrayList<String[]> lLotes = lmodelo.buscarLotes(criterio);
 
-        if (lLotes != null) {
-            for (String[] l : lLotes) {
-                // [1] Numero Lote, [3] Nombre Bodega, [4] Fecha Vencimiento, [5] Estado
-                Object[] fila = {l[1], l[3], l[4], l[5]};
-                lvista.getModeloTabla().addRow(fila);
+            if (lLotes != null) {
+                for (String[] l : lLotes) {
+                    Object[] fila = {l[1], l[3], l[4], l[5]};
+                    lvista.getModeloTabla().addRow(fila);
+                }
             }
         }
     }
-}
 
     private void limpiarCampos() {
         this.idLoteSeleccionado = -1;
         lvista.setCodigoLote("");
         lvista.setFechaVencimiento("");
-        if (lvista.getCbxBodega().getItemCount() > 0) {
-            lvista.getCbxBodega().setSelectedIndex(0);
-        }
+        
+        // Mantiene seleccionada la bodega del bodeguero sin resetear a 0
+        aplicarRestriccionBodega();
     }
 
     public void iniciar() {
         cargarComboBodegas();
+        aplicarRestriccionBodega(); // Restringe e inhabilita si es bodeguero
         cargarDatosTabla();
-        
+
         lvista.addGuardarListener(e -> agregarLote());
         lvista.addEditarListener(e -> editarLote());
         lvista.addDeshabilitarListener(e -> deshabilitarLote());
         lvista.addBuscarListener(e -> buscarLote());
         lvista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
-        
+
         if (lvista.getBtnCrearProducto() != null) {
             lvista.getBtnCrearProducto().addActionListener(e -> irACrearProducto());
-        } 
-        
+        }
+
         lvista.addTablaListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -218,10 +255,10 @@ public class LoteControlador {
         lvista.setLocationRelativeTo(null);
         lvista.setVisible(true);
     }
-    
+
     private void regresarAlMenu() {
-        lvista.dispose(); 
-        
+        lvista.dispose();
+
         String rolActivo = SesionUsuario.getRol();
 
         if (rolActivo != null && rolActivo.trim().toUpperCase().contains("ADMIN")) {
@@ -234,15 +271,15 @@ public class LoteControlador {
             menuControlador.iniciar();
         }
     }
-    
+
     private void irACrearProducto() {
         lvista.dispose();
 
         Vista.ProductoIngreso vistaProducto = new Vista.ProductoIngreso();
         Modelo.Producto modeloProducto = new Modelo.Producto();
-        Controlador.ProductoControlador ctrlProducto = 
+        Controlador.ProductoControlador ctrlProducto =
                 new Controlador.ProductoControlador(modeloProducto, vistaProducto);
-        
-        ctrlProducto.iniciar(); 
+
+        ctrlProducto.iniciar();
     }
 }

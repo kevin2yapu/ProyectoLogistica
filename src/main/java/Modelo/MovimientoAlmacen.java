@@ -194,4 +194,26 @@ public abstract class MovimientoAlmacen {
         }
         return -1;
     }
+    
+    public int obtenerStockDisponible(int idBodega, int idLote, int idProducto) {
+    int stockActual = 0;
+    String sql = "SELECT stock FROM inventario_bodega WHERE bodega_id = ? AND lote_id = ? AND producto_id = ?";
+    
+   ConexionBDD conexion = new ConexionBDD();
+try (Connection con = conexion.conectar();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setInt(1, idBodega);
+        ps.setInt(2, idLote);
+        ps.setInt(3, idProducto);
+        
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            stockActual = rs.getInt("stock");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return stockActual;
+}
 }
