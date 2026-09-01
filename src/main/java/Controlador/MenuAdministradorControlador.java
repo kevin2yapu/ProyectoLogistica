@@ -6,11 +6,13 @@ package Controlador;
 
 import Modelo.InventarioBodega;
 import Modelo.Lote;
+import Modelo.ModeloReportes;
 import Modelo.Usuario;
 import Vista.InicioSesion;
 import Vista.InventarioBodegaVista;
 import Vista.LoteVista;
 import Vista.MenuAdmin;
+import Vista.VistaReporte;
 
 /**
  *
@@ -55,14 +57,25 @@ public class MenuAdministradorControlador {
             ctrl.iniciar();
         });
 
-        // 4. Botón: CERRAR SESIÓN (Vinculado a su controlador)
+        // 4. Botón: VISUALIZAR REPORTES
+        this.vista.getbtnVisualizarReportes().addActionListener(e -> {
+            vista.dispose(); // Oculta/Cierra el menú administrador
+            VistaReporte rVista = new VistaReporte();
+            ModeloReportes rModelo = new ModeloReportes();
+            
+            // Se vincula la vista con su controlador
+            ReportesControlador rCtrl = new ReportesControlador(rVista, rModelo);
+            rVista.setLocationRelativeTo(null);
+            rVista.setVisible(true);
+        });
+
+        // 5. Botón: CERRAR SESIÓN
         this.vista.getBtnCerrarSesion().addActionListener(e -> {
             vista.dispose();
             
             InicioSesion loginVista = new InicioSesion();
             Usuario loginModelo = new Usuario();
             
-            // Se vincula la vista con su controlador para reactivar el botón "Ingresar"
             UsuarioControlador loginCtrl = new UsuarioControlador(loginModelo, loginVista);
             loginCtrl.iniciar();
         });

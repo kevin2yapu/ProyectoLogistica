@@ -101,25 +101,29 @@ public class InventarioBodegaControlador {
         }
     }
 
-    public void buscarInventario() {
-        String bodegaSel = (String) ivista.getCmbBodega().getSelectedItem();
-        String loteSel = (String) ivista.getCmbLote().getSelectedItem();
-        
-        if (bodegaSel == null || loteSel == null) {
-            return;
-        }
+   public void buscarInventario() {
+    String bodegaSel = (String) ivista.getCmbBodega().getSelectedItem();
+    String loteSel = (String) ivista.getCmbLote().getSelectedItem();
+    
+    if (bodegaSel == null || loteSel == null) {
+        return;
+    }
 
-        DefaultTableModel modelTabla = ivista.getModeloTabla();
-        modelTabla.setRowCount(0); 
-        
-        List<String[]> datosFiltrados = imodelo.buscarInventario(bodegaSel, loteSel);
+    DefaultTableModel modelTabla = ivista.getModeloTabla();
+    modelTabla.setRowCount(0); 
+    
+    List<String[]> datosFiltrados = imodelo.buscarInventario(bodegaSel, loteSel);
 
-        if (datosFiltrados != null) {
-            for (String[] fila : datosFiltrados) {
-                modelTabla.addRow(new Object[]{fila[0], fila[1], fila[2], fila[3]});
-            }
+    if (datosFiltrados != null) {
+        for (String[] fila : datosFiltrados) {
+            // Col 0 (BODEGA)       <- bodegaSel (Nombre seleccionado en el ComboBox)
+            // Col 1 (LOTE)         <- fila[0]   (15Le, 155A, 777Prue)
+            // Col 2 (PRODUCTO)     <- fila[1]   (leche vita, jabón, naranja)
+            // Col 3 (STOCK ACTUAL) <- fila[3]   (20.0, 340.0)
+            modelTabla.addRow(new Object[]{bodegaSel, fila[0], fila[1], fila[3]});
         }
     }
+}
 
     private void regresarAlMenu() {
         ivista.dispose();

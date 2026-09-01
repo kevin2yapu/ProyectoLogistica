@@ -1,4 +1,5 @@
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\InventarioBodegaControlador.java
+C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\ReportesControlador.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\Lote.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\InventarioBodega.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Vista\MovimientoAlmacenVista.java
@@ -14,12 +15,14 @@ C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Mode
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Vista\ProductoIngreso.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Vista\InventarioBodegaVista.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\MenuBodegueroControlador.java
+C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Vista\VistaReporte.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\Usuario.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Vista\MenuBodeguero.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\GeneradorPDF.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\UsuarioControlador.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\MovimientoAlmacen.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\Bodega.java
+C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\ModeloReportes.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\SalidaAlmacen.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\ConexionBDD.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\MenuAdministradorControlador.java

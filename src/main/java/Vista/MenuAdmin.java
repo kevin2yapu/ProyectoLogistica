@@ -36,6 +36,7 @@ public class MenuAdmin extends javax.swing.JFrame {
         btnGestionLotesProductos = new javax.swing.JButton();
         btnInventarioBodegas = new javax.swing.JButton();
         btnCerrarSesion = new javax.swing.JButton();
+        btnVisualizarReportes = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -59,6 +60,8 @@ public class MenuAdmin extends javax.swing.JFrame {
 
         btnCerrarSesion.setText("CERRAR SESIÓN ");
 
+        btnVisualizarReportes.setText("VISUALIZAR REPORTES");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -66,15 +69,17 @@ public class MenuAdmin extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(155, 155, 155)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnGestionLotesProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnInventarioBodegas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAdministrarUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnCerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(200, 200, 200)
-                        .addComponent(lblTitulo)))
+                        .addComponent(lblTitulo))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(155, 155, 155)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnVisualizarReportes, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(btnGestionLotesProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnInventarioBodegas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnAdministrarUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnCerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(184, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -90,7 +95,9 @@ public class MenuAdmin extends javax.swing.JFrame {
                 .addComponent(btnInventarioBodegas)
                 .addGap(29, 29, 29)
                 .addComponent(btnCerrarSesion)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(btnVisualizarReportes)
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         pack();
@@ -116,6 +123,9 @@ public javax.swing.JButton getBtnInventarioBodegas() {
     return btnInventarioBodegas; // Reemplaza por el nombre variable de tu botón
 }
     
+public javax.swing.JButton getbtnVisualizarReportes() {
+    return btnVisualizarReportes; // Reemplaza "btnVisualizarReportes" por el nombre de la variable de tu botón
+}
 
 private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {                                                
     // 1. Limpiar o destruir datos de la sesión actual si usas una clase SesionUsuario
@@ -177,6 +187,15 @@ public void aplicarEstilosMenu() {
         btnCerrarSesion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
 }
+
+
+private void btnVisualizarReportesActionPerformed(java.awt.event.ActionEvent evt) {                                                      
+    Vista.VistaReporte vistaReporte = new Vista.VistaReporte();
+    Modelo.ModeloReportes modeloReporte = new Modelo.ModeloReportes();
+    Controlador.ReportesControlador controlador = new Controlador.ReportesControlador(vistaReporte, modeloReporte);
+    vistaReporte.setVisible(true);
+    vistaReporte.setLocationRelativeTo(null); 
+}
     /**
      * @param args the command line arguments
      */
@@ -217,6 +236,7 @@ public void aplicarEstilosMenu() {
     private javax.swing.JButton btnCerrarSesion;
     private javax.swing.JButton btnGestionLotesProductos;
     private javax.swing.JButton btnInventarioBodegas;
+    private javax.swing.JButton btnVisualizarReportes;
     private javax.swing.JLabel lblTitulo;
     // End of variables declaration//GEN-END:variables
 }

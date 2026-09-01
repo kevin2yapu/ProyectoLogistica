@@ -99,11 +99,11 @@ public class MenuBodeguero extends javax.swing.JFrame {
                 .addComponent(btnRegistroProductos)
                 .addGap(32, 32, 32)
                 .addComponent(btnMovimientoAlmacen)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(btnInventarioBodega)
                 .addGap(18, 18, 18)
                 .addComponent(btnCerrarSesion)
-                .addGap(27, 27, 27))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
 
         pack();

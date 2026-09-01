@@ -42,16 +42,16 @@ public class GeneradorPDF {
             documento.add(titulo);
             documento.add(new Paragraph(" ")); // Espaciador
 
-            // --- EXTRACCIÓN CON MAPEO CORRECTO DE ÍNDICES ---
+            // --- REORDENAMIENTO DE ÍNDICES SEGÚN LA DATA REAL ---
             String idNota        = (cabecera.length > 0 && cabecera[0] != null) ? cabecera[0] : "N/A";
-            String fecha         = (cabecera.length > 1 && cabecera[1] != null) ? cabecera[1] : "N/A";
-            String tipoMov       = (cabecera.length > 2 && cabecera[2] != null) ? cabecera[2] : "N/A";
-            String bodegaOrigen  = (cabecera.length > 3 && cabecera[3] != null && !cabecera[3].trim().isEmpty()) ? cabecera[3] : "N/A";
-            String bodegaDestino = (cabecera.length > 4 && cabecera[4] != null && !cabecera[4].trim().isEmpty()) ? cabecera[4] : "N/A";
-            String responsable   = (cabecera.length > 5 && cabecera[5] != null) ? cabecera[5] : "N/A";
+            String tipoMov       = (cabecera.length > 1 && cabecera[1] != null) ? cabecera[1] : "N/A";
+            String bodegaOrigen  = (cabecera.length > 2 && cabecera[2] != null && !cabecera[2].trim().isEmpty()) ? cabecera[2] : "N/A";
+            String bodegaDestino = (cabecera.length > 3 && cabecera[3] != null && !cabecera[3].trim().isEmpty()) ? cabecera[3] : "N/A";
+            String responsable   = (cabecera.length > 4 && cabecera[4] != null) ? cabecera[4] : "N/A";
+            String fecha         = (cabecera.length > 5 && cabecera[5] != null) ? cabecera[5] : "N/A";
             String observacion   = (cabecera.length > 6 && cabecera[6] != null) ? cabecera[6] : "Sin observaciones";
 
-            // Impresión del encabezado
+            // Impresión del encabezado con datos alineados a sus etiquetas correctas
             documento.add(new Paragraph("N° Nota Movimiento: " + idNota, valorFont));
             documento.add(new Paragraph("Fecha: " + fecha, valorFont));
             documento.add(new Paragraph("Tipo Movimiento: " + tipoMov, valorFont));
