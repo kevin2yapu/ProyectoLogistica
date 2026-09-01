@@ -40,7 +40,6 @@ Vista\MenuAdmin$2.class
 Vista\MenuAdmin.class
 Vista\InventarioBodegaVista$2.class
 Controlador\ConexionBDD.class
-Vista\DetalleMovimiento$4.class
 Vista\DetalleMovimiento$1.class
 Controlador\ProductoControlador$1.class
 Controlador\SesionUsuario.class

@@ -38,5 +38,7 @@ private static int idUsuario;
         rol = null;
         idBodega = null;
         nombreBodega = null;
+        
+      
     }
 }

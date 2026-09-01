@@ -65,7 +65,6 @@ public class UsuarioControlador {
 
     public Usuario inicioSesion(String email, String contrasena) {
     Usuario u = null;
-    // Consulta SQL que une usuarios con bodegas
     String sql = "SELECT u.id, u.nombres, u.email, u.contrasena, u.rol, u.estado, u.bodega_id, b.nombre AS nombre_bodega " +
                  "FROM usuarios u " +
                  "LEFT JOIN bodegas b ON u.bodega_id = b.id " +
@@ -90,16 +89,13 @@ public class UsuarioControlador {
                 resultado.getString("rol"),
                 resultado.getString("estado")
             );
-            
-            // Si tu objeto Usuario admite almacenar la bodega, o la extraemos para la sesión:
-            // Guardamos temporalmente idBodega y nombreBodega usando variables locales / atributos auxiliares
+
+            // Obtener el ID de la bodega y manejar valores nulos
             int bodegaId = resultado.getInt("bodega_id");
+            Integer idBodegaObj = resultado.wasNull() ? null : bodegaId;
             String nombreBodega = resultado.getString("nombre_bodega");
 
-            // Si bodega_id resulta 0/NULL (ej. para administradores)
-            Integer idBodegaObj = resultado.wasNull() ? null : bodegaId;
-
-            // Registrar en SesionUsuario inmediatamente
+            // ALMACENAR EN LA MEMORIA GLOBAL DE SESIÓN:
             SesionUsuario.iniciarSesion(
                 u.getId(), 
                 u.getNombres(), 

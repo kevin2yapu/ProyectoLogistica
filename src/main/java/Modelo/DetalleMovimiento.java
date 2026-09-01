@@ -112,64 +112,31 @@ public ArrayList<String> obtenerLotesPorNotaMovimiento(int notaId) {
 }
 
     // CORREGIDO: Une correctamente inventario y lotes respetando la bodega
-    public ArrayList<String> obtenerProductosPorNumeroLote(String numeroLote) {
-        ArrayList<String> lista = new ArrayList<>();
-        String sql = "SELECT DISTINCT p.id, p.nombre " +
-                     "FROM productos p " +
-                     "INNER JOIN inventario_bodega ib ON p.id = ib.producto_id " +
-                     "INNER JOIN lotes l ON ib.lote_id = l.id AND ib.bodega_id = l.bodega_id " +
-                     "WHERE TRIM(l.numero_lote) = TRIM(?)";
+  public ArrayList<String> obtenerProductosPorNumeroLote(String numeroLote, int notaMovimientoId) {
+    ArrayList<String> lista = new ArrayList<>();
 
-        asegurarConexion();
+    // Consulta que vincula el lote ingresado con su producto a través de inventario_bodega
+    String sql = "SELECT DISTINCT p.id, p.nombre " +
+                 "FROM productos p " +
+                 "INNER JOIN inventario_bodega ib ON p.id = ib.producto_id " +
+                 "INNER JOIN lotes l ON ib.lote_id = l.id " +
+                 "WHERE l.numero_lote = ?";
 
-        try (PreparedStatement ps = this.conectado.prepareStatement(sql)) {
-            ps.setString(1, numeroLote);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    lista.add(rs.getInt("id") + " - " + rs.getString("nombre"));
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al consultar productos por número de lote: " + e.getMessage());
-        }
-        return lista;
-    }
+    try (java.sql.Connection cn = new Controlador.ConexionBDD().conectar();
+         PreparedStatement ps = cn.prepareStatement(sql)) {
 
- public String[] obtenerCabeceraNota(int notaMovimientoId) {
-    String[] cabecera = new String[7];
-    
-    // Se añade u.bodega_id como fallback para la Bodega Origen
-    String sql = "SELECT nm.id, nm.fecha_movimiento, nm.tipo_movimiento, nm.observacion, " +
-                 "u.nombres AS responsable, " +
-                 "bo.nombre AS bodega_origen, " +
-                 "bd.nombre AS bodega_destino " +
-                 "FROM nota_movimiento nm " +
-                 "LEFT JOIN usuarios u ON nm.responsable_id = u.id " +
-                 "LEFT JOIN bodegas bo ON bo.id = COALESCE(nm.bodega_origen_id, u.bodega_id) " +
-                 "LEFT JOIN bodegas bd ON nm.bodega_destino_id = bd.id " +
-                 "WHERE nm.id = ?"; 
+        ps.setString(1, numeroLote);
+        ResultSet rs = ps.executeQuery();
 
-    asegurarConexion();
-
-    try (PreparedStatement ps = this.conectado.prepareStatement(sql)) {
-        ps.setInt(1, notaMovimientoId);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                cabecera[0] = String.valueOf(rs.getInt("id"));
-                cabecera[1] = rs.getString("fecha_movimiento") != null ? rs.getString("fecha_movimiento") : "N/A";
-                cabecera[2] = rs.getString("tipo_movimiento") != null ? rs.getString("tipo_movimiento") : "N/A";
-                cabecera[3] = rs.getString("bodega_origen") != null ? rs.getString("bodega_origen") : "N/A";
-                cabecera[4] = rs.getString("bodega_destino") != null ? rs.getString("bodega_destino") : "N/A";
-                cabecera[5] = rs.getString("responsable") != null ? rs.getString("responsable") : "N/A";
-                cabecera[6] = rs.getString("observacion") != null ? rs.getString("observacion") : "Sin observaciones";
-            }
+        while (rs.next()) {
+            lista.add(rs.getInt("id") + " - " + rs.getString("nombre"));
         }
     } catch (SQLException e) {
-        System.err.println("Error en obtenerCabeceraNota: " + e.getMessage());
+        System.out.println("Error al cargar productos por lote: " + e.getMessage());
     }
-    return cabecera;
+
+    return lista;
 }
- 
  
     public ArrayList<String[]> obtenerDetallesPorNota(int notaId) {
         ArrayList<String[]> lista = new ArrayList<>();
@@ -198,4 +165,143 @@ public ArrayList<String> obtenerLotesPorNotaMovimiento(int notaId) {
         }
         return lista;
     }
+    
+    public String[] obtenerCabeceraNota(int notaId) {
+    String[] cabecera = new String[7];
+    // Se corrigió 'bodega' por 'bodegas' y se usaron los nombres exactos de columnas
+    String sql = "SELECT nm.id, nm.tipo_movimiento, " +
+                 "COALESCE(bo.nombre, 'N/A') AS origen, " +
+                 "COALESCE(bd.nombre, 'N/A') AS destino, " +
+                 "u.nombres AS responsable, " +
+                 "nm.fecha_movimiento, nm.observacion " +
+                 "FROM nota_movimiento nm " +
+                 "LEFT JOIN bodegas bo ON nm.bodega_origen_id = bo.id " +
+                 "LEFT JOIN bodegas bd ON nm.bodega_destino_id = bd.id " +
+                 "INNER JOIN usuarios u ON nm.responsable_id = u.id " +
+                 "WHERE nm.id = ?";
+
+    try (Connection cn = new Controlador.ConexionBDD().conectar();
+         PreparedStatement ps = cn.prepareStatement(sql)) {
+
+        ps.setInt(1, notaId);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                cabecera[0] = String.valueOf(rs.getInt("id"));
+                cabecera[1] = rs.getString("tipo_movimiento");
+                cabecera[2] = rs.getString("origen");
+                cabecera[3] = rs.getString("destino");
+                cabecera[4] = rs.getString("responsable");
+                cabecera[5] = rs.getString("fecha_movimiento");
+                cabecera[6] = rs.getString("observacion");
+            }
+        }
+    } catch (SQLException e) {
+        System.out.println("Error al obtener cabecera de la nota: " + e.getMessage());
+    }
+    return cabecera;
+}
+    
+  public boolean registrarDetalleYActualizarStock(int notaId, String numeroLote, int productoId, double cantidad, String tipoMovimiento) {
+    String sql = "{CALL sp_registrar_detalle_movimiento(?, ?, ?, ?, ?)}";
+    
+    try (Connection cn = new Controlador.ConexionBDD().conectar();
+         CallableStatement cs = cn.prepareCall(sql)) {
+
+        cs.setInt(1, notaId);
+        cs.setString(2, numeroLote);  // Se envía la cadena "11111111F"
+        cs.setInt(3, productoId);     // Se envía el ID 15
+        cs.setDouble(4, cantidad);
+        cs.setString(5, tipoMovimiento);
+
+        cs.execute();
+        return true;
+
+    } catch (SQLException e) {
+        System.out.println("Error SQL en registrarDetalle: " + e.getMessage());
+        return false;
+    }
+}
+  
+  
+  // Obtiene solo los lotes con stock en la bodega de origen
+public ArrayList<String> obtenerLotesPorBodega(int bodegaId) {
+    ArrayList<String> lista = new ArrayList<>();
+    String sql = "SELECT DISTINCT l.numero_lote " +
+                 "FROM inventario_bodega ib " +
+                 "JOIN lotes l ON ib.lote_id = l.id " +
+                 "WHERE ib.bodega_id = ? AND ib.stock > 0";
+
+    try (Connection cn = new Controlador.ConexionBDD().conectar();
+         PreparedStatement ps = cn.prepareStatement(sql)) {
+
+        ps.setInt(1, bodegaId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            lista.add(rs.getString("numero_lote"));
+        }
+    } catch (SQLException e) {
+        System.out.println("Error al cargar lotes filtrados: " + e.getMessage());
+    }
+    return lista;
+}
+
+// Obtiene solo los productos que pertenecen al lote seleccionado en esa bodega
+public ArrayList<String> obtenerProductosPorLoteYBodega(int bodegaId, String numeroLote) {
+    ArrayList<String> lista = new ArrayList<>();
+    String sql = "SELECT DISTINCT p.id, p.nombre " +
+                 "FROM inventario_bodega ib " +
+                 "JOIN lotes l ON ib.lote_id = l.id " +
+                 "JOIN productos p ON ib.producto_id = p.id " +
+                 "WHERE ib.bodega_id = ? AND l.numero_lote = ? AND ib.stock > 0";
+
+    try (Connection cn = new Controlador.ConexionBDD().conectar();
+         PreparedStatement ps = cn.prepareStatement(sql)) {
+
+        ps.setInt(1, bodegaId);
+        ps.setString(2, numeroLote);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            lista.add(rs.getInt("id") + " - " + rs.getString("nombre"));
+        }
+    } catch (SQLException e) {
+        System.out.println("Error al cargar productos filtrados: " + e.getMessage());
+    }
+    return lista;
+}
+
+
+public ArrayList<String> obtenerTodosLosLotes() {
+    ArrayList<String> lista = new ArrayList<>();
+    String sql = "SELECT numero_lote FROM lotes";
+
+    try (Connection cn = new Controlador.ConexionBDD().conectar();
+         PreparedStatement ps = cn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            lista.add(rs.getString("numero_lote"));
+        }
+    } catch (SQLException e) {
+        System.out.println("Error al cargar todos los lotes: " + e.getMessage());
+    }
+    return lista;
+}
+
+// Obtener todos los productos del sistema (para ENTRADA)
+public ArrayList<String> obtenerTodosLosProductos() {
+    ArrayList<String> lista = new ArrayList<>();
+    String sql = "SELECT id, nombre FROM productos";
+
+    try (Connection cn = new Controlador.ConexionBDD().conectar();
+         PreparedStatement ps = cn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            lista.add(rs.getInt("id") + " - " + rs.getString("nombre"));
+        }
+    } catch (SQLException e) {
+        System.out.println("Error al cargar todos los productos: " + e.getMessage());
+    }
+    return lista;
+}
 }

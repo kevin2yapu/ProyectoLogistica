@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 
@@ -166,54 +167,78 @@ public abstract class MovimientoAlmacen {
 }
     
     // INSERTAR EN LA TABLA nota_movimiento VIA PROCEDIMIENTO ALMACENADO
-    public int insertarMovimiento(String tipo) {
-        asegurarConexion();
+   public int insertarMovimiento(String tipoMovimiento) {
+        String sql = "INSERT INTO nota_movimiento (bodega_origen_id, bodega_destino_id, responsable_id, fecha_movimiento, observacion, tipo_movimiento) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
+                     
+        int idGenerado = -1;
 
-        try {
-            CallableStatement cs = conectado.prepareCall("{call sp_insertar_movimiento(?, ?, ?, ?, ?, ?)}");
-            cs.setString(1, tipo);
+        try (Connection cn = new Controlador.ConexionBDD().conectar();
+             PreparedStatement ps = cn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
-            if (bodegaOrigenId != null) cs.setInt(2, bodegaOrigenId);
-            else cs.setNull(2, Types.INTEGER);
+            if (tipoMovimiento.contains("ENTRADA") || this.bodegaOrigenId == null) {
+                ps.setNull(1, java.sql.Types.INTEGER); // bodega_origen_id = NULL
+            } else {
+                ps.setInt(1, this.bodegaOrigenId);     // bodega_origen_id = ID de Origen
+            }
 
-            if (bodegaDestinoId != null) cs.setInt(3, bodegaDestinoId);
-            else cs.setNull(3, Types.INTEGER);
+            // Bodega Destino (Siempre requerida)
+            if (this.bodegaDestinoId != null) {
+                ps.setInt(2, this.bodegaDestinoId);
+            } else {
+                ps.setNull(2, java.sql.Types.INTEGER);
+            }
 
-            cs.setInt(4, responsableId);
-            cs.setString(5, observacion);
-            
-            cs.registerOutParameter(6, Types.INTEGER); // Recibe el ID asignado
-            cs.execute();
+            // Resto de los parámetros
+            ps.setInt(3, this.responsableId); 
+            ps.setString(4, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
+            ps.setString(5, this.observacion);
+            ps.setString(6, tipoMovimiento);
 
-            int idGenerado = cs.getInt(6);
-            cs.close();
-            return idGenerado;
-            
+            ps.executeUpdate();
+
+            // Obtener el ID autonumérico generado (id de la nota)
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                idGenerado = rs.getInt(1);
+            }
+
         } catch (SQLException e) {
-            System.err.println("Error al insertar movimiento: " + e.getMessage());
+            System.out.println("Error al insertar movimiento: " + e.getMessage());
         }
-        return -1;
+
+        return idGenerado;
     }
-    
+   
+   
     public int obtenerStockDisponible(int idBodega, int idLote, int idProducto) {
-    int stockActual = 0;
-    String sql = "SELECT stock FROM inventario_bodega WHERE bodega_id = ? AND lote_id = ? AND producto_id = ?";
-    
-   ConexionBDD conexion = new ConexionBDD();
-try (Connection con = conexion.conectar();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+        int stockActual = 0;
+        String sql = "SELECT stock FROM inventario_bodega WHERE bodega_id = ? AND lote_id = ? AND producto_id = ?";
         
-        ps.setInt(1, idBodega);
-        ps.setInt(2, idLote);
-        ps.setInt(3, idProducto);
-        
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            stockActual = rs.getInt("stock");
+        ConexionBDD conexion = new ConexionBDD();
+        try (Connection con = conexion.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, idBodega);
+            ps.setInt(2, idLote);
+            ps.setInt(3, idProducto);
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                stockActual = rs.getInt("stock");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return stockActual;
     }
-    return stockActual;
-}
+
+    
+    public Integer getBodegaParaStock() {
+        if (this.tipoMovimiento != null && this.tipoMovimiento.toUpperCase().contains("ENTRADA")) {
+            return this.bodegaDestinoId;
+        } else {
+            return this.bodegaOrigenId;
+        }
+    }
 }
