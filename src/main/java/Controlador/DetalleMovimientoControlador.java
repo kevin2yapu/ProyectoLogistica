@@ -6,6 +6,9 @@ package Controlador;
 
 import Modelo.Lote;
 import Vista.DetalleMovimiento;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -34,27 +37,22 @@ public class DetalleMovimientoControlador {
     }
 
     public void iniciar() {
-        // 1. Fijar el ID de la Nota de Movimiento
         vista.getCmbMovimientoId().removeAllItems();
         vista.getCmbMovimientoId().addItem(String.valueOf(notaMovimientoId));
         vista.getCmbMovimientoId().setEnabled(false);
 
-        // 2. Cargar lotes iniciales
         cargarLotesEnCombo();
 
-        // 3. Escuchador: Al cambiar Lote en cbxLote, cargar productos en cbxProducto
         vista.getCbxLote().addItemListener(e -> {
             if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
                 cargarProductosPorLote();
             }
         });
 
-        // 4. Escuchadores de botones
         vista.getBtnGuardar().addActionListener(e -> agregarYGuardarDetalle());
         vista.getBtnPdf().addActionListener(e -> generarPDF());
         vista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
 
-        // 5. Cargar tabla de detalles existentes
         tablaModelo = (DefaultTableModel) vista.getTblDetalle().getModel();
         cargarDetallesEnTabla();
 
@@ -62,13 +60,17 @@ public class DetalleMovimientoControlador {
         vista.setVisible(true);
     }
 
+    // CORREGIDO: Ahora busca solo los lotes pertencientes a la bodega origen de esta nota
     private void cargarLotesEnCombo() {
         vista.getCbxLote().removeAllItems();
         vista.getCbxLote().addItem("Seleccione Lote...");
 
-        // Llamada general al modelo de Lotes
-        ArrayList<String> listaLotes = modeloLote.obtenerListaLotes();
-        
+        ArrayList<String> listaLotes = modelo.obtenerLotesPorNotaMovimiento(notaMovimientoId);
+
+        if (listaLotes == null || listaLotes.isEmpty()) {
+            listaLotes = modeloLote.obtenerListaLotes();
+        }
+
         if (listaLotes != null && !listaLotes.isEmpty()) {
             for (String lote : listaLotes) {
                 vista.getCbxLote().addItem(lote);
@@ -76,7 +78,7 @@ public class DetalleMovimientoControlador {
         }
     }
 
-   private void cargarProductosPorLote() {
+    private void cargarProductosPorLote() {
         vista.getCbxProducto().removeAllItems();
         vista.getCbxProducto().addItem("Seleccione Producto...");
 
@@ -99,7 +101,7 @@ public class DetalleMovimientoControlador {
 
     private void agregarYGuardarDetalle() {
         try {
-            if (vista.getCbxLote().getSelectedIndex() <= 0 || vista.getCbxProducto().getSelectedItem() == null) {
+            if (vista.getCbxLote().getSelectedIndex() <= 0 || vista.getCbxProducto().getSelectedIndex() <= 0) {
                 JOptionPane.showMessageDialog(vista, "Seleccione un lote y un producto válidos.");
                 return;
             }
@@ -113,17 +115,22 @@ public class DetalleMovimientoControlador {
                 return;
             }
 
-            // Extraemos el id del producto (formato "1 - NombreProducto")
-            int productoId = Integer.parseInt(productoSeleccionado.split(" - ")[0].trim());
+            // Extraer ID del formato "ID - Nombre"
+            String[] partes = productoSeleccionado.split("-");
+            int productoId = Integer.parseInt(partes[0].trim());
 
-            // Usamos la variable directa del constructor (notaMovimientoId)
-            boolean exito = modelo.registrarDetalleYActualizarStock(notaMovimientoId, loteSeleccionado, productoId, cantidad);
+            boolean exito = modelo.registrarDetalleYActualizarStock(
+    notaMovimientoId, 
+    loteSeleccionado, 
+    productoId, 
+    cantidad, 
+    this.tipoMovimiento != null ? this.tipoMovimiento : "SALIDA" // Garantiza que no viaje nulo
+);
 
             if (exito) {
                 JOptionPane.showMessageDialog(vista, "Detalle guardado y stock actualizado correctamente.");
                 cargarDetallesEnTabla();
 
-                // Limpiar entradas
                 if (vista.getCbxLote().getItemCount() > 0) {
                     vista.getCbxLote().setSelectedIndex(0);
                 }
@@ -138,8 +145,6 @@ public class DetalleMovimientoControlador {
             JOptionPane.showMessageDialog(vista, "Ocurrió un error inesperado: " + e.getMessage());
         }
     }
-    
-    
 
     private void cargarDetallesEnTabla() {
         tablaModelo.setRowCount(0);
@@ -157,23 +162,32 @@ public class DetalleMovimientoControlador {
     }
 
     private void generarPDF() {
-        String[] cabecera = modelo.obtenerCabeceraNota(notaMovimientoId);
-        ArrayList<String[]> detalles = modelo.obtenerDetallesPorNota(notaMovimientoId);
+    // 1. Obtener los datos de cabecera usando el ID de la nota actual (notaMovimientoId)
+    String[] cabecera = modelo.obtenerCabeceraNota(this.notaMovimientoId);
+    ArrayList<String[]> detalles = modelo.obtenerDetallesPorNota(this.notaMovimientoId);
 
-        if (detalles.isEmpty()) {
-            JOptionPane.showMessageDialog(vista, "No hay detalles para generar el reporte.");
-            return;
-        }
-
-        String ruta = "Reporte_Movimiento_" + notaMovimientoId + ".pdf";
-        boolean exito = GeneradorPDF.generarReporteMovimiento(cabecera, detalles, ruta);
-
-        if (exito) {
-            JOptionPane.showMessageDialog(vista, "PDF generado con éxito en:\n" + ruta);
-        } else {
-            JOptionPane.showMessageDialog(vista, "Error al generar el archivo PDF.");
-        }
+    // Validar que existan registros en la tabla
+    if (detalles == null || detalles.isEmpty()) {
+        JOptionPane.showMessageDialog(vista, "No hay detalles registrados para generar el reporte.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
     }
-    
-   
+
+    // Validar que la cabecera contenga información válida
+    if (cabecera == null || cabecera.length == 0 || cabecera[0] == null) {
+        JOptionPane.showMessageDialog(vista, "No se encontraron los datos de la nota N° " + this.notaMovimientoId, "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // 2. Definir nombre y ruta del archivo PDF
+    String ruta = "Reporte_Movimiento_" + this.notaMovimientoId + ".pdf";
+
+    // 3. Invocar al generador de PDF
+    boolean exito = GeneradorPDF.generarReporteMovimiento(cabecera, detalles, ruta);
+
+    if (exito) {
+        JOptionPane.showMessageDialog(vista, "PDF generado con éxito:\n" + ruta, "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    } else {
+        JOptionPane.showMessageDialog(vista, "Error al crear el archivo PDF.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
 }

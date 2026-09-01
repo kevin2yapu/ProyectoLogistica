@@ -42,21 +42,23 @@ public class GeneradorPDF {
             documento.add(titulo);
             documento.add(new Paragraph(" ")); // Espaciador
 
-            // Extraer Bodegas de la cabecera (posiciones 5 y 6)
-            String bodegaOrigen = (cabecera.length > 5 && cabecera[5] != null && !cabecera[5].trim().isEmpty()) ? cabecera[5] : "N/A";
-            String bodegaDestino = (cabecera.length > 6 && cabecera[6] != null && !cabecera[6].trim().isEmpty()) ? cabecera[6] : "N/A";
+            // --- EXTRACCIÓN CON MAPEO CORRECTO DE ÍNDICES ---
+            String idNota        = (cabecera.length > 0 && cabecera[0] != null) ? cabecera[0] : "N/A";
+            String fecha         = (cabecera.length > 1 && cabecera[1] != null) ? cabecera[1] : "N/A";
+            String tipoMov       = (cabecera.length > 2 && cabecera[2] != null) ? cabecera[2] : "N/A";
+            String bodegaOrigen  = (cabecera.length > 3 && cabecera[3] != null && !cabecera[3].trim().isEmpty()) ? cabecera[3] : "N/A";
+            String bodegaDestino = (cabecera.length > 4 && cabecera[4] != null && !cabecera[4].trim().isEmpty()) ? cabecera[4] : "N/A";
+            String responsable   = (cabecera.length > 5 && cabecera[5] != null) ? cabecera[5] : "N/A";
+            String observacion   = (cabecera.length > 6 && cabecera[6] != null) ? cabecera[6] : "Sin observaciones";
 
-            // Cabecera: Datos de la Nota
-            documento.add(new Paragraph("N° Nota Movimiento: " + (cabecera[0] != null ? cabecera[0] : "N/A"), valorFont));
-            documento.add(new Paragraph("Fecha: " + (cabecera[1] != null ? cabecera[1] : "N/A"), valorFont));
-            documento.add(new Paragraph("Tipo Movimiento: " + (cabecera[2] != null ? cabecera[2] : "N/A"), valorFont));
-            
-            // --- NUEVOS CAMPOS AÑADIDOS ---
+            // Impresión del encabezado
+            documento.add(new Paragraph("N° Nota Movimiento: " + idNota, valorFont));
+            documento.add(new Paragraph("Fecha: " + fecha, valorFont));
+            documento.add(new Paragraph("Tipo Movimiento: " + tipoMov, valorFont));
             documento.add(new Paragraph("Bodega Origen: " + bodegaOrigen, valorFont));
             documento.add(new Paragraph("Bodega Destino: " + bodegaDestino, valorFont));
-            
-            documento.add(new Paragraph("Realizado por: " + (cabecera[4] != null ? cabecera[4] : "N/A"), valorFont));
-            documento.add(new Paragraph("Observación: " + (cabecera[3] != null ? cabecera[3] : "Sin observaciones"), valorFont));
+            documento.add(new Paragraph("Realizado por: " + responsable, valorFont));
+            documento.add(new Paragraph("Observación: " + observacion, valorFont));
             documento.add(new Paragraph(" "));
 
             // Tabla de Detalle

@@ -172,15 +172,17 @@ public class MovimientoControlador {
 //    }
 //}
 //    
-    public void registrarMovimiento() {
+   public void registrarMovimiento() {
     String tipoStr = mvista.getCmbTipoMovimiento().getSelectedItem().toString();
     String observacion = mvista.getTxtObservacion().getText().trim();
 
     Bodega bOrigen = (Bodega) mvista.getCmbBodegaOrigen().getSelectedItem();
     Bodega bDestino = (Bodega) mvista.getCmbBodegaDestino().getSelectedItem();
 
-    // Ahora captura el ID de Origen directamente al estar habilitado el combo
-    Integer bodegaOrigenId = (bOrigen != null) ? bOrigen.getId() : null;
+    // Origen: solo se envía si el combo está habilitado y tiene item (para SALIDA)
+    Integer bodegaOrigenId = (mvista.getCmbBodegaOrigen().isEnabled() && bOrigen != null) ? bOrigen.getId() : null;
+    
+    // Destino: SIEMPRE se captura el ID (para ENTRADA o SALIDA)
     Integer bodegaDestinoId = (bDestino != null) ? bDestino.getId() : null;
 
     int responsableId = SesionUsuario.getIdUsuario();
@@ -188,6 +190,11 @@ public class MovimientoControlador {
 
     if (observacion.isEmpty()) {
         JOptionPane.showMessageDialog(mvista, "Por favor complete la observación.");
+        return;
+    }
+
+    if (bodegaDestinoId == null) {
+        JOptionPane.showMessageDialog(mvista, "Debe seleccionar una bodega de destino.");
         return;
     }
 
