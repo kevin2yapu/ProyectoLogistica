@@ -53,15 +53,24 @@ public class ReportesControlador {
         this.vista.getBtnPDF().addActionListener(e -> exportarPDF());
     }
 
+//    private void inicializarFiltros() {
+//        if (vista.getCbxSolicitud() != null) {
+//            vista.getCbxSolicitud().removeAllItems();
+//            vista.getCbxSolicitud().addItem("TODOS");
+//            vista.getCbxSolicitud().addItem("ENTRADA");
+//            vista.getCbxSolicitud().addItem("SALIDA");
+//            vista.getCbxSolicitud().addItem("TRANSFERENCIA");
+//        }
+//    }
+    
     private void inicializarFiltros() {
-        if (vista.getCbxSolicitud() != null) {
-            vista.getCbxSolicitud().removeAllItems();
-            vista.getCbxSolicitud().addItem("TODOS");
-            vista.getCbxSolicitud().addItem("ENTRADA");
-            vista.getCbxSolicitud().addItem("SALIDA");
-            vista.getCbxSolicitud().addItem("TRANSFERENCIA");
-        }
+    if (vista.getCbxSolicitud() != null) {
+        vista.getCbxSolicitud().removeAllItems();
+        vista.getCbxSolicitud().addItem("TODOS");
+        vista.getCbxSolicitud().addItem("ENTRADA");
+        vista.getCbxSolicitud().addItem("SALIDA");
     }
+}
 
     private void generarReporte() {
     String fInicio = vista.getTxtFechaInicio().getText().trim();
