@@ -26,7 +26,7 @@ import javax.swing.table.DefaultTableModel;
 public class UsuarioControlador {
 
     private Usuario modelo;
-    private InicioSesion uvista; // Vista para Login
+    private InicioSesion uvista; 
     private GestionUsuarioVista vistaGestion;
     private int idUsuarioSeleccionado = -1;
 
@@ -47,6 +47,7 @@ public class UsuarioControlador {
         this.vistaGestion = vistaGestion;
     }
 
+  
     // --- MÉTODOS DE LOGIN ---
 
     public void iniciar() {

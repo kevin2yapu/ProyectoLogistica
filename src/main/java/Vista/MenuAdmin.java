@@ -33,7 +33,6 @@ public class MenuAdmin extends javax.swing.JFrame {
 
         lblTitulo = new javax.swing.JLabel();
         btnAdministrarUsuarios = new javax.swing.JButton();
-        btnGestionLotesProductos = new javax.swing.JButton();
         btnInventarioBodegas = new javax.swing.JButton();
         btnCerrarSesion = new javax.swing.JButton();
         btnVisualizarReportes = new javax.swing.JButton();
@@ -46,13 +45,6 @@ public class MenuAdmin extends javax.swing.JFrame {
         btnAdministrarUsuarios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAdministrarUsuariosActionPerformed(evt);
-            }
-        });
-
-        btnGestionLotesProductos.setText("GESTION DE LOTES Y PRODUCTOS");
-        btnGestionLotesProductos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGestionLotesProductosActionPerformed(evt);
             }
         });
 
@@ -73,13 +65,12 @@ public class MenuAdmin extends javax.swing.JFrame {
                         .addComponent(lblTitulo))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(155, 155, 155)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnVisualizarReportes, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnVisualizarReportes, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(btnGestionLotesProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnInventarioBodegas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnAdministrarUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnCerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(btnAdministrarUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE))
+                            .addComponent(btnCerrarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(184, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -89,15 +80,13 @@ public class MenuAdmin extends javax.swing.JFrame {
                 .addComponent(lblTitulo)
                 .addGap(32, 32, 32)
                 .addComponent(btnAdministrarUsuarios)
-                .addGap(30, 30, 30)
-                .addComponent(btnGestionLotesProductos)
-                .addGap(34, 34, 34)
+                .addGap(32, 32, 32)
                 .addComponent(btnInventarioBodegas)
-                .addGap(29, 29, 29)
-                .addComponent(btnCerrarSesion)
-                .addGap(18, 18, 18)
+                .addGap(40, 40, 40)
                 .addComponent(btnVisualizarReportes)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addGap(51, 51, 51)
+                .addComponent(btnCerrarSesion)
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         pack();
@@ -107,17 +96,13 @@ public class MenuAdmin extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAdministrarUsuariosActionPerformed
 
-    private void btnGestionLotesProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionLotesProductosActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGestionLotesProductosActionPerformed
-
     public javax.swing.JButton getBtnAdministrarUsuarios() {
     return btnAdministrarUsuarios; // Reemplaza por el nombre variable de tu botón
 }
 
-public javax.swing.JButton getBtnGestionLotesProductos() {
-    return btnGestionLotesProductos; // Reemplaza por el nombre variable de tu botón
-}
+//public javax.swing.JButton getBtnGestionLotesProductos() {
+//    return btnGestionLotesProductos; // Reemplaza por el nombre variable de tu botón
+//}
 
 public javax.swing.JButton getBtnInventarioBodegas() {
     return btnInventarioBodegas; // Reemplaza por el nombre variable de tu botón
@@ -147,9 +132,9 @@ public javax.swing.JButton getBtnCerrarSesion() {
 
 public void aplicarEstilosMenu() {
     // 1. Colores y fuentes de la línea gráfica
-    Color azulOscuro = new Color(15, 23, 42);      // #0F172A
-    Color azulBoton = new Color(30, 58, 138);      // #1E3A8A (Azul corporativo oscuro)
-    Color rojoCerrar = new Color(220, 38, 38);     // #DC2626 (Rojo para salir)
+    Color azulOscuro = new Color(15, 23, 42);     
+    Color azulBoton = new Color(30, 58, 138);      
+    Color rojoCerrar = new Color(220, 38, 38);     
 
     Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 20);
     Font fuenteBoton = new Font("Segoe UI", Font.BOLD, 13);
@@ -162,7 +147,7 @@ public void aplicarEstilosMenu() {
     }
 
     // 3. Estilizar Botones de Opciones Principales
-    JButton[] botonesNavegacion = {btnAdministrarUsuarios, btnGestionLotesProductos, btnInventarioBodegas};
+    JButton[] botonesNavegacion = {btnAdministrarUsuarios, btnVisualizarReportes, btnInventarioBodegas};
     
     for (JButton btn : botonesNavegacion) {
         if (btn != null) {
@@ -234,7 +219,6 @@ private void btnVisualizarReportesActionPerformed(java.awt.event.ActionEvent evt
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdministrarUsuarios;
     private javax.swing.JButton btnCerrarSesion;
-    private javax.swing.JButton btnGestionLotesProductos;
     private javax.swing.JButton btnInventarioBodegas;
     private javax.swing.JButton btnVisualizarReportes;
     private javax.swing.JLabel lblTitulo;

@@ -39,14 +39,14 @@ public class MenuAdministradorControlador {
             ctrl.iniciarGestion(); 
         });
 
-        // 2. Botón: GESTIÓN DE LOTES Y PRODUCTOS
-        this.vista.getBtnGestionLotesProductos().addActionListener(e -> {
-            vista.dispose();
-            LoteVista lVista = new LoteVista();
-            Lote lModelo = new Lote();
-            LoteControlador ctrl = new LoteControlador(lModelo, lVista);
-            ctrl.iniciar();
-        });
+//        // 2. Botón: GESTIÓN DE LOTES Y PRODUCTOS
+//        this.vista.getBtnGestionLotesProductos().addActionListener(e -> {
+//            vista.dispose();
+//            LoteVista lVista = new LoteVista();
+//            Lote lModelo = new Lote();
+//            LoteControlador ctrl = new LoteControlador(lModelo, lVista);
+//            ctrl.iniciar();
+//        });
 
         // 3. Botón: INVENTARIO BODEGAS
         this.vista.getBtnInventarioBodegas().addActionListener(e -> {

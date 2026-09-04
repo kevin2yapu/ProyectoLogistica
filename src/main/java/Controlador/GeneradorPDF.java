@@ -4,10 +4,12 @@
  */
 package Controlador;
 
+import Modelo.SesionUsuario;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -218,4 +220,67 @@ public void generarComprobanteEntrada(String producto, String cantidad, String l
         System.err.println("Error al construir el documento PDF: " + e.getMessage());
     }
 }
+
+
+
+public static void generarComprobanteSalida(
+            String bodegaOrigen, 
+            String bodegaDestino, 
+            String producto, 
+            int cantidadRequerida, 
+            String observaciones, 
+            String rutaArchivo) {
+            
+        Document documento = new Document();
+
+        try {
+            PdfWriter.getInstance(documento, new FileOutputStream(rutaArchivo));
+            documento.open();
+
+            // Título Principal
+            Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
+            Paragraph titulo = new Paragraph("COMPROBANTE DE SALIDA DE PRODUCTO\n\n", fuenteTitulo);
+            titulo.setAlignment(Element.ALIGN_CENTER);
+            documento.add(titulo);
+
+            // Tabla de Encabezado
+            PdfPTable tabla = new PdfPTable(2);
+            tabla.setWidthPercentage(100);
+            tabla.setWidths(new float[]{35f, 65f});
+
+            // Obtener el responsable desde la sesión activa
+           String responsable = (SesionUsuario.getNombre() != null) ? SesionUsuario.getNombre() : "Usuario Activo";
+            if (responsable == null || responsable.trim().isEmpty()) {
+                responsable = "Usuario Activo";
+            }
+
+            // Filas de Información Principal
+            agregarFilaTabla(tabla, "Bodega Origen:", bodegaOrigen);
+            agregarFilaTabla(tabla, "Bodega Destino:", bodegaDestino);
+            agregarFilaTabla(tabla, "Producto:", producto);
+            agregarFilaTabla(tabla, "Cantidad Requerida:", String.valueOf(cantidadRequerida));
+            agregarFilaTabla(tabla, "Observaciones:", observaciones.isEmpty() ? "Sin observaciones" : observaciones);
+            agregarFilaTabla(tabla, "Responsable:", responsable);
+
+            documento.add(tabla);
+            documento.close();
+
+        } catch (Exception e) {
+            System.err.println("Error al generar PDF de salida: " + e.getMessage());
+        }
+    }
+
+    private static void agregarFilaTabla(PdfPTable tabla, String campo, String valor) {
+        Font fuenteBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+        Font fuenteNormal = FontFactory.getFont(FontFactory.HELVETICA, 12);
+
+        PdfPCell celdaCampo = new PdfPCell(new Phrase(campo, fuenteBold));
+        PdfPCell celdaValor = new PdfPCell(new Phrase(valor, fuenteNormal));
+
+        celdaCampo.setPadding(6);
+        celdaValor.setPadding(6);
+
+        tabla.addCell(celdaCampo);
+        tabla.addCell(celdaValor);
+    }
 }

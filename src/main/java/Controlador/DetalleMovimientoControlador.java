@@ -226,11 +226,69 @@ public class DetalleMovimientoControlador implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == vista.getBtnGuardar()) {
             guardarTransferencia();
+        } else if (e.getSource() == vista.getBtnPDF()) {
+            generarReportePDF(); // <-- ¡AQUÍ SE AGREGA EL EVENTO PARA EL PDF!
         } else if (e.getSource() == vista.getBtnRegresar()) {
             vista.dispose(); 
             Vista.MenuBodeguero vistaMenu = new Vista.MenuBodeguero();
             Controlador.MenuBodegueroControlador menuCtrl = new Controlador.MenuBodegueroControlador(vistaMenu);
             menuCtrl.iniciar();
+        }
+    }
+
+    private void generarReportePDF() {
+        try {
+            // Validar que se haya seleccionado un producto
+            Object prodSel = vista.getCbProducto().getSelectedItem();
+            if (prodSel == null) {
+                JOptionPane.showMessageDialog(vista, "Seleccione un producto para generar el reporte.", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String bodegaOrigen = vista.getCbBodegaOrigen().getSelectedItem() != null ? vista.getCbBodegaOrigen().getSelectedItem().toString() : "";
+            String bodegaDestino = vista.getCbBodegaDestino().getSelectedItem() != null ? vista.getCbBodegaDestino().getSelectedItem().toString() : "";
+            String producto = prodSel.toString();
+            
+            // Cantidad
+            String cantText = vista.getCantidadRequeridaText();
+            int cantidad = 0;
+            if (cantText != null && !cantText.trim().isEmpty()) {
+                try {
+                    cantidad = Integer.parseInt(cantText.trim());
+                } catch (NumberFormatException e) {
+                    cantidad = 0;
+                }
+            }
+
+            String observaciones = vista.getObservacionesText() != null ? vista.getObservacionesText().trim() : "";
+            
+            // Ruta del archivo a guardar
+            String rutaArchivo = "Comprobante_Salida_" + System.currentTimeMillis() + ".pdf";
+
+            // Generar PDF usando GeneradorPDF
+            Controlador.GeneradorPDF.generarComprobanteSalida(
+                bodegaOrigen, 
+                bodegaDestino, 
+                producto, 
+                cantidad, 
+                observaciones, 
+                rutaArchivo
+            );
+
+            // Abrir automáticamente el archivo generado
+            java.io.File file = new java.io.File(rutaArchivo);
+            if (file.exists()) {
+                if (java.awt.Desktop.isDesktopSupported()) {
+                    java.awt.Desktop.getDesktop().open(file);
+                }
+                JOptionPane.showMessageDialog(vista, "PDF de salida generado exitosamente.");
+            } else {
+                JOptionPane.showMessageDialog(vista, "No se pudo generar el documento PDF.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(vista, "Error al generar el PDF: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
     }
 
