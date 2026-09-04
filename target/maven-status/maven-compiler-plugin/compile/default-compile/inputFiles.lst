@@ -1,9 +1,9 @@
+C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\SesionUsuario.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\InventarioBodegaControlador.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\ReportesControlador.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\Lote.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\InventarioBodega.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Vista\MovimientoAlmacenVista.java
-C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\SesionUsuario.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\DetalleMovimiento.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Vista\MenuAdmin.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Vista\GestionUsuarioVista.java
@@ -23,6 +23,7 @@ C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Cont
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\MovimientoAlmacen.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\Bodega.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\ModeloReportes.java
+C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\EntradaControlador.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Modelo\SalidaAlmacen.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\ConexionBDD.java
 C:\Users\KEVIN\OneDrive\Documents\NetBeansProjects\LogisticaP\src\main\java\Controlador\MenuAdministradorControlador.java

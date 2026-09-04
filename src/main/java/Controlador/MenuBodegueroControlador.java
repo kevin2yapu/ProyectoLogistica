@@ -1,25 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Controlador;
 
 import Modelo.Bodega;
-import Modelo.EntradaAlmacen;
 import Modelo.InventarioBodega;
-import Modelo.Lote;
 import Modelo.MovimientoAlmacen;
 import Modelo.Producto;
 import Modelo.Usuario;
 import Vista.InicioSesion;
 import Vista.InventarioBodegaVista;
-import Vista.LoteVista;
 import Vista.MenuBodeguero;
 import Vista.MovimientoAlmacenVista;
 import Vista.ProductoIngreso;
+import Vista.DetalleMovimiento;
 
 /**
- *
+ * Controlador para la gestión del Menú del Bodeguero.
  * @author KEVIN
  */
 public class MenuBodegueroControlador {
@@ -30,44 +24,54 @@ public class MenuBodegueroControlador {
     }
 
     public void iniciar() {
-        // Asignación de eventos a los botones de navegación
-        this.vistaMenu.getBtnRegistroLotes().addActionListener(e -> abrirLotes());
-        this.vistaMenu.getBtnRegistroProductos().addActionListener(e -> abrirProductos());
-        this.vistaMenu.getBtnMovimientoAlmacen().addActionListener(e -> abrirMovimientos());
+        // 1. EVENTO: ENTRADA DE PRODUCTOS
+        if (this.vistaMenu.getBtnEntradaProductos() != null) {
+            for (java.awt.event.ActionListener al : this.vistaMenu.getBtnEntradaProductos().getActionListeners()) {
+                this.vistaMenu.getBtnEntradaProductos().removeActionListener(al);
+            }
+            this.vistaMenu.getBtnEntradaProductos().addActionListener(e -> abrirEntradaProductos());
+        }
 
-        // Evento para INVENTARIO DE BODEGA
+        // 2. EVENTO: SALIDA DE PRODUCTOS (Usa el botón de movimiento hacia la vista de detalle)
+        if (this.vistaMenu.getBtnMovimientoAlmacen() != null) {
+            for (java.awt.event.ActionListener al : this.vistaMenu.getBtnMovimientoAlmacen().getActionListeners()) {
+                this.vistaMenu.getBtnMovimientoAlmacen().removeActionListener(al);
+            }
+            this.vistaMenu.getBtnMovimientoAlmacen().addActionListener(e -> abrirSalidaProductos());
+        }
+
+        // 3. EVENTO: INVENTARIO DE BODEGA
         if (this.vistaMenu.getBtnInventarioBodega() != null) {
+            for (java.awt.event.ActionListener al : this.vistaMenu.getBtnInventarioBodega().getActionListeners()) {
+                this.vistaMenu.getBtnInventarioBodega().removeActionListener(al);
+            }
             this.vistaMenu.getBtnInventarioBodega().addActionListener(e -> abrirInventarioBodega());
         }
 
-        // Evento para CERRAR SESIÓN
-        this.vistaMenu.getBtnCerrarSesion().addActionListener(e -> {
-            vistaMenu.dispose(); // Cierra el menú actual
-            
-            InicioSesion loginVista = new InicioSesion();
-            Usuario loginModelo = new Usuario();
-            
-            // Conectar el controlador para activar el botón "Ingresar"
-            UsuarioControlador loginCtrl = new UsuarioControlador(loginModelo, loginVista);
-            loginCtrl.iniciar();
-        });
+        // 4. EVENTO: CERRAR SESIÓN
+        if (this.vistaMenu.getBtnCerrarSesion() != null) {
+            for (java.awt.event.ActionListener al : this.vistaMenu.getBtnCerrarSesion().getActionListeners()) {
+                this.vistaMenu.getBtnCerrarSesion().removeActionListener(al);
+            }
+            this.vistaMenu.getBtnCerrarSesion().addActionListener(e -> {
+                this.vistaMenu.dispose(); // Cierra el menú actual
+                
+                InicioSesion loginVista = new InicioSesion();
+                Usuario loginModelo = new Usuario();
+                
+                UsuarioControlador loginCtrl = new UsuarioControlador(loginModelo, loginVista);
+                loginCtrl.iniciar();
+            });
+        }
 
         // Configuración y muestra de la vista del menú
         this.vistaMenu.setLocationRelativeTo(null);
         this.vistaMenu.setVisible(true);
     }
 
-    private void abrirLotes() {
-        this.vistaMenu.dispose();
-        
-        LoteVista vistaLotes = new LoteVista();
-        Lote modeloLote = new Lote();
+    // MÉTODOS PRIVADOS DE NAVEGACIÓN
 
-        LoteControlador lControlador = new LoteControlador(modeloLote, vistaLotes);
-        lControlador.iniciar();
-    }
-
-    private void abrirProductos() {
+    private void abrirEntradaProductos() {
         this.vistaMenu.dispose();
         
         ProductoIngreso vistaProductos = new ProductoIngreso();
@@ -81,7 +85,7 @@ public class MenuBodegueroControlador {
         this.vistaMenu.dispose();
 
         MovimientoAlmacenVista mVista = new MovimientoAlmacenVista();
-        MovimientoAlmacen mModelo = new EntradaAlmacen();
+        MovimientoAlmacen mModelo = new Modelo.EntradaAlmacen(); 
         Bodega bModelo = new Bodega();
 
         MovimientoControlador mControlador = new MovimientoControlador(mModelo, bModelo, mVista);
@@ -89,15 +93,22 @@ public class MenuBodegueroControlador {
     }
     
     private void abrirInventarioBodega() {
-        // Oculta/Cierra el menú actual del bodeguero
         this.vistaMenu.dispose();
 
-        // Instancia el Modelo, la Vista y el Controlador del Inventario de Bodega
         InventarioBodega modelo = new InventarioBodega();
         InventarioBodegaVista vistaInventario = new InventarioBodegaVista();
         InventarioBodegaControlador controlador = new InventarioBodegaControlador(modelo, vistaInventario);
 
-        // Inicia el módulo de inventario
         controlador.iniciar();
+    }
+    
+    private void abrirSalidaProductos() {
+        this.vistaMenu.dispose();
+
+        DetalleMovimiento vistaDetalle = new DetalleMovimiento();
+        DetalleMovimientoControlador ctrlDetalle = new DetalleMovimientoControlador(vistaDetalle);
+
+        vistaDetalle.setLocationRelativeTo(null);
+        vistaDetalle.setVisible(true);
     }
 }

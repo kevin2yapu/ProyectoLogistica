@@ -9,7 +9,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
@@ -50,7 +53,11 @@ public class LoteVista extends javax.swing.JFrame {
         txtFechaVencimiento = new javax.swing.JTextField();
         cbxBodega = new javax.swing.JComboBox<>();
         btnRegresar = new javax.swing.JButton();
-        btnCrearProducto = new javax.swing.JButton();
+        btnPDF = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        txtCantidad = new javax.swing.JLabel();
+        lblProducto = new javax.swing.JTextField();
+        lblCantidad = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -95,43 +102,55 @@ public class LoteVista extends javax.swing.JFrame {
 
         btnRegresar.setText("<");
 
-        btnCrearProducto.setText("Crear Producto");
+        btnPDF.setText("PDF");
+
+        jLabel1.setText("Producto:");
+
+        txtCantidad.setText("Cantidad:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(btnBuscar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnGuardar)
-                .addGap(84, 84, 84)
-                .addComponent(btnEditar)
-                .addGap(58, 58, 58)
-                .addComponent(btnDeshabilitar)
-                .addGap(30, 30, 30))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnBuscar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnGuardar)
+                        .addGap(84, 84, 84)
+                        .addComponent(btnEditar)
+                        .addGap(58, 58, 58)
+                        .addComponent(btnDeshabilitar)
+                        .addGap(30, 30, 30))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnRegresar)
-                        .addGap(93, 93, 93)
-                        .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblCodigoLote, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
-                            .addComponent(lblDescripcion, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
-                            .addComponent(lblFechaVencimiento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(40, 40, 40)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtCodigoLote, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
-                            .addComponent(txtFechaVencimiento)
-                            .addComponent(cbxBodega, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(220, 220, 220)
-                        .addComponent(btnCrearProducto)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnRegresar)
+                                .addGap(93, 93, 93)
+                                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(233, 233, 233)
+                                .addComponent(btnPDF))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(lblCodigoLote, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                                        .addComponent(lblDescripcion, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                                        .addComponent(lblFechaVencimiento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(txtCantidad)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(40, 40, 40)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtCodigoLote, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
+                                    .addComponent(txtFechaVencimiento)
+                                    .addComponent(cbxBodega, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lblProducto)
+                                    .addComponent(lblCantidad))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,7 +172,15 @@ public class LoteVista extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblFechaVencimiento)
                     .addComponent(txtFechaVencimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(lblProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCantidad)
+                    .addComponent(lblCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -161,9 +188,8 @@ public class LoteVista extends javax.swing.JFrame {
                     .addComponent(btnEditar)
                     .addComponent(btnBuscar)
                     .addComponent(btnDeshabilitar))
-                .addGap(53, 53, 53)
-                .addComponent(btnCrearProducto)
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addGap(35, 35, 35)
+                .addComponent(btnPDF))
         );
 
         pack();
@@ -173,171 +199,175 @@ public class LoteVista extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtFechaVencimientoActionPerformed
 public DefaultTableModel getModeloTabla() {
-        return (DefaultTableModel) tblLotes.getModel(); 
-    }
+    return (DefaultTableModel) tblLotes.getModel();
+}
 
-    
     public int getFilaSeleccionada() {
-        return tblLotes.getSelectedRow(); 
+        return tblLotes.getSelectedRow();
+    }
+    
+    
+    public String getCodigoLote() { 
+        return txtCodigoLote.getText().trim();
+    }
+    
+    
+    public String getFechaVencimiento() { 
+        return txtFechaVencimiento.getText().trim(); 
+    }
+    
+    public JComboBox<String> getCbxBodega() {
+        return cbxBodega; 
     }
 
-    public String getCodigoLote() {
-        return txtCodigoLote.getText(); 
-    }
-
-   
-
-    public String getFechaVencimiento() {
-        return txtFechaVencimiento.getText(); 
-    }
-
-   
-   
-
-public JComboBox<String> getCbxBodega() {
-    return cbxBodega; }
-   
     public void setCodigoLote(String texto) {
-        txtCodigoLote.setText(texto);
+        txtCodigoLote.setText(texto); 
     }
-
-   
-
+    
     public void setFechaVencimiento(String texto) {
-        txtFechaVencimiento.setText(texto);
+        txtFechaVencimiento.setText(texto); 
     }
 
-
-
-
-    public void addGuardarListener(ActionListener l) {
-        btnGuardar.addActionListener(l); 
+    public JTextField getTxtCodigoLote() {
+        return txtCodigoLote; 
+    }
+    
+    public JTextField getTxtFechaVencimiento() {
+        return txtFechaVencimiento; 
+    }
+    
+    public JTextField getLblProductoInf() { 
+        return lblProducto; 
+    }
+    
+    public JTextField getLblCantidadInf() {
+        return lblCantidad; 
+    }
+    
+    public JTable getTblLotes() { 
+        return tblLotes; 
     }
 
+    public JButton getBtnGuardar() {
+        return btnGuardar;
+    }
+    
+    public JButton getBtnBuscar() {
+        return btnBuscar; 
+    }
+    
+    public JButton getBtnEditar() {
+        return btnEditar;
+    }
+    
+    public JButton getBtnDeshabilitar() {
+        return btnDeshabilitar; 
+    }
+    
+    public JButton getBtnRegresar() {
+        return btnRegresar; 
+    }
+    
+    public JButton getBtnPDF() { 
+        return btnPDF; 
+    }
+
+ 
+
+    public void addGuardarListener(ActionListener l) { 
+        btnGuardar.addActionListener(l);
+    }
     public void addEditarListener(ActionListener l) {
-        btnEditar.addActionListener(l);
+        btnEditar.addActionListener(l); 
     }
-
+    
     public void addDeshabilitarListener(ActionListener l) {
-        btnDeshabilitar.addActionListener(l);
+        btnDeshabilitar.addActionListener(l); 
     }
-
     public void addBuscarListener(ActionListener l) {
-        btnBuscar.addActionListener(l);
+        btnBuscar.addActionListener(l); 
     }
-
-    public void addTablaListener(MouseAdapter adapter) {
+    
+    public void addRegresarListener(ActionListener l) {
+        btnRegresar.addActionListener(l); 
+    }
+    
+    public void addPDFListener(ActionListener l) {
+        btnPDF.addActionListener(l);
+    }
+    public void addTablaListener(MouseAdapter adapter) { 
         tblLotes.addMouseListener(adapter);
     }
-    
-    public javax.swing.JButton getBtnRegresar() {
-    return btnRegresar; 
-}
-    
-    public javax.swing.JButton getBtnCrearProducto() {
-    return btnCrearProducto;
-    
-}
-    public javax.swing.JTextField getTxtCodigoLote() {
-    return txtCodigoLote; // Reemplaza "txtCodigoLote" por el nombre exacto de tu JTextField si es distinto (ej. txtCodigo, txtLote)
+
+ public String getTxtCantidadText() {
+    return lblCantidad.getText().trim();
 }
 
-public javax.swing.JTextField getTxtFechaVencimiento() {
-    return txtFechaVencimiento; // Reemplaza por el nombre exacto de tu componente de fecha
+public JTextField getTxtCantidad() {
+    return lblCantidad;
 }
-    public javax.swing.JTable getTblLotes() {
-    return tblLotes; // Cambia 'tblLotes' por el nombre exacto de la variable de tu JTable si difiere (ej. jTable1, tablaLotes)
+
+public String getProductoText() {
+    return lblProducto.getText().trim();
 }
-    
-    
+
     public void aplicarEstilosLotes() {
-    // 1. Colores y fuentes del ecosistema de logística
-    Color azulBodega = new Color(15, 23, 42);      // #0F172A (Azul marino industrial)
-    Color azulAccion = new Color(37, 99, 235);     // #2563EB (Azul primario para Guardar/Crear)
-    Color verdeAccion = new Color(16, 185, 129);   // #10B981 (Verde esmeralda para Editar)
-    Color rojoPeligro = new Color(220, 38, 38);    // #DC2626 (Rojo advertencia para Deshabilitar)
-    Color grisBoton = new Color(100, 116, 139);    // #64748B (Gris neutro para Buscar)
-    Color grisLineas = new Color(226, 232, 240);   // #E2E8F0
+        Color azulBodega = new Color(15, 23, 42);
+        Color azulAccion = new Color(37, 99, 235);
+        Color verdeAccion = new Color(16, 185, 129);
+        Color rojoPeligro = new Color(220, 38, 38);
+        Color grisBoton = new Color(100, 116, 139);
+        Color grisLineas = new Color(226, 232, 240);
 
-    Font fuenteBase = new Font("Segoe UI", Font.PLAIN, 13);
-    Font fuenteNegrita = new Font("Segoe UI", Font.BOLD, 13);
-    Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 18);
+        Font fuenteBase = new Font("Segoe UI", Font.PLAIN, 13);
+        Font fuenteNegrita = new Font("Segoe UI", Font.BOLD, 13);
+        Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 18);
 
-    // 2. Título de la Vista y Botón Regresar
-    if (lblTitulo != null) {
-        lblTitulo.setText("REGISTRO Y CONTROL DE LOTES");
-        lblTitulo.setFont(fuenteTitulo);
-        lblTitulo.setForeground(azulBodega);
-    }
-    
-    btnRegresar.setText("← Volver");
-    btnRegresar.setFont(fuenteBase);
+        if (lblTitulo != null) {
+            lblTitulo.setText("REGISTRO Y CONTROL DE LOTES");
+            lblTitulo.setFont(fuenteTitulo);
+            lblTitulo.setForeground(azulBodega);
+        }
 
-    // 3. Estilizar Botones de Operación
-    // Botón Buscar (Gris Neutro)
-    btnBuscar.setText("BUSCAR");
-    btnBuscar.setBackground(grisBoton);
-    btnBuscar.setForeground(Color.WHITE);
-    btnBuscar.setFont(fuenteNegrita);
-    btnBuscar.setOpaque(true);
-    btnBuscar.setBorderPainted(false);
-    btnBuscar.setFocusPainted(false);
+        if (btnRegresar != null) {
+            btnRegresar.setText("← Volver");
+            btnRegresar.setFont(fuenteBase);
+        }
 
-    // Botón Guardar (Azul Corporativo)
-    btnGuardar.setText("GUARDAR");
-    btnGuardar.setBackground(azulAccion);
-    btnGuardar.setForeground(Color.WHITE);
-    btnGuardar.setFont(fuenteNegrita);
-    btnGuardar.setOpaque(true);
-    btnGuardar.setBorderPainted(false);
-    btnGuardar.setFocusPainted(false);
+        estilarBoton(btnBuscar, "BUSCAR", grisBoton, fuenteNegrita);
+        estilarBoton(btnGuardar, "GUARDAR LOTE", azulAccion, fuenteNegrita);
+        estilarBoton(btnEditar, "EDITAR", verdeAccion, fuenteNegrita);
+        estilarBoton(btnDeshabilitar, "DESHABILITAR", rojoPeligro, fuenteNegrita);
+        estilarBoton(btnPDF, "GENERAR PDF", azulBodega, fuenteNegrita);
 
-    // Botón Editar (Verde Operativo)
-    btnEditar.setText("EDITAR");
-    btnEditar.setBackground(verdeAccion);
-    btnEditar.setForeground(Color.WHITE);
-    btnEditar.setFont(fuenteNegrita);
-    btnEditar.setOpaque(true);
-    btnEditar.setBorderPainted(false);
-    btnEditar.setFocusPainted(false);
+        if (tblLotes != null) {
+            JTableHeader header = tblLotes.getTableHeader();
+            header.setBackground(azulBodega);
+            header.setForeground(Color.WHITE);
+            header.setFont(fuenteNegrita);
+            header.setPreferredSize(new Dimension(header.getWidth(), 35));
 
-    // Botón Deshabilitar (Rojo Advertencia)
-    btnDeshabilitar.setText("DESHABILITAR");
-    btnDeshabilitar.setBackground(rojoPeligro);
-    btnDeshabilitar.setForeground(Color.WHITE);
-    btnDeshabilitar.setFont(fuenteNegrita);
-    btnDeshabilitar.setOpaque(true);
-    btnDeshabilitar.setBorderPainted(false);
-    btnDeshabilitar.setFocusPainted(false);
-
-    // Botón Crear Producto (Azul Principal)
-    if (btnCrearProducto != null) {
-        btnCrearProducto.setText("CREAR PRODUCTO");
-        btnCrearProducto.setBackground(azulBodega);
-        btnCrearProducto.setForeground(Color.WHITE);
-        btnCrearProducto.setFont(fuenteNegrita);
-        btnCrearProducto.setOpaque(true);
-        btnCrearProducto.setBorderPainted(false);
-        btnCrearProducto.setFocusPainted(false);
+            tblLotes.setRowHeight(28);
+            tblLotes.setFont(fuenteBase);
+            tblLotes.setGridColor(grisLineas);
+            tblLotes.setShowVerticalLines(false);
+            tblLotes.setSelectionBackground(new Color(219, 234, 254));
+            tblLotes.setSelectionForeground(Color.BLACK);
+        }
     }
 
-    // 4. Estilizar Tabla (JTable)
-    if (tblLotes != null) {
-        JTableHeader header = tblLotes.getTableHeader();
-        header.setBackground(azulBodega);
-        header.setForeground(Color.WHITE);
-        header.setFont(fuenteNegrita);
-        header.setPreferredSize(new Dimension(header.getWidth(), 35));
-
-        tblLotes.setRowHeight(28);
-        tblLotes.setFont(fuenteBase);
-        tblLotes.setGridColor(grisLineas);
-        tblLotes.setShowVerticalLines(false);
-        tblLotes.setSelectionBackground(new Color(219, 234, 254));
-        tblLotes.setSelectionForeground(Color.BLACK);
+    private void estilarBoton(JButton btn, String texto, Color bg, Font fuente) {
+        if (btn != null) {
+            btn.setText(texto);
+            btn.setBackground(bg);
+            btn.setForeground(Color.WHITE);
+            btn.setFont(fuente);
+            btn.setOpaque(true);
+            btn.setBorderPainted(false);
+            btn.setFocusPainted(false);
+            btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        }
     }
-}
-
     /**
      * @param args the command line arguments
      */
@@ -375,18 +405,22 @@ public javax.swing.JTextField getTxtFechaVencimiento() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
-    private javax.swing.JButton btnCrearProducto;
     private javax.swing.JButton btnDeshabilitar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnPDF;
     private javax.swing.JButton btnRegresar;
     private javax.swing.JComboBox<String> cbxBodega;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField lblCantidad;
     private javax.swing.JLabel lblCodigoLote;
     private javax.swing.JLabel lblDescripcion;
     private javax.swing.JLabel lblFechaVencimiento;
+    private javax.swing.JTextField lblProducto;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JTable tblLotes;
+    private javax.swing.JLabel txtCantidad;
     private javax.swing.JTextField txtCodigoLote;
     private javax.swing.JTextField txtFechaVencimiento;
     // End of variables declaration//GEN-END:variables

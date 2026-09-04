@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -26,6 +27,7 @@ public class Lote {
     private int idBodega;
     private String fechaVencimiento;
     private String estado;
+    private int cantidad;
     
     private ConexionBDD conectar = new ConexionBDD();
 
@@ -88,6 +90,13 @@ public class Lote {
         this.id = id;
     }
     
+    public int getCantidad() {
+    return cantidad;
+}
+
+public void setCantidad(int cantidad) {
+    this.cantidad = cantidad;
+}
     
 
    public ArrayList<String[]> obtenerLotes() {
@@ -118,20 +127,24 @@ public class Lote {
         return lista;
     }
 
-    public boolean insertarLote() {
-    String sql = "INSERT INTO lotes (numero_lote, bodega_id, fecha_vencimiento, estado) VALUES (?, ?, ?, 'ACTIVO')";
-
-    try (Connection con = new ConexionBDD().conectar();
+   public java.sql.Connection getConexionBDD() throws SQLException {
+    return conectar.conectar(); // Retorna la conexión activa mediante el objeto 'conectar'
+}
+   public boolean insertarLote() {
+    String sql = "INSERT INTO lotes (numero_lote, cantidad, bodega_id, fecha_vencimiento, estado, producto_id) VALUES (?, ?, ?, ?, ?, ?)";
+    try (Connection con = getConexionBDD();
          PreparedStatement ps = con.prepareStatement(sql)) {
 
         ps.setString(1, this.codigoLote);
-        ps.setInt(2, this.idBodega);
-        ps.setString(3, this.fechaVencimiento);
+        ps.setInt(2, this.cantidad);          
+        ps.setInt(3, this.idBodega);
+        ps.setString(4, this.fechaVencimiento);
+        ps.setString(5, this.estado);
+        ps.setInt(6, this.idProducto);       
 
         return ps.executeUpdate() > 0;
-
     } catch (SQLException e) {
-        System.out.println(">>> ERROR INSERTAR LOTE: " + e.getMessage());
+        System.err.println(">>> ERROR AL INSERTAR LOTE: " + e.getMessage());
         return false;
     }
 }
@@ -297,27 +310,40 @@ public int obtenerProductoIdPorLote(int loteId) {
     return productoId;
 }
 
-public ArrayList<String> obtenerListaLotesPorBodega(int bodegaId) {
-    ArrayList<String> lista = new ArrayList<>();
-    String sql = "SELECT DISTINCT l.numero_lote " +
-                 "FROM inventario_bodega ib " +
-                 "INNER JOIN lotes l ON ib.lote_id = l.id " +
-                 "WHERE ib.bodega_id = ? AND ib.stock > 0";
+public List<Lote> obtenerLotesDisponiblesFIFOPorNombre(String nombreProducto, int idBodega) {
+        List<Lote> listaLotes = new ArrayList<>();
+        
+        String sql = "SELECT l.id, l.numero_lote, l.fecha_vencimiento, l.cantidad " +
+                     "FROM lotes l " +
+                     "INNER JOIN productos p ON l.producto_id = p.id " +
+                     "WHERE p.nombre = ? AND l.bodega_id = ? AND l.cantidad > 0 " +
+                     "ORDER BY l.fecha_vencimiento ASC, l.id ASC;";
 
-    Controlador.ConexionBDD c = new Controlador.ConexionBDD();
-    try (Connection con = c.conectar();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+        ConexionBDD conexionBDD = new ConexionBDD();
 
-        ps.setInt(1, bodegaId);
-        try (ResultSet rs = ps.executeQuery()) {
+        try (Connection con = conexionBDD.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, nombreProducto);
+            ps.setInt(2, idBodega);
+            ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
-                lista.add(rs.getString("numero_lote"));
+                Lote lote = new Lote();
+                lote.setId(rs.getInt("id"));
+                lote.setCodigoLote(rs.getString("numero_lote"));
+                lote.setFechaVencimiento(rs.getString("fecha_vencimiento"));
+                lote.setCantidad(rs.getInt("cantidad"));
+                
+                listaLotes.add(lote);
             }
+
+        } catch (SQLException e) {
+            System.err.println("Error al obtener lotes FIFO en Modelo: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.err.println("Error al cargar lotes por bodega: " + e.getMessage());
+
+        return listaLotes;
     }
-    return lista;
-}
+
 }
 

@@ -4,6 +4,7 @@
  */
 package Controlador;
 
+import Modelo.SesionUsuario;
 import Modelo.InventarioBodega;
 import Vista.InventarioBodegaVista;
 import java.util.ArrayList;
@@ -124,6 +125,37 @@ public class InventarioBodegaControlador {
         }
     }
 }
+    
+//    public void buscarInventario() {
+//    String bodegaSel = (String) ivista.getCmbBodega().getSelectedItem();
+//    String loteSel = (String) ivista.getCmbLote().getSelectedItem();
+//    
+//    if (bodegaSel == null || loteSel == null) {
+//        return;
+//    }
+//
+//    DefaultTableModel modelTabla = ivista.getModeloTabla();
+//    modelTabla.setRowCount(0); // Limpiar la tabla antes de cargar
+//
+//    List<String[]> datosFiltrados = imodelo.buscarInventario(bodegaSel, loteSel);
+//
+//    if (datosFiltrados != null) {
+//        for (String[] fila : datosFiltrados) {
+//            
+//
+//            modelTabla.addRow(new Object[]{
+//                fila.length > 0 ? fila[0] : "",          
+//                fila.length > 1 ? fila[1] : "",          
+//                fila.length > 2 ? fila[2] : "",         
+//                fila.length > 3 ? fila[3] : "",           
+//                fila.length > 4 ? fila[4] : "0.0",        
+//                fila.length > 5 ? fila[5] : "ACTIVO",     
+//                fila.length > 6 ? fila[6] : "Sin Lote",   
+//                fila.length > 7 ? fila[7] : "ACTIVO"      
+//            });
+//        }
+//    }
+//}
 
     private void regresarAlMenu() {
         ivista.dispose();

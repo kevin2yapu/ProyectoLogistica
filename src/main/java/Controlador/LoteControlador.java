@@ -1,17 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Controlador;
 
+import Modelo.SesionUsuario;
 import Modelo.Lote;
 import Vista.LoteVista;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
@@ -29,8 +24,6 @@ public class LoteControlador {
         this.lvista = lvista;
     }
 
-    // Carga el catálogo desplegable JComboBox
-    // Carga el catálogo desplegable JComboBox
     public void cargarComboBodegas() {
         lvista.getCbxBodega().removeAllItems();
         ArrayList<String> bodegas = lmodelo.obtenerComboBodegas();
@@ -41,8 +34,6 @@ public class LoteControlador {
         }
     }
 
-    // Selecciona automáticamente la bodega en la que el usuario inició sesión
-    // y deshabilita el ComboBox si el rol es BODEGUERO.
     private void aplicarRestriccionBodega() {
         if (SesionUsuario.getIdBodega() != null) {
             int bodegaSesionId = SesionUsuario.getIdBodega();
@@ -55,7 +46,6 @@ public class LoteControlador {
                 }
             }
 
-            // Si es bodeguero, bloquea el combo para evitar selección de otras bodegas
             String rol = SesionUsuario.getRol();
             if (rol != null && !rol.trim().toUpperCase().contains("ADMIN")) {
                 lvista.getCbxBodega().setEnabled(false);
@@ -63,7 +53,6 @@ public class LoteControlador {
         }
     }
 
-    // Extrae sólo el número ID de la selección del combo (ej: "1 - Bodega Norte" -> 1)
     private int obtenerIdBodegaSeleccionada() {
         String seleccion = (String) lvista.getCbxBodega().getSelectedItem();
         if (seleccion != null && seleccion.contains(" - ")) {
@@ -73,7 +62,6 @@ public class LoteControlador {
         return -1;
     }
 
-    // Carga las columnas en la tabla
     public void cargarDatosTabla() {
         lvista.getModeloTabla().setRowCount(0);
         ArrayList<String[]> lLotes = lmodelo.obtenerLotes();
@@ -102,7 +90,6 @@ public class LoteControlador {
             lvista.setCodigoLote(codigoLote);
             lvista.setFechaVencimiento(fecha);
 
-            // Permite cambiar la selección en pantalla solo si es Administrador
             String rol = SesionUsuario.getRol();
             if (rol != null && rol.trim().toUpperCase().contains("ADMIN")) {
                 for (int i = 0; i < lvista.getCbxBodega().getItemCount(); i++) {
@@ -119,41 +106,48 @@ public class LoteControlador {
         String codigoLote = lvista.getCodigoLote().trim();
         int idBodega = obtenerIdBodegaSeleccionada();
         String fecha = lvista.getFechaVencimiento().trim();
+        String cantidadStr = lvista.getTxtCantidadText(); // Lee del campo de texto de la vista
 
-        if (codigoLote.isEmpty() || idBodega == -1 || fecha.isEmpty()) {
-            JOptionPane.showMessageDialog(lvista, "Por favor complete todos los campos.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
+        // 1. VALIDACIÓN DE CAMPOS VACÍOS
+        if (codigoLote.isEmpty() || idBodega == -1 || fecha.isEmpty() || cantidadStr.isEmpty()) {
+            JOptionPane.showMessageDialog(lvista, "Por favor complete todos los campos requeridos.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        if (!fecha.matches("\\d{4}-\\d{2}-\\d{2}")) {
-            JOptionPane.showMessageDialog(lvista, "Formato de fecha inválido. Use AAAA-MM-DD", "Fecha Incorrecta", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
+        // 2. VALIDACIÓN DE STOCK (MÍNIMO 10 UNIDADES)
+        int cantidad;
         try {
-            java.time.LocalDate fechaVencimiento = java.time.LocalDate.parse(fecha);
-            java.time.LocalDate fechaActual = java.time.LocalDate.now();
+            cantidad = Integer.parseInt(cantidadStr);
+            if (cantidad < 10) {
+                JOptionPane.showMessageDialog(lvista, "El stock del lote no puede ser menor a 10 unidades.", "Validación de Stock", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(lvista, "Ingrese un valor entero numérico válido para la cantidad.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 3. VALIDACIÓN DE FECHA DE VENCIMIENTO
+        if (!fecha.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            JOptionPane.showMessageDialog(lvista, "Formato de fecha inválido. Use el formato AAAA-MM-DD (Ej: 2026-12-31)", "Fecha Incorrecta", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            LocalDate fechaVencimiento = LocalDate.parse(fecha);
+            LocalDate fechaActual = LocalDate.now();
 
             if (fechaVencimiento.isBefore(fechaActual)) {
                 JOptionPane.showMessageDialog(lvista, "La fecha de vencimiento no puede ser anterior a la fecha actual (" + fechaActual + ").", "Fecha Inválida", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(lvista, "La fecha ingresada no es válida.", "Error de Fecha", JOptionPane.ERROR_MESSAGE);
+        } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(lvista, "La fecha ingresada no corresponde a un día de calendario válido.", "Error de Fecha", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        lmodelo.setCodigoLote(codigoLote);
-        lmodelo.setIdBodega(idBodega);
-        lmodelo.setFechaVencimiento(fecha);
-
-        if (lmodelo.insertarLote()) {
-            JOptionPane.showMessageDialog(lvista, "Lote guardado con éxito.");
-            limpiarCampos();
-            cargarDatosTabla();
-        } else {
-            JOptionPane.showMessageDialog(lvista, "Error al guardar en la base de datos.", "Error SQL", JOptionPane.ERROR_MESSAGE);
-        }
+        // 4. GUARDAR Y GENERAR REPORTE PDF
+        guardarLoteYGenerarReporte(codigoLote, fecha, idBodega, cantidad);
     }
 
     public void editarLote() {
@@ -225,14 +219,15 @@ public class LoteControlador {
         this.idLoteSeleccionado = -1;
         lvista.setCodigoLote("");
         lvista.setFechaVencimiento("");
-        
-        // Mantiene seleccionada la bodega del bodeguero sin resetear a 0
+        if (lvista.getTxtCantidad() != null) {
+            lvista.getTxtCantidad().setText("");
+        }
         aplicarRestriccionBodega();
     }
 
     public void iniciar() {
         cargarComboBodegas();
-        aplicarRestriccionBodega(); // Restringe e inhabilita si es bodeguero
+        aplicarRestriccionBodega();
         cargarDatosTabla();
 
         lvista.addGuardarListener(e -> agregarLote());
@@ -240,10 +235,6 @@ public class LoteControlador {
         lvista.addDeshabilitarListener(e -> deshabilitarLote());
         lvista.addBuscarListener(e -> buscarLote());
         lvista.getBtnRegresar().addActionListener(e -> regresarAlMenu());
-
-        if (lvista.getBtnCrearProducto() != null) {
-            lvista.getBtnCrearProducto().addActionListener(e -> irACrearProducto());
-        }
 
         lvista.addTablaListener(new MouseAdapter() {
             @Override
@@ -272,14 +263,38 @@ public class LoteControlador {
         }
     }
 
-    private void irACrearProducto() {
-        lvista.dispose();
+    // Método para coordinar el PDF de entrada tras guardar el lote con sus valores validados
+    private void guardarLoteYGenerarReporte(String codigoLote, String fechaVenc, int bodegaId, int cantidad) {
+        try {
+            // Asignar los valores al modelo
+            lmodelo.setCodigoLote(codigoLote);
+            lmodelo.setFechaVencimiento(fechaVenc);
+            lmodelo.setIdBodega(bodegaId);
+            lmodelo.setCantidad(cantidad);
+            lmodelo.setEstado("ACTIVO");
 
-        Vista.ProductoIngreso vistaProducto = new Vista.ProductoIngreso();
-        Modelo.Producto modeloProducto = new Modelo.Producto();
-        Controlador.ProductoControlador ctrlProducto =
-                new Controlador.ProductoControlador(modeloProducto, vistaProducto);
+            // Insertar en Base de Datos
+            if (lmodelo.insertarLote()) {
+                JOptionPane.showMessageDialog(lvista, "Lote registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
-        ctrlProducto.iniciar();
+                // Generar PDF de Comprobante
+                try {
+                    String productoNombre = (lvista.getProductoText() != null && !lvista.getProductoText().isEmpty()) 
+                            ? lvista.getProductoText() : "Producto Registrado";
+                    
+                    Controlador.GeneradorPDF pdfGenerator = new Controlador.GeneradorPDF();
+                    pdfGenerator.generarComprobanteEntrada(productoNombre, String.valueOf(cantidad), codigoLote, fechaVenc, SesionUsuario.getNombreBodega());
+                } catch (Exception e) {
+                    System.err.println("Aviso: No se pudo generar el PDF automáticamente - " + e.getMessage());
+                }
+
+                limpiarCampos();
+                cargarDatosTabla();
+            } else {
+                JOptionPane.showMessageDialog(lvista, "Error al guardar el lote en la Base de Datos.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(lvista, "Ocurrió un error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

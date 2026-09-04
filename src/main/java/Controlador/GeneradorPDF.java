@@ -174,4 +174,48 @@ public static boolean generarReporteMovimiento(String[] cabecera, ArrayList<Stri
             return false;
         }
     }
+
+public void generarComprobanteEntrada(String producto, String cantidad, String lote, String fechaVenc, String bodega) {
+    com.itextpdf.text.Document documento = new com.itextpdf.text.Document();
+    try {
+        String ruta = "Entrada_" + lote + ".pdf";
+        com.itextpdf.text.pdf.PdfWriter.getInstance(documento, new java.io.FileOutputStream(ruta));
+        documento.open();
+
+        // Título del PDF
+        com.itextpdf.text.Paragraph titulo = new com.itextpdf.text.Paragraph(
+            "COMPROBANTE DE ENTRADA DE PRODUCTO\n\n",
+            com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 18)
+        );
+        titulo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+        documento.add(titulo);
+
+        // Tabla con la información de la entrada
+        com.itextpdf.text.pdf.PdfPTable tabla = new com.itextpdf.text.pdf.PdfPTable(2);
+        tabla.setWidthPercentage(100);
+
+        tabla.addCell("Bodega:");
+        tabla.addCell(bodega);
+        tabla.addCell("Producto:");
+        tabla.addCell(producto);
+        tabla.addCell("Cantidad Ingresada:");
+        tabla.addCell(cantidad);
+        tabla.addCell("Código de Lote:");
+        tabla.addCell(lote);
+        tabla.addCell("Fecha Vencimiento:");
+        tabla.addCell(fechaVenc);
+
+        documento.add(tabla);
+        documento.close();
+
+        // Abrir el archivo PDF generado automáticamente en el sistema
+        java.io.File file = new java.io.File(ruta);
+        if (file.exists() && java.awt.Desktop.isDesktopSupported()) {
+            java.awt.Desktop.getDesktop().open(file);
+        }
+
+    } catch (Exception e) {
+        System.err.println("Error al construir el documento PDF: " + e.getMessage());
+    }
+}
 }

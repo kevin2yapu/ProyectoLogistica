@@ -4,6 +4,7 @@
  */
 package Controlador;
 
+import Modelo.SesionUsuario;
 import Modelo.Usuario;
 import Vista.GestionUsuarioVista;
 import Vista.InicioSesion;
@@ -24,24 +25,23 @@ import javax.swing.table.DefaultTableModel;
  */
 public class UsuarioControlador {
 
- private Usuario modelo;
+    private Usuario modelo;
     private InicioSesion uvista; // Vista para Login
     private GestionUsuarioVista vistaGestion;
     private int idUsuarioSeleccionado = -1;
 
-    // Lista en memoria para almacenar los objetos Usuario (incluye el ID)
     private ArrayList<Usuario> listaUsuariosActual = new ArrayList<>();
 
     public UsuarioControlador() {
     }
 
-    // Constructor para el Login
+    // Constructor para Login
     public UsuarioControlador(Usuario modelo, InicioSesion uvista) {
         this.modelo = modelo;
         this.uvista = uvista;
     }
 
-    // Constructor para la Gestión de Usuarios (Admin)
+    // Constructor para Gestión de Usuarios
     public UsuarioControlador(Usuario modelo, GestionUsuarioVista vistaGestion) {
         this.modelo = modelo;
         this.vistaGestion = vistaGestion;
@@ -50,117 +50,111 @@ public class UsuarioControlador {
     // --- MÉTODOS DE LOGIN ---
 
     public void iniciar() {
-        // 1. Remover listeners anteriores del botón para evitar dupplicaciones
-        for (java.awt.event.ActionListener al : this.uvista.getBtnIngresar().getActionListeners()) {
-            this.uvista.getBtnIngresar().removeActionListener(al);
+        if (this.uvista != null && this.uvista.getBtnIngresar() != null) {
+            for (java.awt.event.ActionListener al : this.uvista.getBtnIngresar().getActionListeners()) {
+                this.uvista.getBtnIngresar().removeActionListener(al);
+            }
+            this.uvista.getBtnIngresar().addActionListener(e -> recuperarUsuario());
+            this.uvista.setLocationRelativeTo(null);
+            this.uvista.setVisible(true);
         }
-
-        // 2. Asignar el nuevo listener
-        this.uvista.getBtnIngresar().addActionListener(e -> recuperarUsuario());
-
-        // 3. Mostrar la vista centrada
-        this.uvista.setLocationRelativeTo(null);
-        this.uvista.setVisible(true);
     }
 
     public Usuario inicioSesion(String email, String contrasena) {
-    Usuario u = null;
-    String sql = "SELECT u.id, u.nombres, u.email, u.contrasena, u.rol, u.estado, u.bodega_id, b.nombre AS nombre_bodega " +
-                 "FROM usuarios u " +
-                 "LEFT JOIN bodegas b ON u.bodega_id = b.id " +
-                 "WHERE u.email = ? AND u.contrasena = ? AND u.estado = 'ACTIVO'";
+        Usuario u = null;
+        String sql = "SELECT u.id, u.nombres, u.email, u.contrasena, u.rol, u.estado, u.bodega_id, b.nombre AS nombre_bodega " +
+                     "FROM usuarios u " +
+                     "LEFT JOIN bodegas b ON u.bodega_id = b.id " +
+                     "WHERE u.email = ? AND u.contrasena = ? AND u.estado = 'ACTIVO'";
 
-    ConexionBDD conectar = new ConexionBDD();
+        ConexionBDD conectar = new ConexionBDD();
 
-    try (Connection conectado = conectar.conectar();
-         PreparedStatement ps = conectado.prepareStatement(sql)) {
+        try (Connection conectado = conectar.conectar();
+             PreparedStatement ps = conectado.prepareStatement(sql)) {
 
-        ps.setString(1, email);
-        ps.setString(2, contrasena);
+            ps.setString(1, email);
+            ps.setString(2, contrasena);
 
-        ResultSet resultado = ps.executeQuery();
+            ResultSet resultado = ps.executeQuery();
 
-        if (resultado.next()) {
-            u = new Usuario(
-                resultado.getInt("id"),
-                resultado.getString("nombres"),
-                resultado.getString("email"),
-                resultado.getString("contrasena"),
-                resultado.getString("rol"),
-                resultado.getString("estado")
-            );
+            if (resultado.next()) {
+                u = new Usuario(
+                    resultado.getInt("id"),
+                    resultado.getString("nombres"),
+                    resultado.getString("email"),
+                    resultado.getString("contrasena"),
+                    resultado.getString("rol"),
+                    resultado.getString("estado")
+                );
 
-            // Obtener el ID de la bodega y manejar valores nulos
-            int bodegaId = resultado.getInt("bodega_id");
-            Integer idBodegaObj = resultado.wasNull() ? null : bodegaId;
-            String nombreBodega = resultado.getString("nombre_bodega");
+                int bodegaId = resultado.getInt("bodega_id");
+                Integer idBodegaObj = resultado.wasNull() ? null : bodegaId;
+                String nombreBodega = resultado.getString("nombre_bodega");
 
-            // ALMACENAR EN LA MEMORIA GLOBAL DE SESIÓN:
-            SesionUsuario.iniciarSesion(
-                u.getId(), 
-                u.getNombres(), 
-                u.getRol(), 
-                idBodegaObj, 
-                nombreBodega
-            );
+                SesionUsuario.iniciarSesion(
+                    u.getId(), 
+                    u.getNombres(), 
+                    u.getRol(), 
+                    idBodegaObj, 
+                    nombreBodega
+                );
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error en el login: " + e.getMessage());
         }
 
-    } catch (SQLException e) {
-        System.out.println("Error en el login: " + e.getMessage());
+        return u;
     }
 
-    return u;
-}
-
     public void recuperarUsuario() {
-    String email = uvista.getEmail();
-    String contrasena = uvista.getContrasena();
-    String rolSeleccionado = uvista.getRol();
+        String email = uvista.getEmail();
+        String contrasena = uvista.getContrasena();
+        String rolSeleccionado = uvista.getRol();
 
-    if (!email.isEmpty() && !contrasena.isEmpty()) {
+        if (!email.isEmpty() && !contrasena.isEmpty()) {
 
-        Usuario usuarioEncontrado = inicioSesion(email, contrasena);
+            Usuario usuarioEncontrado = inicioSesion(email, contrasena);
 
-        if (usuarioEncontrado != null) {
+            if (usuarioEncontrado != null) {
 
-            String rolBD = usuarioEncontrado.getRol().trim().toUpperCase();
-            String rolInterfaz = rolSeleccionado.trim().toUpperCase();
+                String rolBD = usuarioEncontrado.getRol().trim().toUpperCase();
+                String rolInterfaz = rolSeleccionado.trim().toUpperCase();
 
-            if (rolBD.contains(rolInterfaz) || rolInterfaz.contains(rolBD)) {
+                if (rolBD.contains(rolInterfaz) || rolInterfaz.contains(rolBD)) {
 
-                JOptionPane.showMessageDialog(uvista, "¡Bienvenido/a: " + usuarioEncontrado.getNombres() + "!");
+                    JOptionPane.showMessageDialog(uvista, "¡Bienvenido/a: " + usuarioEncontrado.getNombres() + "!");
 
-                if (rolBD.contains("ADMIN")) {
-                    uvista.dispose();
-                    MenuAdmin vistaAdmin = new MenuAdmin();
-                    MenuAdministradorControlador adminCtrl = new MenuAdministradorControlador(vistaAdmin);
-                    adminCtrl.iniciar();
+                    if (rolBD.contains("ADMIN")) {
+                        uvista.dispose();
+                        MenuAdmin vistaAdmin = new MenuAdmin();
+                        MenuAdministradorControlador adminCtrl = new MenuAdministradorControlador(vistaAdmin);
+                        adminCtrl.iniciar();
+                    } else {
+                        uvista.dispose();
+                        MenuBodeguero vistaMenu = new MenuBodeguero();
+                        MenuBodegueroControlador menuCtrl = new MenuBodegueroControlador(vistaMenu);
+                        menuCtrl.iniciar(); // Inicia vistas y asignación de listeners
+                    }
+
                 } else {
-                    uvista.dispose();
-                    MenuBodeguero vistaMenu = new MenuBodeguero();
-                    MenuBodegueroControlador menuCtrl = new MenuBodegueroControlador(vistaMenu);
-                    menuCtrl.iniciar();
+                    JOptionPane.showMessageDialog(uvista, "El rol seleccionado no corresponde a este usuario.", "Rol Incorrecto", JOptionPane.WARNING_MESSAGE);
                 }
 
             } else {
-                JOptionPane.showMessageDialog(uvista, "El rol seleccionado no corresponde a este usuario.", "Rol Incorrecto", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(uvista, "Credenciales incorrectas.", "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } else {
-            JOptionPane.showMessageDialog(uvista, "Credenciales incorrectas.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(uvista, "Por favor complete todos los campos.", "Atención", JOptionPane.WARNING_MESSAGE);
         }
-
-    } else {
-        JOptionPane.showMessageDialog(uvista, "Por favor complete todos los campos.", "Atención", JOptionPane.WARNING_MESSAGE);
     }
-}
 
     // --- MÉTODOS DE GESTIÓN DE USUARIOS ---
 
     public void iniciarGestion() {
         cargarTablaUsuarios();
 
-        // Evento al hacer clic en la tabla para pasar datos a los campos
         this.vistaGestion.getTblUsuarios().addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -179,7 +173,6 @@ public class UsuarioControlador {
             }
         });
 
-        // Eventos de los botones de la interfaz de Gestión
         this.vistaGestion.getBtnEditar().addActionListener(e -> editarUsuario());
         this.vistaGestion.getBtnDeshabilitar().addActionListener(e -> deshabilitarUsuario());
         this.vistaGestion.getBtnVolver().addActionListener(e -> regresarAlMenu());
@@ -219,30 +212,27 @@ public class UsuarioControlador {
         }
     }
 
-   private void cargarTablaUsuarios() {
-    DefaultTableModel tableModel = (DefaultTableModel) vistaGestion.getTblUsuarios().getModel();
-    tableModel.setRowCount(0);
+    private void cargarTablaUsuarios() {
+        DefaultTableModel tableModel = (DefaultTableModel) vistaGestion.getTblUsuarios().getModel();
+        tableModel.setRowCount(0);
 
-    ArrayList<String[]> datos = modelo.listarUsuarios(); 
-    listaUsuariosActual.clear();
+        ArrayList<String[]> datos = modelo.listarUsuarios(); 
+        listaUsuariosActual.clear();
 
-    for (String[] fila : datos) {
-        // Pasa los 6 parámetros incluyendo fila[5] (el estado)
-        Usuario u = new Usuario(
-            Integer.parseInt(fila[0]),
-            fila[1],
-            fila[2],
-            fila[3],
-            fila[4],
-            fila[5] 
-        );
-        
-        listaUsuariosActual.add(u);
-        
-        // Se cargan las 5 columnas a la vista
-        tableModel.addRow(new Object[]{u.getNombres(), u.getEmail(), u.getContrasena(), u.getRol(), u.getEstado()});
+        for (String[] fila : datos) {
+            Usuario u = new Usuario(
+                Integer.parseInt(fila[0]),
+                fila[1],
+                fila[2],
+                fila[3],
+                fila[4],
+                fila[5] 
+            );
+            
+            listaUsuariosActual.add(u);
+            tableModel.addRow(new Object[]{u.getNombres(), u.getEmail(), u.getContrasena(), u.getRol(), u.getEstado()});
+        }
     }
-}
 
     private void editarUsuario() {
         if (idUsuarioSeleccionado == -1) {

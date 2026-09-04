@@ -32,41 +32,28 @@ public class MenuBodeguero extends javax.swing.JFrame {
     private void initComponents() {
 
         lblBienVenido = new javax.swing.JLabel();
-        btnRegistroLotes = new javax.swing.JButton();
-        btnRegistroProductos = new javax.swing.JButton();
-        btnMovimientoAlmacen = new javax.swing.JButton();
+        btnSalidaProductos = new javax.swing.JButton();
         btnCerrarSesion = new javax.swing.JButton();
         btnInventarioBodega = new javax.swing.JButton();
+        btnEntradaProductos = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         lblBienVenido.setFont(new java.awt.Font("Showcard Gothic", 3, 36)); // NOI18N
         lblBienVenido.setText("Bienvenido al sistema de logistica XYZ");
 
-        btnRegistroLotes.setText("REGISTRO DE LOTES");
-        btnRegistroLotes.addActionListener(new java.awt.event.ActionListener() {
+        btnSalidaProductos.setText("SALIDA DE PRODUCTOS");
+        btnSalidaProductos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRegistroLotesActionPerformed(evt);
-            }
-        });
-
-        btnRegistroProductos.setText("REGISTRO DE PRODUCTO");
-        btnRegistroProductos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRegistroProductosActionPerformed(evt);
-            }
-        });
-
-        btnMovimientoAlmacen.setText("MOVIMIENTO DE ALMACEN ");
-        btnMovimientoAlmacen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMovimientoAlmacenActionPerformed(evt);
+                btnSalidaProductosActionPerformed(evt);
             }
         });
 
         btnCerrarSesion.setText("CERRAR SESIÓN ");
 
         btnInventarioBodega.setText("INVENTARIO BODEGAS ");
+
+        btnEntradaProductos.setText("ENTRADA DE PRODUCTOS");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -80,12 +67,11 @@ public class MenuBodeguero extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(157, 157, 157)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnRegistroProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnRegistroLotes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnMovimientoAlmacen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnSalidaProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnCerrarSesion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnInventarioBodega, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 186, Short.MAX_VALUE)))
+                            .addComponent(btnInventarioBodega, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnEntradaProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 196, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -93,15 +79,13 @@ public class MenuBodeguero extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(lblBienVenido)
-                .addGap(42, 42, 42)
-                .addComponent(btnRegistroLotes)
-                .addGap(29, 29, 29)
-                .addComponent(btnRegistroProductos)
-                .addGap(32, 32, 32)
-                .addComponent(btnMovimientoAlmacen)
-                .addGap(18, 18, 18)
+                .addGap(50, 50, 50)
+                .addComponent(btnEntradaProductos)
+                .addGap(38, 38, 38)
+                .addComponent(btnSalidaProductos)
+                .addGap(35, 35, 35)
                 .addComponent(btnInventarioBodega)
-                .addGap(18, 18, 18)
+                .addGap(39, 39, 39)
                 .addComponent(btnCerrarSesion)
                 .addContainerGap(60, Short.MAX_VALUE))
         );
@@ -109,81 +93,67 @@ public class MenuBodeguero extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnRegistroLotesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroLotesActionPerformed
+    private void btnSalidaProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalidaProductosActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnRegistroLotesActionPerformed
+    }//GEN-LAST:event_btnSalidaProductosActionPerformed
 
-    private void btnRegistroProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroProductosActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnRegistroProductosActionPerformed
+// --- GETTERS PARA EL CONTROLADOR (MenuBodegueroControlador) ---
+    public javax.swing.JButton getBtnEntradaProductos() {
+        return btnEntradaProductos;
+    }
 
-    private void btnMovimientoAlmacenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMovimientoAlmacenActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnMovimientoAlmacenActionPerformed
-
-    public javax.swing.JButton getBtnRegistroLotes() {
-    return btnRegistroLotes; 
-}
-
-public javax.swing.JButton getBtnRegistroProductos() {
-    return btnRegistroProductos; 
-}
-
-public javax.swing.JButton getBtnMovimientoAlmacen() {
-    return btnMovimientoAlmacen;
-}
-    
-    public javax.swing.JButton getBtnCerrarSesion() {
-    return btnCerrarSesion; // Verifica que coincide con el nombre del botón en el Designer
-}
+    public javax.swing.JButton getBtnMovimientoAlmacen() {
+        return btnSalidaProductos;
+    }
     
     public javax.swing.JButton getBtnInventarioBodega() {
-    return btnInventarioBodega; // Asegúrate de que este nombre coincida con la variable de tu JButton
-}
-    
-    public void aplicarEstilosMenuBodeguero() {
-    // 1. Paleta de colores institucional
-    Color azulOscuro = new Color(15, 23, 42);      // #0F172A
-    Color azulBoton = new Color(30, 58, 138);      // #1E3A8A
-    Color rojoCerrar = new Color(220, 38, 38);     // #DC2626
-
-    Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 20);
-    Font fuenteBoton = new Font("Segoe UI", Font.BOLD, 13);
-
-    // 2. Encabezado principal
-    if (lblBienVenido != null) {
-        lblBienVenido.setText("BIENVENIDO AL SISTEMA DE LOGÍSTICA");
-        lblBienVenido.setFont(fuenteTitulo);
-        lblBienVenido.setForeground(azulOscuro);
+        return btnInventarioBodega;
     }
 
-    // 3. Botones del menú operativo
-    JButton[] botonesOperacion = {btnRegistroLotes, btnRegistroProductos, btnMovimientoAlmacen, btnInventarioBodega};
-    
-    for (JButton btn : botonesOperacion) {
-        if (btn != null) {
-            btn.setBackground(azulBoton);
-            btn.setForeground(Color.WHITE);
-            btn.setFont(fuenteBoton);
-            btn.setOpaque(true);
-            btn.setBorderPainted(false);
-            btn.setFocusPainted(false);
-            btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    public javax.swing.JButton getBtnCerrarSesion() {
+        return btnCerrarSesion;
+    }
+
+    // --- ESTILOS VISUALES ---
+    public void aplicarEstilosMenuBodeguero() {
+        Color azulOscuro = new Color(15, 23, 42);      // #0F172A
+        Color azulBoton = new Color(30, 58, 138);      // #1E3A8A
+        Color rojoCerrar = new Color(220, 38, 38);     // #DC2626
+
+        Font fuenteTitulo = new Font("Segoe UI", Font.BOLD, 20);
+        Font fuenteBoton = new Font("Segoe UI", Font.BOLD, 13);
+
+        if (lblBienVenido != null) {
+            lblBienVenido.setText("BIENVENIDO AL SISTEMA DE LOGÍSTICA");
+            lblBienVenido.setFont(fuenteTitulo);
+            lblBienVenido.setForeground(azulOscuro);
+        }
+
+        JButton[] botonesOperacion = {btnEntradaProductos, btnSalidaProductos, btnInventarioBodega};
+        
+        for (JButton btn : botonesOperacion) {
+            if (btn != null) {
+                btn.setBackground(azulBoton);
+                btn.setForeground(Color.WHITE);
+                btn.setFont(fuenteBoton);
+                btn.setOpaque(true);
+                btn.setBorderPainted(false);
+                btn.setFocusPainted(false);
+                btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            }
+        }
+
+        if (btnCerrarSesion != null) {
+            btnCerrarSesion.setText("CERRAR SESIÓN");
+            btnCerrarSesion.setBackground(rojoCerrar);
+            btnCerrarSesion.setForeground(Color.WHITE);
+            btnCerrarSesion.setFont(fuenteBoton);
+            btnCerrarSesion.setOpaque(true);
+            btnCerrarSesion.setBorderPainted(false);
+            btnCerrarSesion.setFocusPainted(false);
+            btnCerrarSesion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         }
     }
-
-    // 4. Salida de sesión
-    if (btnCerrarSesion != null) {
-        btnCerrarSesion.setText("CERRAR SESIÓN");
-        btnCerrarSesion.setBackground(rojoCerrar);
-        btnCerrarSesion.setForeground(Color.WHITE);
-        btnCerrarSesion.setFont(fuenteBoton);
-        btnCerrarSesion.setOpaque(true);
-        btnCerrarSesion.setBorderPainted(false);
-        btnCerrarSesion.setFocusPainted(false);
-        btnCerrarSesion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }
-}
     
     
     /**
@@ -223,10 +193,9 @@ public javax.swing.JButton getBtnMovimientoAlmacen() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCerrarSesion;
+    private javax.swing.JButton btnEntradaProductos;
     private javax.swing.JButton btnInventarioBodega;
-    private javax.swing.JButton btnMovimientoAlmacen;
-    private javax.swing.JButton btnRegistroLotes;
-    private javax.swing.JButton btnRegistroProductos;
+    private javax.swing.JButton btnSalidaProductos;
     private javax.swing.JLabel lblBienVenido;
     // End of variables declaration//GEN-END:variables
 }

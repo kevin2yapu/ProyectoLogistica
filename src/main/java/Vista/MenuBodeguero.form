@@ -29,16 +29,15 @@
                       <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                       <Component id="lblBienVenido" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="157" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="btnRegistroProductos" max="32767" attributes="0"/>
-                          <Component id="btnRegistroLotes" max="32767" attributes="0"/>
-                          <Component id="btnMovimientoAlmacen" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnSalidaProductos" alignment="0" max="32767" attributes="0"/>
                           <Component id="btnCerrarSesion" alignment="0" max="32767" attributes="0"/>
                           <Component id="btnInventarioBodega" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnEntradaProductos" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="186" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="196" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -50,15 +49,13 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
               <Component id="lblBienVenido" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
-              <Component id="btnRegistroLotes" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-              <Component id="btnRegistroProductos" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
-              <Component id="btnMovimientoAlmacen" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
+              <Component id="btnEntradaProductos" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+              <Component id="btnSalidaProductos" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
               <Component id="btnInventarioBodega" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
               <Component id="btnCerrarSesion" min="-2" max="-2" attributes="0"/>
               <EmptySpace pref="60" max="32767" attributes="0"/>
           </Group>
@@ -74,28 +71,12 @@
         <Property name="text" type="java.lang.String" value="Bienvenido al sistema de logistica XYZ"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="btnRegistroLotes">
+    <Component class="javax.swing.JButton" name="btnSalidaProductos">
       <Properties>
-        <Property name="text" type="java.lang.String" value="REGISTRO DE LOTES"/>
+        <Property name="text" type="java.lang.String" value="SALIDA DE PRODUCTOS"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRegistroLotesActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="btnRegistroProductos">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="REGISTRO DE PRODUCTO"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRegistroProductosActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="btnMovimientoAlmacen">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="MOVIMIENTO DE ALMACEN "/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnMovimientoAlmacenActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSalidaProductosActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnCerrarSesion">
@@ -106,6 +87,11 @@
     <Component class="javax.swing.JButton" name="btnInventarioBodega">
       <Properties>
         <Property name="text" type="java.lang.String" value="INVENTARIO BODEGAS "/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnEntradaProductos">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="ENTRADA DE PRODUCTOS"/>
       </Properties>
     </Component>
   </SubComponents>

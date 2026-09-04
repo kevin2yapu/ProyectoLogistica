@@ -10,7 +10,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -24,11 +26,10 @@ public class Producto {
     private double stock;
     private String estado;
     private String estadoProducto;
-    private Integer idLote;
+    private int idBodega;
     private ConexionBDD conectar = new ConexionBDD();
+    private Integer idLote;
     
-   
-   
     public Producto(){
         
     }
@@ -50,12 +51,12 @@ public class Producto {
         this.estadoProducto = estadoProducto;
     }
 
-    public Integer getIdLote() {
-        return idLote;
+    public int getIdBodega() {
+        return idBodega;
     }
 
-    public void setIdLote(Integer idLote) {
-        this.idLote = idLote;
+    public void setIdBodega(int idBodega) {
+        this.idBodega = idBodega;
     }
 
     public int getId() {
@@ -69,7 +70,15 @@ public class Producto {
     public String getCodigo() {
         return codigo;
     }
+    
+    public Integer getIdLote() {
+        return idLote;
+    }
 
+    public void setIdLote(Integer idLote) {
+        this.idLote = idLote;
+    }
+    
     public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
@@ -105,69 +114,90 @@ public class Producto {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-    
-   
 
-public ArrayList<String[]> obtenerProductos() {
-    ArrayList<String[]> lista = new ArrayList<>();
-    String sql = "SELECT p.id, p.codigo, p.nombre, p.descripcion, "
-               + "COALESCE(SUM(ib.stock), 0) AS stock, "
-               + "p.estado, p.estado_producto, "
-               + "COALESCE(GROUP_CONCAT(DISTINCT l.numero_lote SEPARATOR ', '), 'Sin Lote') AS lote "
-               + "FROM productos p "
-               + "LEFT JOIN inventario_bodega ib ON p.id = ib.producto_id "
-               + "LEFT JOIN lotes l ON ib.lote_id = l.id "
-               + "GROUP BY p.id, p.codigo, p.nombre, p.descripcion, p.estado, p.estado_producto";
+    public ArrayList<String> obtenerProductosPorLote(int idLote, int idBodega) {
+        ArrayList<String> lista = new ArrayList<>();
+        String sql = "SELECT DISTINCT p.id, p.nombre " +
+                     "FROM productos p " +
+                     "INNER JOIN inventario_bodega ib ON p.id = ib.producto_id " +
+                     "WHERE ib.lote_id = ? AND ib.bodega_id = ?";
 
-    try (Connection con = conectar.conectar();
-         PreparedStatement ps = con.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-
-        while (rs.next()) {
-            String[] fila = new String[8];
-            fila[0] = String.valueOf(rs.getInt("id"));
-            fila[1] = rs.getString("codigo");
-            fila[2] = rs.getString("nombre");
-            fila[3] = rs.getString("descripcion");
-            fila[4] = String.valueOf(rs.getDouble("stock"));
-            fila[5] = rs.getString("estado");
-            fila[6] = rs.getString("estado_producto");
-            fila[7] = rs.getString("lote"); // Muestra los lotes reales asociados en bodega
-            lista.add(fila);
-        }
-    } catch (SQLException e) {
-        System.out.println(">>> ERROR SQL EN OBTENER PRODUCTOS: " + e.getMessage());
-    }
-    return lista;
-}
-
-    // INSERTAR PRODUCTO
-    public boolean insertarProducto() {
-        String sql = "{call sp_ingresar_producto(?, ?, ?, ?, ?, ?)}";
         try (Connection con = conectar.conectar();
-             CallableStatement cs = con.prepareCall(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            cs.setString(1, this.codigo);
-            cs.setString(2, this.nombre);
-            cs.setString(3, this.descripcion);
-            cs.setDouble(4, this.stock);
-            cs.setString(5, this.estadoProducto);
-
-            if (this.idLote != null && this.idLote > 0) {
-                cs.setInt(6, this.idLote);
-            } else {
-                cs.setNull(6, java.sql.Types.INTEGER);
+            ps.setInt(1, idLote);
+            ps.setInt(2, idBodega);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(rs.getInt("id") + " - " + rs.getString("nombre"));
+                }
             }
-
-            cs.executeUpdate();
-            return true;
         } catch (SQLException e) {
-            System.out.println("Error al insertar producto: " + e.getMessage());
+            System.out.println(">>> ERROR AL CARGAR PRODUCTOS POR LOTE: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public ArrayList<String[]> obtenerProductos() {
+        ArrayList<String[]> lista = new ArrayList<>();
+        String sql = "SELECT p.id, p.codigo, p.nombre, p.descripcion, "
+                   + "COALESCE(SUM(ib.stock), 0) AS stock, "
+                   + "p.estado, p.estado_producto, "
+                   + "COALESCE(GROUP_CONCAT(DISTINCT l.numero_lote SEPARATOR ', '), 'Sin Lote') AS lote "
+                   + "FROM productos p "
+                   + "LEFT JOIN inventario_bodega ib ON p.id = ib.producto_id "
+                   + "LEFT JOIN lotes l ON ib.lote_id = l.id "
+                   + "GROUP BY p.id, p.codigo, p.nombre, p.descripcion, p.estado, p.estado_producto";
+
+        try (Connection con = conectar.conectar();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String[] fila = new String[8];
+                fila[0] = String.valueOf(rs.getInt("id"));
+                fila[1] = rs.getString("codigo");
+                fila[2] = rs.getString("nombre");
+                fila[3] = rs.getString("descripcion");
+                fila[4] = String.valueOf(rs.getDouble("stock"));
+                fila[5] = rs.getString("estado_producto"); // Posición 5: Estado Físico ("BUENO ESTADO")
+                fila[6] = rs.getString("lote");            // Posición 6: Lote
+                fila[7] = rs.getString("estado");          // Posición 7: Estado de la BD ("ACTIVO")
+                lista.add(fila);
+            }
+        } catch (SQLException e) {
+            System.out.println(">>> ERROR SQL EN OBTENER PRODUCTOS: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public Connection getConexion() throws SQLException {
+        return conectar.conectar();
+    }
+
+    public boolean insertarProducto() {
+        String sql = "INSERT INTO productos (codigo, nombre, descripcion, estado_producto, estado) VALUES (?, ?, ?, ?, 'ACTIVO')";
+        
+        try {
+            PreparedStatement ps = getConexion().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, this.codigo);
+            ps.setString(2, this.nombre);
+            ps.setString(3, this.descripcion);
+            ps.setString(4, this.estadoProducto);
+
+            int res = ps.executeUpdate();
+            
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                this.id = rs.getInt(1);
+            }
+            return res > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al insertar producto: " + e.getMessage());
             return false;
         }
     }
 
-    // ACTUALIZAR PRODUCTO
     public boolean actualizarProducto() {
         String sql = "{call sp_actualizar_producto(?, ?, ?, ?, ?, ?, ?)}";
         try (Connection con = conectar.conectar();
@@ -209,31 +239,41 @@ public ArrayList<String[]> obtenerProductos() {
     }
 
     public ArrayList<String[]> buscarProductos(String criterio) {
-        ArrayList<String[]> lregistros = new ArrayList<>();
-        String sentenciaSQL = "{call sp_buscar_producto(?)}";
+        ArrayList<String[]> lista = new ArrayList<>();
+        String sql = "SELECT p.id, p.codigo, p.nombre, p.descripcion, "
+                   + "COALESCE(SUM(ib.stock), 0) AS stock, "
+                   + "p.estado, p.estado_producto, "
+                   + "COALESCE(GROUP_CONCAT(DISTINCT l.numero_lote SEPARATOR ', '), 'Sin Lote') AS lote "
+                   + "FROM productos p "
+                   + "LEFT JOIN inventario_bodega ib ON p.id = ib.producto_id "
+                   + "LEFT JOIN lotes l ON ib.lote_id = l.id "
+                   + "WHERE p.codigo LIKE ? OR p.nombre LIKE ? "
+                   + "GROUP BY p.id, p.codigo, p.nombre, p.descripcion, p.estado, p.estado_producto";
 
-        try (Connection conectado = conectar.conectar();
-             CallableStatement cs = conectado.prepareCall(sentenciaSQL)) {
-
-            cs.setString(1, criterio);
-            try (ResultSet res = cs.executeQuery()) {
-                while (res.next()) {
-                    String[] lista = new String[8];
-                    lista[0] = String.valueOf(res.getInt("id"));
-                    lista[1] = res.getString("codigo");
-                    lista[2] = res.getString("nombre");
-                    lista[3] = res.getString("descripcion");
-                    lista[4] = String.valueOf(res.getDouble("stock"));
-                    lista[5] = res.getString("estado");
-                    lista[6] = res.getString("estado_producto");
-                    lista[7] = res.getString("lote");
-                    lregistros.add(lista);
+        try (Connection con = conectar.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, "%" + criterio + "%");
+            ps.setString(2, "%" + criterio + "%");
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String[] fila = new String[8];
+                    fila[0] = String.valueOf(rs.getInt("id"));
+                    fila[1] = rs.getString("codigo");
+                    fila[2] = rs.getString("nombre");
+                    fila[3] = rs.getString("descripcion");
+                    fila[4] = String.valueOf(rs.getDouble("stock"));
+                    fila[5] = rs.getString("estado_producto"); // Posición 5: Estado Físico ("BUENO ESTADO")
+                    fila[6] = rs.getString("lote");            // Posición 6: Lote
+                    fila[7] = rs.getString("estado");          // Posición 7: Estado de la BD ("ACTIVO")
+                    lista.add(fila);
                 }
             }
         } catch (SQLException e) {
             System.out.println(">>> ERROR SQL EN BUSCAR PRODUCTOS: " + e.getMessage());
         }
-        return lregistros;
+        return lista;
     }
 
     public ArrayList<String> obtenerComboLotes() {
@@ -275,26 +315,130 @@ public ArrayList<String[]> obtenerProductos() {
     }
     
     public ArrayList<String> obtenerProductosPorLote(int idLote) {
-    ArrayList<String> lista = new ArrayList<>();
-    String sql = "SELECT DISTINCT p.id, p.nombre " +
-                 "FROM productos p " +
-                 "INNER JOIN inventario_bodega ib ON p.id = ib.producto_id " +
-                 "WHERE ib.lote_id = ?";
+        ArrayList<String> lista = new ArrayList<>();
+        String sql = "SELECT DISTINCT p.id, p.nombre " +
+                     "FROM productos p " +
+                     "INNER JOIN inventario_bodega ib ON p.id = ib.producto_id " +
+                     "WHERE ib.lote_id = ?";
 
-    try (Connection con = conectar.conectar();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = conectar.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-        ps.setInt(1, idLote);
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                // Formato idéntico al del combo de lotes: "ID - NOMBRE"
-                lista.add(rs.getInt("id") + " - " + rs.getString("nombre"));
+            ps.setInt(1, idLote);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(rs.getInt("id") + " - " + rs.getString("nombre"));
+                }
             }
+        } catch (SQLException e) {
+            System.out.println(">>> ERROR AL CARGAR PRODUCTOS POR LOTE: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.out.println(">>> ERROR AL CARGAR PRODUCTOS POR LOTE: " + e.getMessage());
+        return lista;
     }
-    return lista;
-}
 
+    @Override
+    public String toString() {
+        return nombre != null ? nombre : "";
+    }
+
+    public ArrayList<Producto> obtenerCatalogo() {
+        ArrayList<Producto> lista = new ArrayList<>();
+        String sql = "SELECT id, codigo, nombre, descripcion FROM productos WHERE estado = 'ACTIVO'";
+
+        try (Connection con = conectar.conectar();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Producto p = new Producto();
+                p.setId(rs.getInt("id"));
+                p.setCodigo(rs.getString("codigo"));
+                p.setNombre(rs.getString("nombre"));
+                p.setDescripcion(rs.getString("descripcion"));
+                lista.add(p);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener catálogo de productos: " + e.getMessage());
+        }
+
+        return lista;
+    }
+
+    public ArrayList<String> obtenerProductosDisponiblesPorBodega(int idBodega) {
+        ArrayList<String> listaProductos = new ArrayList<>();
+        String sql = "SELECT DISTINCT p.nombre " +
+                     "FROM productos p " +
+                     "INNER JOIN lotes l ON l.producto_id = p.id " +
+                     "WHERE l.bodega_id = ? AND l.cantidad > 0 " +
+                     "GROUP BY p.nombre " +
+                     "ORDER BY p.nombre ASC;";
+
+        Controlador.ConexionBDD conexion = new Controlador.ConexionBDD();
+
+        try (Connection con = conexion.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idBodega);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                listaProductos.add(rs.getString("nombre"));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al obtener productos por bodega: " + e.getMessage());
+        }
+
+        return listaProductos;
+    }
+    
+    public List<String> obtenerNombresProductosPorBodega(int idBodega) {
+        List<String> listaProductos = new ArrayList<>();
+        String sql = "SELECT p.nombre " +
+                     "FROM productos p " +
+                     "INNER JOIN lotes l ON p.id = l.producto_id " +
+                     "WHERE l.bodega_id = ? AND l.cantidad > 0 " +
+                     "GROUP BY p.nombre " +
+                     "ORDER BY p.nombre ASC;";
+
+        ConexionBDD conexionBDD = new ConexionBDD();
+
+        try (Connection con = conexionBDD.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idBodega);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                listaProductos.add(rs.getString("nombre"));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al obtener productos en Modelo: " + e.getMessage());
+        }
+
+        return listaProductos;
+    }
+    
+    public int obtenerIdPorNombre(String nombreProducto) {
+        int id = 0;
+        String sql = "SELECT id FROM productos WHERE nombre = ? LIMIT 1;";
+        Controlador.ConexionBDD conexionBDD = new Controlador.ConexionBDD();
+
+        try (Connection con = conexionBDD.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, nombreProducto);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                id = rs.getInt("id");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al obtener ID de producto: " + e.getMessage());
+        }
+
+        return id;
+    }
 }

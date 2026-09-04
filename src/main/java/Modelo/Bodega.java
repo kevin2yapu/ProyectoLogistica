@@ -1,11 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Modelo;
 
 import Controlador.ConexionBDD;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- *
  * @author KEVIN
  */
 public class Bodega {
@@ -45,37 +39,62 @@ public class Bodega {
         this.nombre = nombre;
     }
 
-    // CLAVE: El JComboBox llama automáticamente al método toString() 
-    // para saber qué texto mostrar en pantalla.
     @Override
     public String toString() {
         return nombre;
     }
 
-    // MÉTODO PARA CONSULTAR EL CATÁLOGO EN BDD
+    // CONSULTA A LA BASE DE DATOS
     public ArrayList<Bodega> obtenerCatalogo() {
         ArrayList<Bodega> lista = new ArrayList<>();
-        ConexionBDD conectar = new ConexionBDD();
+        ConexionBDD conexion = new ConexionBDD();
+        String sql = "SELECT * FROM bodegas;";
 
-        String sql = "SELECT id, nombre FROM bodegas;";
-
-        try {
-            Connection conectado = (Connection) conectar.conectar();
-            PreparedStatement ps = conectado.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (Connection con = conexion.conectar();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                lista.add(new Bodega(rs.getInt("id"), rs.getString("nombre")));
+                // Intenta leer 'id', si falla lee 'id_bodega'
+                int idBodega;
+                try {
+                    idBodega = rs.getInt("id");
+                } catch (SQLException e) {
+                    idBodega = rs.getInt("id_bodega");
+                }
+                lista.add(new Bodega(idBodega, rs.getString("nombre")));
             }
-
-            rs.close();
-            ps.close();
-            conectado.close();
 
         } catch (SQLException e) {
             System.err.println("Error al obtener catálogo de bodegas: " + e.getMessage());
         }
 
         return lista;
+    }
+
+    // Obtiene el ID de la bodega a partir del nombre seleccionado en el combo
+    public int obtenerIdPorNombre(String nombreBodega) {
+        int idEncontrado = -1;
+        ConexionBDD conexion = new ConexionBDD();
+        String sql = "SELECT * FROM bodegas WHERE nombre = ?;";
+
+        try (Connection con = conexion.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, nombreBodega);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    try {
+                        idEncontrado = rs.getInt("id");
+                    } catch (SQLException e) {
+                        idEncontrado = rs.getInt("id_bodega");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener ID de bodega por nombre: " + e.getMessage());
+        }
+
+        return idEncontrado;
     }
 }

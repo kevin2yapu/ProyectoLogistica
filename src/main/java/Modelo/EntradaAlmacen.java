@@ -4,6 +4,8 @@
  */
 package Modelo;
 
+import Controlador.ConexionBDD;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -22,17 +24,24 @@ public class EntradaAlmacen extends MovimientoAlmacen {
         super(id, tipoMovimiento, bodegaOrigenId, bodegaDestinoId, responsableId, fechaMovimiento, observacion);
     }
 
-    @Override
-    public boolean impactarInventario(int productoId, int cantidad) {
-        // Incrementa el stock general del producto
-        String sentenciaSQL = "UPDATE productos SET stock = stock + ? WHERE id = ?;";
-        try (PreparedStatement ps = conectado.prepareStatement(sentenciaSQL)) {
-            ps.setInt(1, cantidad);
-            ps.setInt(2, productoId);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Error al aplicar entrada: " + e.getMessage());
-            return false;
-        }
+   @Override
+public boolean impactarInventario(int productoId, int cantidad) {
+    String sentenciaSQL = "UPDATE productos SET stock = stock + ? WHERE id = ?;";
+    
+    ConexionBDD conexion = new ConexionBDD();
+    
+    try (Connection con = conexion.conectar();
+         PreparedStatement ps = con.prepareStatement(sentenciaSQL)) {
+        
+        ps.setInt(1, cantidad);
+        ps.setInt(2, productoId);
+        
+        int filasAfectadas = ps.executeUpdate();
+        return filasAfectadas > 0;
+        
+    } catch (SQLException e) {
+        System.err.println("Error al aplicar entrada: " + e.getMessage());
+        return false;
     }
+}
 }

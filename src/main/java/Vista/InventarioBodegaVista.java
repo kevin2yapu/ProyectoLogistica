@@ -68,7 +68,7 @@ public class InventarioBodegaVista extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "BODEGA", "LOTE", "PRODUCTO", "STOCK ACTUAL"
+                "BODEGA", "CODIGO", "PRODUCTO", "STOCK ACTUAL"
             }
         ));
         jScrollPane1.setViewportView(tblInventario);

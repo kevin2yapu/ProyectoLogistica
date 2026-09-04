@@ -7,7 +7,10 @@ package Vista;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.JTableHeader;
 
 /**
@@ -35,30 +38,32 @@ public class DetalleMovimiento extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        lblLote = new javax.swing.JLabel();
+        lblBodegaDestino = new javax.swing.JLabel();
         lblProducto = new javax.swing.JLabel();
         lblCantidad = new javax.swing.JLabel();
         txtCantidad = new javax.swing.JTextField();
-        lblNotaId = new javax.swing.JLabel();
+        lblBodegaOrigen = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblDetalle = new javax.swing.JTable();
-        btnPdf = new javax.swing.JButton();
+        tblLotes = new javax.swing.JTable();
+        btnPDF = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
-        cmbMovimientoId = new javax.swing.JComboBox<>();
+        cmbBodegaOrigen = new javax.swing.JComboBox<>();
         btnRegresar = new javax.swing.JButton();
-        cmbLote = new javax.swing.JComboBox<>();
+        cmbBodegaDEstino = new javax.swing.JComboBox<>();
         cmbProductos = new javax.swing.JComboBox<>();
+        lblObservaciones = new javax.swing.JLabel();
+        txtObservaciones = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI Black", 3, 14)); // NOI18N
-        jLabel1.setText("DETALLE DE MOVIMIENTO");
+        jLabel1.setText("SALIDA DE PRODUCTOS");
 
-        lblLote.setText("Lote:");
+        lblBodegaDestino.setText("Bodega Destino:");
 
         lblProducto.setText("Producto:");
 
-        lblCantidad.setText("Cantidad:");
+        lblCantidad.setText("Cantidad Requerida:");
 
         txtCantidad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -66,26 +71,26 @@ public class DetalleMovimiento extends javax.swing.JFrame {
             }
         });
 
-        lblNotaId.setText("ID Movimiento Almacen:");
+        lblBodegaOrigen.setText("Bodega Origen:");
 
-        tblDetalle.setModel(new javax.swing.table.DefaultTableModel(
+        tblLotes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "NOTA MOVIMIENTO", "LOTE", "PRODUCTO", "CANTIDAD"
+                "ID LOTE", " CODIGO LOTE", "FECHA VENCIMIENTO:", "STOCK DISPONIBLE:", "A DESCONTAR"
             }
         ));
-        jScrollPane1.setViewportView(tblDetalle);
+        jScrollPane1.setViewportView(tblLotes);
 
-        btnPdf.setText("PDF");
+        btnPDF.setText("PDF");
 
         btnGuardar.setText("GUARDAR");
 
-        cmbMovimientoId.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbBodegaOrigen.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnRegresar.setText("<");
         btnRegresar.addActionListener(new java.awt.event.ActionListener() {
@@ -94,51 +99,64 @@ public class DetalleMovimiento extends javax.swing.JFrame {
             }
         });
 
-        cmbLote.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbBodegaDEstino.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         cmbProductos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        lblObservaciones.setText("Observaciones:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(63, 63, 63)
-                                .addComponent(btnPdf)
-                                .addGap(82, 82, 82)
-                                .addComponent(btnGuardar))
+                                .addGap(28, 28, 28)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(lblBodegaOrigen))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(lblBodegaDestino))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(lblProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(40, 40, 40)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(cmbProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 440, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cmbBodegaOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cmbBodegaDEstino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGap(28, 28, 28)
+                                        .addGap(128, 128, 128)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(lblLote, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(lblProducto, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
-                                            .addComponent(lblCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(14, 14, 14)
-                                        .addComponent(lblNotaId)))
-                                .addGap(37, 37, 37)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtCantidad)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(cmbMovimientoId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(cmbLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(cmbProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(0, 0, Short.MAX_VALUE)))))
-                        .addGap(0, 92, Short.MAX_VALUE))
+                                            .addComponent(txtCantidad)
+                                            .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(lblCantidad)
+                                    .addComponent(lblObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(45, 45, 45))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnRegresar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(159, 159, 159)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(155, 155, 155)
+                .addComponent(btnPDF)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnGuardar)
+                .addGap(160, 160, 160))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -149,32 +167,35 @@ public class DetalleMovimiento extends javax.swing.JFrame {
                     .addComponent(btnRegresar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblNotaId)
-                        .addComponent(cmbMovimientoId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel2))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(lblLote))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(lblBodegaOrigen)
+                                .addComponent(cmbBodegaOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblBodegaDestino)
+                            .addComponent(cmbBodegaDEstino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addComponent(cmbLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblProducto)
-                            .addComponent(cmbProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblCantidad)
-                            .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(43, 43, 43)
+                            .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblObservaciones)
+                            .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cmbProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblProducto))
+                .addGap(120, 120, 120)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(44, 44, 44)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnPdf)
+                    .addComponent(btnPDF)
                     .addComponent(btnGuardar))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         pack();
@@ -189,45 +210,55 @@ public class DetalleMovimiento extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     public javax.swing.JComboBox<String> getCmbMovimientoId() {
-    return cmbMovimientoId; // Reemplaza por el nombre de tu JComboBox
+    return cmbBodegaOrigen; // Reemplaza por el nombre de tu JComboBox
 }
 
 //public javax.swing.JTextField getTxtLote() {
 //    return txtLote; // Reemplaza por el nombre de tu JTextField de Lote
 //}
 
-    public JComboBox<String> getCmbLote() { return cmbLote; }
+    public JComboBox<String> getCmbLote() { return cmbBodegaDEstino; }
     
     
 
 
-public javax.swing.JTextField getTxtCantidad() {
-    return txtCantidad; // Reemplaza por el nombre de tu JTextField de Cantidad
+public JComboBox getCbBodegaOrigen() {
+    return cmbBodegaOrigen;
 }
 
-public javax.swing.JTable getTblDetalle() {
-    return tblDetalle; // Reemplaza por el nombre de tu JTable
+public JComboBox getCbBodegaDestino() {
+    return cmbBodegaDEstino;
 }
 
-public javax.swing.JButton getBtnGuardar() {
-    return btnGuardar; // Reemplaza por el nombre de tu JButton GUARDAR
+public JComboBox getCbProducto() {
+    return cmbProductos; 
 }
 
+public JTextField getTxtCantidadRequerida() {
+    return txtCantidad; 
+} 
 
-    public javax.swing.JButton getBtnPdf() {
-    return btnPdf; // Reemplaza 'btnPdf' por el nombre variable real de tu JButton en NetBeans (ej. btnPDF, jButton1, etc.)
-}
-    public javax.swing.JButton getBtnRegresar() {
-    return btnRegresar; 
-}
-    
-    public javax.swing.JComboBox<String> getCbxLote() {
-    return cmbLote; // O regresa cmbLote si en tu diseñador se llama cmbLote
+public String getCantidadRequeridaText() {
+    return txtCantidad.getText().trim();
 }
 
-public javax.swing.JComboBox<String> getCbxProducto() {
-    return cmbProductos;
+public String getObservacionesText() { 
+    return txtObservaciones.getText().trim();
 }
+
+public JButton getBtnGuardar() { 
+    return btnGuardar; 
+}
+
+public JButton getBtnPDF() {
+    return btnPDF;
+}
+
+public javax.swing.JButton getBtnRegresar() {
+    return btnRegresar;
+}
+
+public JTable getTblLotes() { return tblLotes; }
     
     
     public void aplicarEstilos() {
@@ -249,26 +280,28 @@ public javax.swing.JComboBox<String> getCbxProducto() {
     btnGuardar.setFont(fuenteNegrita);
     btnGuardar.setFocusPainted(false);
 
-    btnPdf.setBackground(new Color(220, 38, 38)); // Rojo para PDF (#DC2626)
-    btnPdf.setForeground(Color.WHITE);
-    btnPdf.setFont(fuenteNegrita);
-    btnPdf.setFocusPainted(false);
+    btnPDF.setBackground(new Color(220, 38, 38)); // Rojo para PDF (#DC2626)
+    btnPDF.setForeground(Color.WHITE);
+    btnPDF.setFont(fuenteNegrita);
+    btnPDF.setFocusPainted(false);
 
     btnRegresar.setText("← Volver");
     btnRegresar.setFont(fuenteBase);
 
     // 4. Personalizar Encabezado y Filas de la Tabla
-    JTableHeader header = tblDetalle.getTableHeader();
+    JTableHeader header = tblLotes.getTableHeader();
     header.setBackground(grisOscuro);
     header.setForeground(Color.WHITE);
     header.setFont(fuenteNegrita);
     header.setPreferredSize(new Dimension(header.getWidth(), 35));
 
-    tblDetalle.setRowHeight(28);
-    tblDetalle.setFont(fuenteBase);
-    tblDetalle.setGridColor(new Color(226, 232, 240));
-    tblDetalle.setShowVerticalLines(false);
+    tblLotes.setRowHeight(28);
+    tblLotes.setFont(fuenteBase);
+    tblLotes.setGridColor(new Color(226, 232, 240));
+    tblLotes.setShowVerticalLines(false);
 }
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -306,19 +339,21 @@ public javax.swing.JComboBox<String> getCbxProducto() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGuardar;
-    private javax.swing.JButton btnPdf;
+    private javax.swing.JButton btnPDF;
     private javax.swing.JButton btnRegresar;
-    private javax.swing.JComboBox<String> cmbLote;
-    private javax.swing.JComboBox<String> cmbMovimientoId;
+    private javax.swing.JComboBox<String> cmbBodegaDEstino;
+    private javax.swing.JComboBox<String> cmbBodegaOrigen;
     private javax.swing.JComboBox<String> cmbProductos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblBodegaDestino;
+    private javax.swing.JLabel lblBodegaOrigen;
     private javax.swing.JLabel lblCantidad;
-    private javax.swing.JLabel lblLote;
-    private javax.swing.JLabel lblNotaId;
+    private javax.swing.JLabel lblObservaciones;
     private javax.swing.JLabel lblProducto;
-    private javax.swing.JTable tblDetalle;
+    private javax.swing.JTable tblLotes;
     private javax.swing.JTextField txtCantidad;
+    private javax.swing.JTextField txtObservaciones;
     // End of variables declaration//GEN-END:variables
 }
